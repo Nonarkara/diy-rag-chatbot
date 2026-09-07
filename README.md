@@ -8,9 +8,9 @@
 
 เปิดสไลด์ในเบราว์เซอร์:
 
-```bash
-open deck/index.html
-```
+- ไฟล์ท้องถิ่น: `open deck/index.html`
+- ออนไลน์: [nonarkara.github.io/diy-rag-chatbot](https://nonarkara.github.io/diy-rag-chatbot/)
+- ต้นทาง: [github.com/Nonarkara/diy-rag-chatbot](https://github.com/Nonarkara/diy-rag-chatbot)
 
 หรือเสิร์ฟที่ `http://127.0.0.1:8765/deck/`
 
