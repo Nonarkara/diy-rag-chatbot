@@ -24,11 +24,13 @@ python3 -m http.server 8765
 
 ## English
 
-A 31-slide Thai briefing on how to turn a folder of documents into a LINE Official Account chatbot that **answers only from those files** and **refuses when it cannot**.
+Clone this repo, then tell your AI agent:
 
-Designed in [Axiom Design Core](https://github.com/Nonarkara/Axiom-Design-Core) Editorial mode. Partner marks (Axiom, Dr Non, Smart City Thailand, LINE OA Manager / Developers Console) are identity, not decoration.
+> Read AGENTS.md and START-HERE.md and walk me through each station until the LINE Official Account answers from the knowledge folder. Do not skip steps. Do not ask me to paste secrets into chat.
 
-This is **not** an official product of depa, the Smart City Thailand Office, or LY Corporation.
+A 31-slide Thai briefing (`deck/`) and an 18-slide Axiom PowerPoint/PDF sit in the repo. The bot **answers only from those files** and **refuses when it cannot**.
+
+Designed in [Axiom Design Core](https://github.com/Nonarkara/Axiom-Design-Core) Editorial mode. This is **not** an official product of depa, the Smart City Thailand Office, or LY Corporation.
 
 ---
 
@@ -49,14 +51,20 @@ This is **not** an official product of depa, the Smart City Thailand Office, or 
 ## โครงสร้าง
 
 ```
-deck/
-  index.html     สไลด์ทั้งหมด
-  tokens.css     Axiom Design Core
-  deck.css
-  deck.js
-  logos/         Axiom · ดร.นน · Smart City Thailand · LINE wayfinding
-PROMPT.md        ข้อความวางใน Claude Code / Cursor เพื่อให้สร้างเครื่อง
+START-HERE.md            จับมือทีละเว็บ (อ่านไฟล์นี้ก่อน)
+AGENTS.md                สัญญาของเอเจนต์ — พาทีละสถานี
+LINE_RAG_Claude_Code_Master_Prompt.md   ให้เอเจนต์สร้างเครื่อง
+LINE_RAG_OA_Guide_TH_Axiom.pptx / .pdf  สำเนานำเสนอ 18 หน้า
+deck/                    สไลด์ภาษาไทย 31 หน้า
+PROMPT.md                ชี้ไปที่ master prompt
 ```
+
+ทางลัด: โคลน repo นี้ แล้วบอกเอเจนต์ว่า
+
+> อ่าน AGENTS.md กับ START-HERE.md แล้วพาฉันทำทีละขั้น
+> จนกว่า LINE Official Account จะตอบจากโฟลเดอร์ knowledge ได้
+> อย่าข้ามขั้น อย่าให้ฉันวางคีย์ลงในแชต
+
 
 ---
 
