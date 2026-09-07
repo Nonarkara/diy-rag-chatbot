@@ -1,0 +1,16 @@
+.env
+.venv/
+venv/
+rag_database/
+__pycache__/
+*.py[cod]
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+cloudflared.log

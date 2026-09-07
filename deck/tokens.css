@@ -1,0 +1,46 @@
+/* Axiom Design Core tokens — Editorial deck subset.
+   Law: github.com/Nonarkara/Axiom-Design-Core
+   Do not invent a second accent. Green is retired except inside LINE's own mark. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Sarabun:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  --paper: #f6f5f2;
+  --panel: #ffffff;
+  --ink: #191712;
+  --ink-2: #6f6c63;
+  --ink-3: #a9a59a;
+  --line: #e7e5dd;
+  --line-2: #d2cfc5;
+  --blue: #26243F;
+  --red: #A8322B;
+  --fill-1: #8f8b80;
+  --fill-2: #bdb9ad;
+  --fill-3: #d8d4ca;
+
+  --font-sans: 'Inter', 'Sarabun', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-serif: 'Spectral', 'Sarabun', Georgia, 'Times New Roman', serif;
+  --font-thai: 'Sarabun', 'Inter', sans-serif;
+
+  --t-hero: clamp(34px, 4.6vw, 52px);
+  --t-big: clamp(22px, 2.6vw, 30px);
+  --t-body: 17px;
+  --t-label: 11px;
+  --t-micro: 10px;
+
+  --gap-6: 6px;
+  --gap-11: 11px;
+  --gap-13: 13px;
+  --gap-16: 16px;
+  --gap-22: 22px;
+  --gap-44: 44px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --t-state: 150ms;
+  --t-layout: 250ms;
+
+  --slide-w: min(100vw, calc(100vh * 16 / 9));
+  --slide-h: min(100vh, calc(100vw * 9 / 16));
+  --chrome-h: 44px;
+  --foot-h: 32px;
+}

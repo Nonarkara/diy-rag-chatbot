@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dr Non's DIY RAG / Chatbot-as-a-Self-Service</title>
+  <meta name="description" content="คู่มือทีละขั้น: โฟลเดอร์ความรู้ → LINE Official Account → แชตบอทที่ตอบจากเอกสารจริง และปฏิเสธเมื่อไม่รู้">
+  <link rel="icon" href="logos/axiom-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="deck.css">
+</head>
+<body>
+  <a class="skip" href="#stage">ข้ามไปสไลด์</a>
+
+  <div class="deck" role="application" aria-label="สไลด์คู่มือแร็กทำเอง">
+    <header class="chrome chrome--top">
+      <div class="brand">
+        <img class="brand__axiom" src="logos/axiom-mark.svg" alt="Axiom">
+        <span class="brand__word">Dr Non’s DIY RAG</span>
+      </div>
+      <div class="partners" aria-label="เครื่องหมายที่เกี่ยวข้อง">
+        <img src="logos/dr-non.svg" alt="ดร.นน" height="20">
+        <span class="sep"></span>
+        <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand" height="20">
+        <span class="sep"></span>
+        <img src="logos/line-oa-manager.svg" alt="LINE OA Manager" height="20">
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+
+      <!-- 01 -->
+      <section class="slide cover is-on" data-title="ปก">
+        <p class="kicker">คู่มือปฏิบัติ · ภาษาไทย · Axiom Design Core · Editorial</p>
+        <h1>แร็กทำเองของดร.นน</h1>
+        <p class="lede" style="font-family:var(--font-serif); font-style:italic; color:var(--ink);">
+          DIY RAG / Chatbot-as-a-Self-Service
+        </p>
+        <div class="eq" aria-label="กฎหนึ่งข้อ">
+          <span>โฟลเดอร์คือสมอง</span>
+          <span>ไลน์คือปาก</span>
+          <span class="move">โมเดลคือล่าม — ไม่ใช่เจ้านาย</span>
+        </div>
+        <p class="note" style="margin-top:28px; max-width:46ch;">
+          สำหรับคนที่ไม่เขียนโค้ด แต่ชี้ URL ได้ สมัครบัญชีได้
+          และวางข้อความภาษาคนลงในเอเจนต์ได้
+        </p>
+        <div class="partners" style="margin-top:auto; padding-top:28px; align-items:flex-end;">
+          <img src="logos/axiom-logo.png" alt="Axiom" style="height:44px;">
+          <span class="sep"></span>
+          <img src="logos/dr-non.svg" alt="ดร.นน" style="height:44px;">
+          <span class="sep"></span>
+          <img src="logos/smart-city-thailand.svg" alt="Smart City Thailand" style="height:36px;">
+          <span class="sep"></span>
+          <img src="logos/line-oa-manager.svg" alt="LINE OA Manager" style="height:32px;">
+          <img src="logos/line-developers.svg" alt="LINE Developers Console" style="height:32px;">
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="slide" data-title="วิธีใช้เด็คนี้">
+        <p class="kicker">01 / การใช้</p>
+        <h2>เด็คนี้เป็นคู่มือปฏิบัติ ไม่ใช่สไลด์ขายของ</h2>
+        <div class="two" style="margin-top:18px;">
+          <div class="copy">
+            <ol class="plain">
+              <li><span class="num">01</span><span>ลูกศรซ้ายขวา หรือคลิกซ้าย/ขวาของสไลด์ เพื่อเลื่อน</span></li>
+              <li><span class="num">02</span><span>พิมพ์ลง PDF ได้จากเบราว์เซอร์ — ตั้งค่ากระดาษเป็น Landscape</span></li>
+              <li><span class="num">03</span><span>ลิงก์ในตารางเป็นของจริง เปิดแล้วทำตามได้ทันที</span></li>
+              <li><span class="num">04</span><span>สีแดงใช้แค่จุดที่ถ้าผิดแล้วระบบโกหกหรือเงียบ — ไม่ได้ใช้เพื่อตกแต่ง</span></li>
+            </ol>
+            <p class="note" style="margin-top:18px;">
+              ชุดนี้ถอดบทเรียนจากระบบที่วิ่งอยู่ที่ rag.nonarkara.org
+              ไม่ใช่ทฤษฎีจากบล็อก และไม่ใช่ผลิตภัณฑ์ทางการของ depa หรือ LINE
+            </p>
+          </div>
+          <div class="viz">
+            <div class="grid-hair" style="grid-template-columns:1fr; height:100%;">
+              <div>
+                <div class="kicker">โหมด</div>
+                <h3>Editorial</h3>
+                <p class="note" style="margin-top:8px;">คนกำลังอ่านและคิด — เซอริฟได้ สีเทา + จุดแดงหนึ่งจุด</p>
+              </div>
+              <div>
+                <div class="kicker">Divine Move</div>
+                <h3>การปฏิเสธคือสินค้า</h3>
+                <p class="note" style="margin-top:8px;">บอทที่พูดว่า “ไม่ทราบ” มีประโยชน์กว่าบอทที่แต่งเรื่อง</p>
+              </div>
+              <div>
+                <div class="kicker">ห้าม</div>
+                <h3>ไล่สี · เงา · มุมโค้ง · เอเจนต์ที่ท่องเน็ตเอง</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="slide" data-title="สารบัญ">
+        <p class="kicker">02 / แผนที่</p>
+        <h2>สิบสองสถานี — ห้าสถานีเป็นงานมือคน</h2>
+        <nav class="toc">
+          <a href="#4" data-go="4"><span class="n">03</span><span class="t">กฎหนึ่งข้อ</span></a>
+          <a href="#8" data-go="8"><span class="n">07</span><span class="t">ห้าการกระทำของมนุษย์</span></a>
+          <a href="#10" data-go="10"><span class="n">09</span><span class="t">ขั้น 1 โยนไฟล์ลงโฟลเดอร์</span></a>
+          <a href="#12" data-go="12"><span class="n">11</span><span class="t">ขั้น 2 สร้าง LINE OA</span></a>
+          <a href="#16" data-go="16"><span class="n">15</span><span class="t">ขั้น 3 เลือกสมอง AI</span></a>
+          <a href="#19" data-go="19"><span class="n">18</span><span class="t">ขั้น 4 วางคีย์ใน .env</span></a>
+          <a href="#20" data-go="20"><span class="n">19</span><span class="t">ขั้น 5 อุโมงค์ Cloudflare</span></a>
+          <a href="#22" data-go="22"><span class="n">21</span><span class="t">ขั้น 6 ตั้ง webhook</span></a>
+          <a href="#23" data-go="23"><span class="n">22</span><span class="t">ขั้น 7 คำถามเดินทางอย่างไร</span></a>
+          <a href="#24" data-go="24"><span class="n">23</span><span class="t">รั้ว: ห้ามเดา</span></a>
+          <a href="#26" data-go="26"><span class="n">25</span><span class="t">ให้เอเจนต์สร้างเครื่อง</span></a>
+          <a href="#28" data-go="28"><span class="n">27</span><span class="t">เมื่อของพัง</span></a>
+        </nav>
+      </section>
+
+      <!-- 04 -->
+      <section class="slide" data-title="กฎหนึ่งข้อ">
+        <p class="kicker">03 / หลัก</p>
+        <h2>อย่าเรียกสิ่งนี้ว่าเอเจนต์ จนกว่ามันจะต้องลงมือ</h2>
+        <div class="two" style="margin-top:16px;">
+          <div>
+            <p class="lede" style="margin-top:0;">สำหรับการค้นความรู้ของหน่วยงาน ลำดับที่ถูกคือสั้น ถูก ตรวจสอบได้</p>
+            <div class="grid-hair" style="grid-template-columns:1fr 1fr; margin-top:18px;">
+              <div>
+                <h3>ใช้แบบนี้</h3>
+                <p class="note">LINE → ค้นเอกสาร → โมเดลสรุป → ตอบ</p>
+              </div>
+              <div>
+                <h3>ยังไม่ต้อง</h3>
+                <p class="note">เอเจนต์ → เครื่องมือหลายชิ้น → ท่องเน็ต → ฐานข้อมูล → แล้วค่อยตอบ</p>
+              </div>
+            </div>
+            <p class="note" style="margin-top:16px;">
+              แบบแรกถูกกว่า เร็วกว่า คาดเดาได้ และเอามาอธิบายกับผู้บริหารได้
+              เครื่องมือจองคิว รับเรื่องร้องเรียน ออกเอกสาร ค่อยต่อเมื่อสมองนิ่งแล้ว
+            </p>
+          </div>
+          <div class="viz">
+            <svg viewBox="0 0 360 240" width="100%" height="100%" aria-hidden="true">
+              <rect x="0.5" y="0.5" width="359" height="239" fill="#fff" stroke="#e7e5dd"/>
+              <rect x="16" y="28" width="88" height="48" fill="#f6f5f2" stroke="#d2cfc5"/>
+              <text x="60" y="56" text-anchor="middle" font-size="11" font-family="Sarabun, sans-serif" fill="#191712">ไลน์</text>
+              <text x="132" y="56" text-anchor="middle" font-size="14" fill="#a9a59a">→</text>
+              <rect x="152" y="28" width="88" height="48" fill="#f6f5f2" stroke="#d2cfc5"/>
+              <text x="196" y="56" text-anchor="middle" font-size="11" font-family="Sarabun, sans-serif" fill="#191712">ค้นไฟล์</text>
+              <text x="268" y="56" text-anchor="middle" font-size="14" fill="#a9a59a">→</text>
+              <rect x="284" y="28" width="60" height="48" fill="#26243F"/>
+              <text x="314" y="56" text-anchor="middle" font-size="11" font-family="Sarabun, sans-serif" fill="#f6f5f2">ล่าม</text>
+              <line x1="16" y1="120" x2="344" y2="120" stroke="#e7e5dd"/>
+              <text x="16" y="148" font-size="10" font-family="Inter, sans-serif" letter-spacing="1.4" fill="#a9a59a">IF NO EVIDENCE</text>
+              <rect x="16" y="164" width="328" height="48" fill="#fff" stroke="#A8322B" stroke-width="1.5"/>
+              <text x="180" y="193" text-anchor="middle" font-size="13" font-family="Sarabun, sans-serif" fill="#A8322B">ปฏิเสธ — ไม่เดา</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="slide" data-title="สิ่งที่จะได้">
+        <p class="kicker">04 / ผลลัพธ์</p>
+        <h2>เมื่อทำครบ จะได้อะไรในมือ</h2>
+        <div class="grid-hair" style="grid-template-columns:repeat(3,1fr); margin-top:18px;">
+          <div>
+            <p class="kicker">สมอง</p>
+            <h3>โฟลเดอร์บนเครื่องคุณ</h3>
+            <p class="note" style="margin-top:8px;">PDF, Word, Excel, PowerPoint, ข้อความ, มาร์กดาวน์ — โยนเข้า knowledge/ ระบบอ่านเอง</p>
+          </div>
+          <div>
+            <p class="kicker">ปาก</p>
+            <h3>LINE Official Account</h3>
+            <p class="note" style="margin-top:8px;">ลูกค้าทักมาได้ 24 ชั่วโมง คำตอบมาจากไฟล์ของคุณ ไม่จากความรู้ทั่วไปของโมเดล</p>
+          </div>
+          <div>
+            <p class="kicker">รั้ว</p>
+            <h3>ถามมั่วไม่ได้</h3>
+            <p class="note" style="margin-top:8px;">ถ้าเอกสารไม่มี บอทพูดว่าไม่มี และบอกว่าจะติดต่อคนได้อย่างไร</p>
+          </div>
+          <div>
+            <p class="kicker">ทางเลือกสมอง</p>
+            <h3>ในเครื่อง หรือคีย์ฟรี</h3>
+            <p class="note" style="margin-top:8px;">Gemma 4 e2b/e4b, DeepSeek บนแรม 8–16 GB — หรือ Groq / Gemini ที่สมัครฟรีได้</p>
+          </div>
+          <div>
+            <p class="kicker">หน้าควบคุม</p>
+            <h3>แอดมินที่ localhost</h3>
+            <p class="note" style="margin-top:8px;">ไฟล์ที่อ่านแล้ว จำนวนชิ้นข้อความ การเชื่อม LINE การเชื่อมโมเดล คำถามล่าสุด</p>
+          </div>
+          <div>
+            <p class="kicker">ข้อแม้</p>
+            <h3>คอมพิวเตอร์ต้องเปิด</h3>
+            <p class="note" style="margin-top:8px;">บอทอยู่ที่โน้ตบุ๊กหรือมินิพีซีของคุณ ปิดเครื่อง = บอทตาย นี่ไม่ใช่คลาวด์เช่า</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 -->
+      <section class="slide" data-title="ไม่ใช่อะไร">
+        <p class="kicker">05 / ขอบเขต</p>
+        <h2>ชุดนี้ตั้งใจไม่ทำสิ่งเหล่านี้</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ไม่ใช่</th><th>เพราะอะไร</th><th>ถ้าต้องการ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>แชตบอทรู้ทุกเรื่องแบบ ChatGPT</td>
+              <td>ความรู้ทั่วไปทำให้หน่วยงานโดนคำตอบปลอม</td>
+              <td>ใช้ ChatGPT โดยตรง — อย่าต่อกับ LINE OA ขององค์กร</td>
+            </tr>
+            <tr>
+              <td>Dify / Botpress / ManyChat</td>
+              <td>ทางสั้นสำหรับต้นแบบ แต่โฟลเดอร์ไม่ใช่สมองอีกต่อไป</td>
+              <td>ใช้ได้ถ้ายอมให้ความรู้ไปอยู่บนบริการคนอื่น</td>
+            </tr>
+            <tr>
+              <td>ฐานข้อมูล PostgreSQL / Pinecone</td>
+              <td>คุณต้องเป็นแอดมินระบบ ชุดนี้เลี่ยงงานนั้น</td>
+              <td>SQLite ไฟล์เดียวข้างโฟลเดอร์ความรู้</td>
+            </tr>
+            <tr>
+              <td>เอเจนต์ที่จองคิวและออกเอกสารเอง</td>
+              <td>ยังไม่มีหลักฐานจากไฟล์ก็ลงมือไม่ได้</td>
+              <td>ต่อเครื่องมือทีหลัง เมื่อการปฏิเสธทำงานแล้ว</td>
+            </tr>
+            <tr>
+              <td>ผลิตภัณฑ์ทางการของ depa / LINE</td>
+              <td>นี่คือชุดสอนของดร.นน และ Axiom X</td>
+              <td>อย่าใส่ตราสัญลักษณ์ราชการบนบอทโดยไม่ได้รับอนุญาต</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 07 -->
+      <section class="slide" data-title="สถาปัตยกรรม">
+        <p class="kicker">06 / โครง</p>
+        <h2>ไฟล์เข้ามาทางหนึ่ง คำตอบออกทางไลน์</h2>
+        <svg viewBox="0 0 1100 380" width="100%" style="margin-top:10px;" role="img" aria-label="แผนภาพสถาปัตยกรรม">
+          <rect x="8" y="8" width="240" height="364" fill="#fff" stroke="#d2cfc5"/>
+          <text x="24" y="36" font-size="10" font-family="Inter" letter-spacing="1.6" fill="#a9a59a">KNOWLEDGE FOLDER</text>
+          <text x="24" y="64" font-size="16" font-family="Sarabun" fill="#191712">โฟลเดอร์ความรู้</text>
+          <text x="24" y="100" font-size="13" font-family="Sarabun" fill="#6f6c63">PDF · DOCX · XLSX</text>
+          <text x="24" y="122" font-size="13" font-family="Sarabun" fill="#6f6c63">PPTX · TXT · MD</text>
+          <text x="24" y="160" font-size="12" font-family="Sarabun" fill="#191712">จำแฮชของไฟล์</text>
+          <text x="24" y="182" font-size="12" font-family="Sarabun" fill="#6f6c63">ของใหม่เท่านั้นที่ถูกอ่านใหม่</text>
+          <text x="24" y="220" font-size="12" font-family="Sarabun" fill="#191712">ตัดเป็นชิ้น + ฝังความหมาย</text>
+          <text x="24" y="242" font-size="12" font-family="Sarabun" fill="#6f6c63">bge-m3 · ไทย+อังกฤษ</text>
+          <rect x="24" y="270" width="208" height="80" fill="#f6f5f2" stroke="#e7e5dd"/>
+          <text x="36" y="304" font-size="13" font-family="Sarabun" fill="#191712">ดัชนีในเครื่อง</text>
+          <text x="36" y="326" font-size="11" font-family="Sarabun" fill="#6f6c63">SQLite — ไม่ใช้ Chroma</text>
+
+          <text x="278" y="196" font-size="18" fill="#a9a59a">→</text>
+
+          <rect x="312" y="8" width="280" height="364" fill="#fff" stroke="#d2cfc5"/>
+          <text x="328" y="36" font-size="10" font-family="Inter" letter-spacing="1.6" fill="#a9a59a">LOCAL RAG</text>
+          <text x="328" y="64" font-size="16" font-family="Sarabun" fill="#191712">ค้นแบบลูกผสม</text>
+          <text x="328" y="108" font-size="13" font-family="Sarabun" fill="#191712">1. ความหมาย (เวกเตอร์)</text>
+          <text x="328" y="132" font-size="13" font-family="Sarabun" fill="#191712">2. คำตรงตัว (ไทยไม่มีวรรค)</text>
+          <text x="328" y="156" font-size="13" font-family="Sarabun" fill="#191712">3. รวมอันดับแบบ RRF</text>
+          <text x="328" y="200" font-size="13" font-family="Sarabun" fill="#6f6c63">ถ้าคะแนนต่ำกว่าเกณฑ์</text>
+          <rect x="328" y="216" width="248" height="44" fill="#fff" stroke="#A8322B"/>
+          <text x="452" y="243" text-anchor="middle" font-size="13" font-family="Sarabun" fill="#A8322B">หยุด — ไม่ส่งให้โมเดล</text>
+          <text x="328" y="292" font-size="13" font-family="Sarabun" fill="#191712">ถ้ามีหลักฐาน</text>
+          <text x="328" y="316" font-size="13" font-family="Sarabun" fill="#6f6c63">โมเดลสรุปจากชิ้นที่ค้นได้เท่านั้น</text>
+          <text x="328" y="348" font-size="12" font-family="Sarabun" fill="#6f6c63">อ้างชื่อไฟล์ · ไม่ใส่ดอกจันมาร์กดาวน์</text>
+
+          <text x="618" y="196" font-size="18" fill="#a9a59a">→</text>
+
+          <rect x="652" y="8" width="440" height="364" fill="#fff" stroke="#d2cfc5"/>
+          <text x="668" y="36" font-size="10" font-family="Inter" letter-spacing="1.6" fill="#a9a59a">LINE CHANNEL</text>
+          <text x="668" y="64" font-size="16" font-family="Sarabun" fill="#191712">คนใช้ทัก OA</text>
+          <rect x="668" y="92" width="408" height="72" fill="#f6f5f2" stroke="#e7e5dd"/>
+          <text x="684" y="122" font-size="13" font-family="Sarabun" fill="#191712">LINE ── HTTPS POST ── เครื่องคุณ</text>
+          <text x="684" y="146" font-size="12" font-family="Sarabun" fill="#6f6c63">ตรวจลายเซ็น HMAC ก่อนทำอะไร</text>
+          <text x="668" y="200" font-size="13" font-family="Sarabun" fill="#191712">ตอบด้วย Push ไม่ใช่ Reply</text>
+          <text x="668" y="224" font-size="12" font-family="Sarabun" fill="#6f6c63">โทเคนตอบกลับของ LINE หมดอายุใน ~30 วินาที</text>
+          <text x="668" y="248" font-size="12" font-family="Sarabun" fill="#6f6c63">แร็กมักช้ากว่านั้น — Push ถึงมือคนใช้แน่นอน</text>
+          <rect x="668" y="280" width="408" height="72" fill="#26243F"/>
+          <text x="684" y="310" font-size="13" font-family="Sarabun" fill="#f6f5f2">คำตอบกลับเข้าแชตเดิม</text>
+          <text x="684" y="334" font-size="12" font-family="Sarabun" fill="#d8d4ca">+ บรรทัดว่า สร้างโดย AI อาจมีข้อผิดพลาด</text>
+        </svg>
+      </section>
+
+      <!-- 08 -->
+      <section class="slide" data-title="ห้าการกระทำ">
+        <p class="kicker">07 / งานมือคน</p>
+        <h2>ห้าอย่างที่คนทำ — นอกนั้นให้เครื่องทำ</h2>
+        <div class="steps">
+          <article>
+            <span class="n">01</span>
+            <h3>โยนไฟล์</h3>
+            <p>วางเอกสารลงโฟลเดอร์ knowledge/ ซ้อนโฟลเดอร์ย่อยได้</p>
+          </article>
+          <article>
+            <span class="n">02</span>
+            <h3>สร้าง LINE OA</h3>
+            <p>สมัครที่ manager.line.biz แล้วเปิด Messaging API จากหน้าบัญชี — ไม่สร้างชาแนลเองใน Developers Console</p>
+          </article>
+          <article>
+            <span class="n">03</span>
+            <h3>วางสองคีย์</h3>
+            <p>Channel Secret และ Channel Access Token ใส่ในไฟล์ .env ห้ามวางในโค้ด</p>
+          </article>
+          <article>
+            <span class="n">04</span>
+            <h3>เลือกสมอง</h3>
+            <p>Ollama ในเครื่อง หรือคีย์ Groq / Gemini / OpenAI / Anthropic</p>
+          </article>
+          <article>
+            <span class="n">05</span>
+            <h3>กด START</h3>
+            <p>โปรแกรมตรวจของ ทำดัชนี เปิดเซิร์ฟเวอร์ เฝ้าโฟลเดอร์ แสดงสถานะ</p>
+          </article>
+        </div>
+        <p class="note" style="margin-top:16px;">ห้าอย่างนี้คือทั้งหมดที่เจ้าของบอทต้องทำด้วยมือ ถ้ามีขั้นที่หก แปลว่าคู่มือนี้พัง</p>
+      </section>
+
+      <!-- 09 -->
+      <section class="slide" data-title="ของที่ต้องมี">
+        <p class="kicker">08 / อุปกรณ์</p>
+        <h2>ของบนโต๊ะก่อนเริ่ม</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ของ</th><th>ทำไมต้องมี</th><th>ได้จากไหน</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>คอมพิวเตอร์ที่เปิดค้างได้</td>
+              <td>บอทอยู่ที่นี่ ไม่ได้อยู่บนคลาวด์เช่า</td>
+              <td>แม็ค มินิพีซี หรือวินโดวส์ที่เปิดทั้งคืนได้</td>
+            </tr>
+            <tr>
+              <td>Python 3.11 ขึ้นไป</td>
+              <td>ชุดนี้เป็นโปรแกรมไพธอน</td>
+              <td><a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer">python.org/downloads</a> — ติ๊ก Add to PATH</td>
+            </tr>
+            <tr>
+              <td>Ollama</td>
+              <td>ฝังความหมายของเอกสารในเครื่อง และเป็นสมองสำรอง</td>
+              <td><a href="https://ollama.com/download" target="_blank" rel="noreferrer">ollama.com/download</a></td>
+            </tr>
+            <tr>
+              <td>บัญชี LINE และ Business ID</td>
+              <td>สร้าง Official Account ไม่ได้ถ้าไม่มี</td>
+              <td><a href="https://account.line.biz/" target="_blank" rel="noreferrer">account.line.biz</a></td>
+            </tr>
+            <tr>
+              <td>cloudflared</td>
+              <td>ให้ LINE ยิง HTTPS มาถึง localhost โดยไม่เปิดพอร์ทเราเตอร์</td>
+              <td><a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/" target="_blank" rel="noreferrer">ติดตั้ง cloudflared</a></td>
+            </tr>
+            <tr>
+              <td>เอเจนต์เขียนโค้ด (ถ้าจะให้สร้างเครื่อง)</td>
+              <td>Claude Code / Cursor / ตัวอื่น — สร้างเครื่อง ไม่ได้เป็นเครื่อง</td>
+              <td>วางไฟล์ PROMPT.md ในโฟลเดอร์ว่าง</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide" data-title="โฟลเดอร์ความรู้">
+        <p class="kicker">09 / ขั้นที่ 1</p>
+        <div class="two">
+          <div>
+            <h2>โยนไฟล์ลงโฟลเดอร์นี้</h2>
+            <pre class="cmd">MyLineBot/
+├── knowledge/          ← สมอง
+│   ├── คู่มือพนักงาน.pdf
+│   ├── ระเบียบ.docx
+│   ├── ราคา.xlsx
+│   └── โครงการ/
+│       └── รายงาน.pdf
+├── rag_database/       ← เครื่องทำเอง อย่าแก้
+├── .env                ← คีย์ อย่าแชร์
+└── START.command</pre>
+            <p class="note" style="margin-top:14px;">ซ้อนโฟลเดอร์ย่อยได้ โปรแกรมเดินลงไปทั้งหมด อย่าวางรหัสผ่าน เลขบัญชี หรือสัญญา NDA ถ้าเครื่องไม่ได้เข้ารหัสดิสก์</p>
+          </div>
+          <div>
+            <h2 style="font-size:22px;">สิ่งที่เครื่องทำตอนเปิด</h2>
+            <ol class="plain">
+              <li><span class="num">A</span><span>ถอดข้อความจากไฟล์</span></li>
+              <li><span class="num">B</span><span>ตัดเป็นชิ้นที่ความหมายจบเป็นประโยค — ภาษาไทยไม่มีวรรค จึงห้ามตัดกลางพยางค์</span></li>
+              <li><span class="num">C</span><span>ฝังความหมายด้วย bge-m3</span></li>
+              <li><span class="num">D</span><span>เก็บชิ้น + ชื่อไฟล์ + หน้า + แฮช</span></li>
+            </ol>
+            <div class="warn">
+              <strong>PDF สแกนไม่มีชั้นข้อความ</strong>
+              ส่งออกเป็นข้อความจากเวิร์ดก่อน หรือใช้ระบบที่มี OCR ชุดสอนรุ่นแรกไม่ถอดลายมือ
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="slide" data-title="แฮชของไฟล์">
+        <p class="kicker">10 / ขั้นที่ 1 ต่อ</p>
+        <h2>จำแฮชไว้ จึงไม่ต้องอ่านห้าพันไฟล์ทุกครั้ง</h2>
+        <div class="two" style="margin-top:16px;">
+          <div>
+            <p class="lede" style="margin-top:0;">นี่คือจุดที่ทำให้คนทั่วไปใช้ได้ ไม่ใช่โปรแกรมเมอร์</p>
+            <ul class="plain">
+              <li><span class="num">+</span><span>เพิ่ม knowledge/นโยบาย-2569.pdf → อ่านเฉพาะไฟล์นั้น</span></li>
+              <li><span class="num">~</span><span>แทนที่ไฟล์ชื่อเดิมด้วยของใหม่ → ลบชิ้นเก่า แล้วอ่านใหม่</span></li>
+              <li><span class="num">−</span><span>ลบไฟล์ออกจากโฟลเดอร์ → ลบออกจากดัชนีด้วย</span></li>
+              <li><span class="num">=</span><span>ไฟล์ไม่เปลี่ยน แฮชตรง → ข้าม</span></li>
+            </ul>
+          </div>
+          <div class="grid-hair" style="grid-template-columns:1fr;">
+            <div>
+              <p class="kicker">รองรับ</p>
+              <h3>PDF · DOCX · XLSX · PPTX · TXT · Markdown</h3>
+            </div>
+            <div>
+              <p class="kicker">โมเดลฝังความหมาย</p>
+              <h3>bge-m3 เท่านั้นถ้ามีไทยปนอังกฤษ</h3>
+              <p class="note" style="margin-top:8px;">วัดแล้ว: nomic-embed-text คะแนนเรื่องตรงกับเรื่องมั่วทับกัน — ตั้งเกณฑ์ปฏิเสธไม่ได้</p>
+            </div>
+            <div>
+              <p class="kicker">เกณฑ์หลักฐานที่วัดแล้ว</p>
+              <h3>minScore = 0.46</h3>
+              <p class="note" style="margin-top:8px;">เรื่องตรง 0.50–0.61 · เรื่องมั่ว ≤ 0.42 · เปลี่ยนโมเดลฝัง = ต้องวัดใหม่ทั้งคลัง</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide" data-title="สร้าง LINE OA">
+        <p class="kicker">11 / ขั้นที่ 2</p>
+        <div class="two">
+          <div>
+            <h2>สร้าง Official Account จากหน้าบัญชี ไม่ใช่คอนโซลนักพัฒนา</h2>
+            <ol class="plain">
+              <li><span class="num">1</span><span>สมัคร Business ID ที่ <a href="https://account.line.biz/" target="_blank" rel="noreferrer">account.line.biz</a></span></li>
+              <li><span class="num">2</span><span>สร้าง LINE Official Account จากแบบฟอร์มที่ขึ้นหลังสมัคร</span></li>
+              <li><span class="num">3</span><span>ตรวจบัญชีได้ที่ <a href="https://manager.line.biz/" target="_blank" rel="noreferrer">manager.line.biz</a></span></li>
+            </ol>
+            <p class="note" style="margin-top:16px;">
+              แหล่งที่มา: คู่มือ Messaging API ของ LINE ระบุชัดว่าต้องมี OA ก่อน แล้วค่อยเปิด Messaging API ให้ OA นั้น
+            </p>
+          </div>
+          <div>
+            <img src="logos/line-oa-manager.svg" alt="LINE OA Manager" style="height:36px; margin-bottom:14px;">
+            <div class="warn">
+              <strong>ตั้งแต่วันที่ 4 กันยายน 2024</strong>
+              สร้าง Messaging API channel ตรงจาก LINE Developers Console ไม่ได้อีกแล้ว
+              ถ้าคุณไปที่ developers.line.biz แล้วหาปุ่มสร้างชาแนลไม่เจอ — นั่นถูกแล้ว
+            </div>
+            <p class="note" style="margin-top:16px;">เลือก Provider ดี ๆ ตอนเปิด API เพราะย้ายชาแนลข้าม Provider ทีหลังไม่ได้ และ User ID ของผู้ใช้จะคนละชุดถ้าคนละ Provider</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="slide" data-title="เปิด Messaging API">
+        <p class="kicker">12 / ขั้นที่ 2 ต่อ</p>
+        <h2>เปิด Messaging API จาก OA Manager</h2>
+        <div class="two" style="margin-top:14px;">
+          <ol class="plain">
+            <li><span class="num">1</span><span>เข้า <strong>manager.line.biz</strong> → เลือกบัญชี → การตั้งค่า → Messaging API</span></li>
+            <li><span class="num">2</span><span>กด Enable Messaging API — ขั้นตอนนี้จะสร้างชาแนลให้อัตโนมัติ</span></li>
+            <li><span class="num">3</span><span>ถ้ายังไม่เคยเข้า Developers Console จะถูกขอชื่อและอีเมลนักพัฒนา</span></li>
+            <li><span class="num">4</span><span>เลือก Provider ที่จะดูแลบัญชีนี้</span></li>
+            <li><span class="num">5</span><span>ไปที่ <strong>developers.line.biz/console</strong> ล็อกอินด้วยบัญชีเดียวกับ OA Manager</span></li>
+            <li><span class="num">6</span><span>เปิด Provider นั้น ต้องเห็นชาแนล Messaging API ถูกสร้างแล้ว</span></li>
+          </ol>
+          <div>
+            <img src="logos/line-developers.svg" alt="LINE Developers Console" style="height:36px; margin-bottom:14px;">
+            <div class="grid-hair" style="grid-template-columns:1fr;">
+              <div>
+                <p class="kicker">สองเว็บ คนละหน้าที่</p>
+                <p class="note"><strong>OA Manager</strong> = หน้าตาบัญชี ทักทาย เมนูรูป ปิดตอบอัตโนมัติ</p>
+                <p class="note" style="margin-top:8px;"><strong>Developers Console</strong> = คีย์, webhook, สวิตช์ Use webhook</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide" data-title="สองคีย์">
+        <p class="kicker">13 / ขั้นที่ 2 ต่อ</p>
+        <h2>คีย์ไลน์มีสองค่า ไม่ใช่ค่าเดียว</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ค่า</th><th>ทำอะไร</th><th>หยิบที่ไหน</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">LINE_CHANNEL_SECRET</td>
+              <td>พิสูจน์ว่าเว็บฮุคมาจาก LINE จริง ด้วยลายเซ็น HMAC-SHA256 ที่หัวข้อ <span class="mono">x-line-signature</span></td>
+              <td>Console → ชาแนล → Basic settings → Channel secret</td>
+            </tr>
+            <tr>
+              <td class="mono">LINE_CHANNEL_ACCESS_TOKEN</td>
+              <td>ให้เครื่องคุณเรียก Messaging API เพื่อส่งข้อความกลับ</td>
+              <td>แท็บ Messaging API → Issue (ใช้แบบกำหนดวันหมดอายุได้ ดีกว่าแบบไม่มีวันหมด)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="warn">
+          <strong>อย่าวางคีย์ในแชต รูปหน้าจอ หรือกิตฮับ</strong>
+          ถ้าโผล่ในภาพระหว่างติดตั้ง — ออกโทเคนใหม่ทันที แล้วลบของเก่า
+        </div>
+      </section>
+
+      <!-- 15 -->
+      <section class="slide" data-title="ปิดตอบอัตโนมัติ">
+        <p class="kicker">14 / ขั้นที่ 2 ต่อ</p>
+        <h2>ปิดทักทายและตอบอัตโนมัติของ OA Manager</h2>
+        <div class="two" style="margin-top:16px;">
+          <div>
+            <p class="lede" style="margin-top:0;">ค่าเริ่มต้นตอนสร้างชาแนลคือเปิดทั้งคู่ คนใช้จะได้คำตอบซ้ำสองรอบ — จากเมนูสำเร็จรูป และจากบอทคุณ</p>
+            <ol class="plain">
+              <li><span class="num">1</span><span>OA Manager → การตอบกลับ → ข้อความทักทาย = ปิด</span></li>
+              <li><span class="num">2</span><span>ข้อความตอบกลับอัตโนมัติ = ปิด</span></li>
+              <li><span class="num">3</span><span>Developers Console → Messaging API → Use webhook = เปิด</span></li>
+            </ol>
+            <p class="note" style="margin-top:14px;">ทักทายตอนเพิ่มเพื่อนให้บอทเป็นคนส่งเองจากเหตุการณ์ follow จะได้ข้อความเดียว ภาษาเดียว ไม่ชนกัน</p>
+          </div>
+          <div class="grid-hair" style="grid-template-columns:1fr;">
+            <div>
+              <p class="kicker">Reply ฟรีไม่จำกัด</p>
+              <p class="note">ข้อความตอบกลับในแชตไม่นับโควตาที่ต้องจ่าย ของที่นับคือ Push / Multicast / Broadcast ต่อผู้รับ</p>
+            </div>
+            <div>
+              <p class="kicker">แปลว่าอะไรในทางธุรกิจ</p>
+              <p class="note">ผู้ตอบ 24 ชั่วโมงไม่เสียค่าไลน์ งบอยู่ที่โฆษณาที่คุณเลือกยิงเอง</p>
+            </div>
+            <div>
+              <p class="kicker">QR เพิ่มเพื่อน</p>
+              <p class="note">แท็บ Messaging API ใน Console มีคิวอาร์โค้ดของ OA สแกนด้วยมือถือตัวเองเพื่อทดสอบ</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 -->
+      <section class="slide" data-title="เลือกสมอง">
+        <p class="kicker">15 / ขั้นที่ 3</p>
+        <h2>สมองมีสองที่: ในเครื่อง หรือคีย์บนเน็ต</h2>
+        <div class="grid-hair" style="grid-template-columns:1fr 1fr; margin-top:16px;">
+          <div>
+            <p class="kicker">ในเครื่อง · ข้อความไม่ออกจากบ้าน</p>
+            <h3>Ollama + Gemma 4 หรือ DeepSeek</h3>
+            <p class="note" style="margin-top:10px;">เหมาะกับข้อมูลภายใน ระเบียบบริษัท เรื่องที่กฎหมายห้ามส่งให้คลาวด์</p>
+            <p class="note" style="margin-top:8px;">ราคา: ไฟฟ้าและแรม คำตอบบนแม็ค 16 GB อุ่นเครื่องแล้วประมาณไม่กี่วินาที — ถ้าโดนโมเดลอื่นไล่ออกจากแรม อาจเป็นนาที</p>
+          </div>
+          <div>
+            <p class="kicker">คลาวด์ · เร็ว ฟรีมีเพดาน</p>
+            <h3>Groq · Gemini · OpenAI · Anthropic</h3>
+            <p class="note" style="margin-top:10px;">คำถามและชิ้นเอกสารที่ค้นได้จะถูกส่งออกจากเครื่อง ตัวคลังไฟล์ทั้งก้อนไม่ถูกอัปโหลด</p>
+            <p class="note" style="margin-top:8px;">ต้องบอกคนใช้ใน /privacy ว่าส่งไปผู้ให้บริการใด ชุดจริงใช้โซ่สำรองเพราะโควตาฟรีหมดระหว่างวัน</p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:16px;">
+          ไม่ว่าจะตอบด้วยใคร <strong>การค้นหาต้องอยู่ในเครื่อง</strong> ด้วย bge-m3
+          นี่คือจุดที่ทำให้บอทไม่แต่งเรื่องจากความรู้โลก
+        </p>
+      </section>
+
+      <!-- 17 -->
+      <section class="slide" data-title="รุ่นในเครื่อง">
+        <p class="kicker">16 / ขั้นที่ 3 ต่อ</p>
+        <h2>รุ่นที่วิ่งบนแรม 8–16 GB</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>คำสั่ง Ollama</th><th>แรมที่สบาย</th><th>ใช้เมื่อ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">ollama pull gemma4:e2b</td>
+              <td>8 GB</td>
+              <td>โน้ตบุ๊กเล็ก ทดสอบให้ขึ้นก่อน คุณภาพพอสำหรับคำถามสั้น</td>
+            </tr>
+            <tr>
+              <td class="mono">ollama pull gemma4:e4b</td>
+              <td>16 GB</td>
+              <td>ค่าเริ่มต้นที่แนะนำ แท็ก gemma4 ไม่ระบุรุ่นจะได้ตัวนี้</td>
+            </tr>
+            <tr>
+              <td class="mono">ollama pull deepseek-r1:8b</td>
+              <td>16 GB</td>
+              <td>อยากให้คิดก่อนตอบ — ต้องเผื่อโทเคนคิด ไม่งั้นได้คำตอบว่าง</td>
+            </tr>
+            <tr>
+              <td class="mono">ollama pull bge-m3</td>
+              <td>~1 GB เพิ่ม</td>
+              <td><strong>บังคับ</strong> สำหรับการค้น อย่าใช้ nomic-embed-text ถ้าคลังมีไทย</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="warn">
+          <strong>กฎแรม:</strong> สมองตอบกับสมองค้นต้องอยู่ด้วยกันได้
+          ถ้ารันสองตัวไล่กันบนเครื่อง 16 GB คำถามทุกข้อจะจ่ายเวลารอโหลดใหม่ประมาณสองนาที
+        </div>
+      </section>
+
+      <!-- 18 -->
+      <section class="slide" data-title="คีย์ฟรี">
+        <p class="kicker">17 / ขั้นที่ 3 ต่อ</p>
+        <h2>คีย์บนอินเทอร์เน็ต รวมของฟรี</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ผู้ให้บริการ</th><th>สมัคร</th><th>หมายเหตุที่ต้องรู้</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Groq</td>
+              <td><a href="https://console.groq.com/keys" target="_blank" rel="noreferrer">console.groq.com/keys</a></td>
+              <td>ไม่ต้องบัตร โชว์คีย์ครั้งเดียว รุ่นเช่น openai/gpt-oss-20b เร็วมาก เพดานต่อนาทีหมดได้ระหว่างวัน — อย่าใช้ตัวเดียวเป็นแผนผลิต</td>
+            </tr>
+            <tr>
+              <td>Google Gemini</td>
+              <td><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer">aistudio.google.com/app/apikey</a></td>
+              <td>คีย์ใหม่เป็น Auth key ชั้นฟรีมีโควตา บางรุ่นข้อมูลถูกใช้พัฒนาผลิตภัณฑ์ของกูเกิล — อ่านหน้าแผน</td>
+            </tr>
+            <tr>
+              <td>OpenRouter</td>
+              <td><a href="https://openrouter.ai/keys" target="_blank" rel="noreferrer">openrouter.ai/keys</a></td>
+              <td>บางรุ่นติด :free ได้โดยไม่ใส่บัตร รายการเปลี่ยนเร็ว ตรวจหน้าโมเดลก่อนล็อกชื่อ</td>
+            </tr>
+            <tr>
+              <td>OpenAI</td>
+              <td><a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer">platform.openai.com/api-keys</a></td>
+              <td>มีค่าใช้จ่าย ใส่บัตร อย่าลืมเพดานงบ</td>
+            </tr>
+            <tr>
+              <td>Anthropic</td>
+              <td><a href="https://console.anthropic.com/" target="_blank" rel="noreferrer">console.anthropic.com</a></td>
+              <td>มีค่าใช้จ่าย คุณภาพสูง เหมาะกับคำตอบยาวจากนโยบาย</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 19 -->
+      <section class="slide" data-title=".env">
+        <p class="kicker">18 / ขั้นที่ 4</p>
+        <h2>วางความลับใน .env แล้วหยุด</h2>
+        <pre class="cmd">LINE_CHANNEL_SECRET=xxxxxxxx
+LINE_CHANNEL_ACCESS_TOKEN=xxxxxxxx
+
+ANSWER_PROVIDER=auto
+GROQ_API_KEY=xxxxxxxx
+OLLAMA_CHAT_MODEL=gemma4:e4b
+OLLAMA_EMBED_MODEL=bge-m3
+
+BOT_NAME=บอทความรู้หน่วยงาน
+BOT_LANGUAGE=th
+KNOWLEDGE_FOLDER=./knowledge
+RAG_MIN_SCORE=0.46</pre>
+        <p class="note" style="margin-top:14px;">
+          START จะคัดลอก .env.example ให้ถ้ายังไม่มีไฟล์นี้
+          ไฟล์ .env อยู่ใน .gitignore อยู่แล้ว — อย่าบังคับแอดมันเข้ากิต
+        </p>
+      </section>
+
+      <!-- 20 -->
+      <section class="slide" data-title="อุโมงค์">
+        <p class="kicker">19 / ขั้นที่ 5</p>
+        <h2>LINE ต้องเห็นเครื่องคุณผ่าน HTTPS</h2>
+        <div class="two" style="margin-top:12px;">
+          <div>
+            <p class="lede" style="margin-top:0;">localhost:8000 LINE ยิงไม่ถึง ต้องมีที่อยู่ https://…/webhook</p>
+            <p class="note">ทดสอบเร็ว — ไม่ต้องมีโดเมน ไม่ต้องมีบัญชี Cloudflare</p>
+            <pre class="cmd">cloudflared tunnel --url http://127.0.0.1:8000</pre>
+            <p class="note" style="margin-top:10px;">
+              จะได้ที่อยู่สุ่มบน trycloudflare.com
+              Cloudflare ระบุว่า Quick Tunnel สำหรับพัฒนา ไม่ใช่ผลิต
+              ใช้ <span class="mono">127.0.0.1</span> ห้ามพิมพ์ localhost — cloudflared ชอบ IPv6 แล้วเครื่องคุณฟัง IPv4
+            </p>
+          </div>
+          <div>
+            <svg viewBox="0 0 340 260" width="100%" height="100%" aria-hidden="true">
+              <rect x="0.5" y="0.5" width="339" height="259" fill="#fff" stroke="#e7e5dd"/>
+              <rect x="16" y="24" width="88" height="44" fill="#f6f5f2" stroke="#d2cfc5"/>
+              <text x="60" y="50" text-anchor="middle" font-size="11" font-family="Sarabun" fill="#191712">LINE</text>
+              <text x="132" y="50" font-size="14" fill="#a9a59a">→</text>
+              <rect x="148" y="24" width="176" height="44" fill="#26243F"/>
+              <text x="236" y="50" text-anchor="middle" font-size="11" font-family="Sarabun" fill="#f6f5f2">https://…</text>
+              <text x="170" y="100" font-size="12" font-family="Sarabun" fill="#6f6c63">อุโมงค์ออกจากเครื่อง · ไม่เปิดพอร์ท</text>
+              <line x1="236" y1="68" x2="236" y2="128" stroke="#d2cfc5"/>
+              <rect x="148" y="128" width="176" height="44" fill="#f6f5f2" stroke="#d2cfc5"/>
+              <text x="236" y="154" text-anchor="middle" font-size="11" font-family="Sarabun" fill="#191712">127.0.0.1:8000</text>
+              <line x1="236" y1="172" x2="236" y2="196" stroke="#d2cfc5"/>
+              <rect x="148" y="196" width="176" height="40" fill="#fff" stroke="#191712"/>
+              <text x="236" y="221" text-anchor="middle" font-size="11" font-family="Sarabun" fill="#191712">แร็ก</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 -->
+      <section class="slide" data-title="คอมปิดบอทตาย">
+        <p class="kicker">20 / ขั้นที่ 5 ต่อ</p>
+        <h2 class="move">คอมพิวเตอร์ปิด บอทตาย</h2>
+        <div class="two" style="margin-top:16px;">
+          <div>
+            <p class="lede" style="margin-top:0;">นี่ไม่ใช่ข้อบกพร่องของโปรแกรม นี่คือสถาปัตยกรรม</p>
+            <ul class="plain">
+              <li><span class="num">—</span><span>สำนักงาน เทศบาล มหาวิทยาลัย: วางแม็คมินิหรือมินิพีซีที่เปิดทั้งคืน</span></li>
+              <li><span class="num">—</span><span>ผลิตจริง: สร้าง Named Tunnel ชี้โดเมนคุณ แล้วค่อยย้ายโปรแกรมตัวเดียวกันขึ้นวีพีเอส</span></li>
+              <li><span class="num">—</span><span>Quick Tunnel จำกัด 200 คำขอพร้อมกัน และไม่รับประกันเวลาทำงาน</span></li>
+            </ul>
+          </div>
+          <div class="grid-hair" style="grid-template-columns:1fr;">
+            <div>
+              <p class="kicker">ทดสอบ</p>
+              <h3>trycloudflare.com สุ่มชื่อ เปลี่ยนทุกครั้งที่เปิดใหม่</h3>
+            </div>
+            <div>
+              <p class="kicker">ประจำ</p>
+              <h3>Named Tunnel + โดเมนคุณ</h3>
+              <p class="note" style="margin-top:8px;">ยังเป็นการเชื่อมออก ไม่ต้องตั้งเราเตอร์</p>
+            </div>
+            <div>
+              <p class="kicker" style="color:var(--red);">อย่า</p>
+              <h3>เปิดพอร์ท 8000 สู่โลก</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 -->
+      <section class="slide" data-title="webhook">
+        <p class="kicker">21 / ขั้นที่ 6</p>
+        <h2>ตั้ง webhook แล้วตรวจลายเซ็นทุกครั้ง</h2>
+        <div class="two" style="margin-top:12px;">
+          <ol class="plain">
+            <li><span class="num">1</span><span>คัดลอก URL จากอุโมงค์ ต่อท้ายด้วย <span class="mono">/webhook</span></span></li>
+            <li><span class="num">2</span><span>Developers Console → Messaging API → Webhook URL → Update</span></li>
+            <li><span class="num">3</span><span>กด Verify ต้องขึ้น Success</span></li>
+            <li><span class="num">4</span><span>เปิด Use webhook</span></li>
+            <li><span class="num">5</span><span>โปรแกรมต้องตอบ 200 เร็ว แล้วไปค้นเอกสารพื้นหลัง LINE แนะนำให้ทำแบบนี้</span></li>
+          </ol>
+          <div>
+            <div class="warn">
+              <strong>ถ้าไม่ตรวจลายเซ็น</strong>
+              คนที่เดา URL ได้จะยิงคำถามปลอมเข้าบอทคุณได้
+              ชุดนี้ตอบ 401 เมื่อลายเซ็นไม่ตรง — ถอดออกไม่ได้
+            </div>
+            <p class="note" style="margin-top:14px;">
+              LINE อาจส่งเหตุการณ์เดิมซ้ำ ใช้ webhookEventId กันของซ้ำ
+              เปิด Webhook redelivery ได้ในแท็บเดียวกัน
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 23 -->
+      <section class="slide" data-title="คำถามเดินทาง">
+        <p class="kicker">22 / ขั้นที่ 7</p>
+        <h2>จากข้อความคนใช้ ถึงคำตอบในแชต</h2>
+        <div class="flow" style="margin-top:18px;">
+          <div class="box">
+            <p class="kicker">1</p>
+            <h3>คำถาม</h3>
+            <p>สวัสดิการค่ารักษาครอบคลุมพ่อแม่หรือไม่</p>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <p class="kicker">2</p>
+            <h3>ค้น</h3>
+            <p>ฝังคำถาม เทียบทั้งคลัง รวมกับคำตรงตัว</p>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <p class="kicker">3</p>
+            <h3>หลักฐาน</h3>
+            <p>คู่มือพนักงาน.pdf หน้า 42 · สวัสดิการ-2569.pdf หน้า 17</p>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <p class="kicker">4</p>
+            <h3>ล่าม</h3>
+            <p>ตอบจากชิ้นเหล่านี้เท่านั้น ภาษาเดียวกับคำถาม</p>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <p class="kicker">5</p>
+            <h3>ไลน์</h3>
+            <p>ข้อความธรรมดา ไม่มี **มาร์กดาวน์** มีแหล่งและคำเตือน AI</p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:20px;">
+          อย่าให้โมเดลเดาภาษา — ดูสคริปต์ไทยในโค้ด แล้วบังคับในพรอมต์
+          โมเดลเล็กที่ถูกบอกว่า “ตอบภาษาเดียวกับคำถาม” ตอบอังกฤษเป็นไทยราวหนึ่งในสามครั้ง
+        </p>
+      </section>
+
+      <!-- 24 -->
+      <section class="slide" data-title="การปฏิเสธคือสินค้า">
+        <p class="kicker">23 / รั้ว</p>
+        <h2>สินค้าคือการปฏิเสธ</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ประตู</th><th>ราคา</th><th>กันอะไร</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>รูปแบบการโจมตี (jailbreak, ขโมยพรอมต์)</td>
+              <td>ฟรี ไม่เรียกโมเดล</td>
+              <td>คนที่พยายามดึงระบบออกนอกเอกสาร</td>
+            </tr>
+            <tr>
+              <td>เกณฑ์การค้น minScore 0.46 หรือคำตรงตัวที่หายาก</td>
+              <td>ฟรี ไม่เรียกโมเดล</td>
+              <td>คำถามที่คลังตอบไม่ได้</td>
+            </tr>
+            <tr>
+              <td>พรอมต์บังคับให้ตอบจากชิ้นที่ส่งไป</td>
+              <td>หนึ่งครั้งต่อคำถาม</td>
+              <td>การแต่งรายละเอียดที่ไม่มีในหน้า</td>
+            </tr>
+            <tr>
+              <td>โมเดลตอบว่าไม่ทราบ → ถือว่าปฏิเสธ</td>
+              <td>ฟรี</td>
+              <td>การคิดเงินคำตอบที่ไม่มีสาระ</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="warn">
+          <strong>อย่าใส่เกต “เรื่องนี้เกี่ยวกับเอกสารหรือไม่” ด้วยโมเดลเล็ก</strong>
+          วัดแล้ว: มันปฏิเสธคำถาม “ร้านปิดวันไหน” ทั้งที่เอกสารมีวันปิดอยู่
+          การค้นหาตอบคำถามนั้นอยู่แล้ว โดยไม่เสียเวลาและไม่เดา
+        </div>
+      </section>
+
+      <!-- 25 -->
+      <section class="slide" data-title="หน้าที่ผู้ให้บริการ">
+        <p class="kicker">24 / ความชอบธรรม</p>
+        <h2>ถ้าจะให้คนแปลกหน้าทักมา ต้องมีอย่างน้อยเท่านี้</h2>
+        <div class="grid-hair" style="grid-template-columns:1fr 1fr 1fr; margin-top:16px;">
+          <div>
+            <p class="kicker">เปิดเผย</p>
+            <h3>/about และตอนเพิ่มเพื่อน</h3>
+            <p class="note" style="margin-top:8px;">บอกว่าผู้ตอบเป็นโปรแกรม ก่อนคนใช้พิมพ์คำถามแรก</p>
+          </div>
+          <div>
+            <p class="kicker">ความเป็นส่วนตัว</p>
+            <h3>/privacy</h3>
+            <p class="note" style="margin-top:8px;">เก็บอะไร นานเท่าไหร่ ส่งให้ผู้ให้บริการคลาวด์รายใด ถ้าส่ง</p>
+          </div>
+          <div>
+            <p class="kicker">ลบ</p>
+            <h3>/forget</h3>
+            <p class="note" style="margin-top:8px;">ลบข้อมูลของผู้ใช้คนนั้นทันที ไม่ต้องเปิดตั๋ว ไม่ต้องรอแอดมิน</p>
+          </div>
+          <div>
+            <p class="kicker">คำเตือน AI</p>
+            <h3>ท้ายทุกคำตอบที่โมเดลเขียน</h3>
+            <p class="note" style="margin-top:8px;">「คำตอบนี้สร้างโดย AI จากเอกสาร อาจมีข้อผิดพลาด」</p>
+          </div>
+          <div>
+            <p class="kicker">ส่งต่อคน</p>
+            <h3>เมื่อเอกสารไม่มี หรือคนขอคน</h3>
+            <p class="note" style="margin-top:8px;">ทุกการปฏิเสธต้องมีทางไปต่อ ชื่อคน ช่องทาง ห้ามจบที่ “ไม่มีข้อมูล”</p>
+          </div>
+          <div>
+            <p class="kicker">โฆษณา</p>
+            <h3>ต้องสมัครใจ</h3>
+            <p class="note" style="margin-top:8px;">/subscribe ถึงจะอยู่ในรายชื่อ /stop ออกทันที ห้ามยิงจากแค่การทัก</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 26 -->
+      <section class="slide" data-title="เอเจนต์สร้างเครื่อง">
+        <p class="kicker">25 / Claude Code และตัวอื่น</p>
+        <h2>เอเจนต์สร้างเครื่อง ไม่ได้เป็นเครื่อง</h2>
+        <div class="two" style="margin-top:12px;">
+          <div>
+            <p class="lede" style="margin-top:0;">วาง PROMPT.md ในโฟลเดอร์ว่าง แล้วบอกเอเจนต์ว่าอ่านไฟล์นั้นแล้วทำให้ครบ</p>
+            <p class="note">
+              ข้อบังคับที่ต้องอยู่ในพรอมต์: ตรวจลายเซ็นไลน์, ปฏิเสธเมื่อไม่มีหลักฐาน,
+              ฝังด้วย bge-m3, จำแฮชไฟล์, คีย์อยู่ใน .env, มี START.command และ START.bat,
+              มีหน้าแอดมิน, มีเทสอัตโนมัติ, คำตอบไลน์เป็นข้อความธรรมดา
+            </p>
+            <p class="note" style="margin-top:12px;">
+              อย่าให้เอเจนต์ติดตั้ง LangChain หรือ LlamaIndex โดยไม่ถูกถาม
+              ของพวกนั้นซ่อนรั้วที่คุณต้องเห็น
+            </p>
+          </div>
+          <div class="grid-hair" style="grid-template-columns:1fr;">
+            <div>
+              <p class="kicker">ทาง A</p>
+              <h3>โคลนชุดนี้ → ใส่ .env → โยนไฟล์ → START</h3>
+            </div>
+            <div>
+              <p class="kicker">ทาง B</p>
+              <h3>โฟลเดอร์ว่าง → วาง PROMPT.md → ให้เอเจนต์สร้าง</h3>
+            </div>
+            <div>
+              <p class="kicker">อย่าทำ</p>
+              <h3>ให้แชตจีพีทีเป็นบอทไลน์โดยไม่มีดัชนีเอกสาร</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 27 -->
+      <section class="slide" data-title="บทเรียนจากของจริง">
+        <p class="kicker">26 / จาก rag.nonarkara.org</p>
+        <h2>บทเรียนที่จ่ายด้วยของพังจริง</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>ที่เจอ</th><th>ที่ทำ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ค้นเฉพาะเวกเตอร์พลาดชื่อเฉพาะ เช่น Honiara</td>
+              <td>ค้นลูกผสม: ความหมาย + คำตรงตัว (ไทยใช้ไตรแกรม เพราะไม่มีวรรค)</td>
+            </tr>
+            <tr>
+              <td>ชิ้นภาษาไทยถูกตัดกลางคำ</td>
+              <td>ตัดตามย่อหน้าและเครื่องหมายจบประโยค ไม่ใช่ตามช่องว่าง</td>
+            </tr>
+            <tr>
+              <td>โมเดลเล็กเป็นเกตหัวข้อแล้วปฏิเสธคำถามถูก</td>
+              <td>เอาออก เหลือเกณฑ์การค้น</td>
+            </tr>
+            <tr>
+              <td>โทเคนตอบกลับไลน์หมดก่อนแร็กตอบ</td>
+              <td>Push ทุกคำตอบที่ใช้โมเดล Reply ได้เฉพาะข้อความทันที เช่น /privacy</td>
+            </tr>
+            <tr>
+              <td>ไลน์เงียบเมื่อโปรแกรมพัง</td>
+              <td>จับข้อผิดพลาดแล้วส่งคำขอโทษสองภาษาทุกครั้ง ห้ามเงียบ</td>
+            </tr>
+            <tr>
+              <td>**ตัวหนา** โผล่ในแชตเพราะไลน์ไม่เรนเดอร์มาร์กดาวน์</td>
+              <td>ถอดมาร์กดาวน์ก่อนส่ง</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 28 -->
+      <section class="slide" data-title="เมื่อของพัง">
+        <p class="kicker">27 / ซ่อม</p>
+        <h2>ของพังแบบที่เจอบ่อย</h2>
+        <table class="sheet">
+          <thead>
+            <tr><th>อาการ</th><th>ดูที่</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Verify webhook ไม่ผ่าน</td>
+              <td>อุโมงค์ชี้ 127.0.0.1 ไม่ใช่ localhost · โปรแกรมเปิดอยู่ · URL มี /webhook</td>
+            </tr>
+            <tr>
+              <td>ทักแล้วเงียบ</td>
+              <td>Use webhook เปิดหรือยัง · ทักทายอัตโนมัติชนหรือไม่ · ลายเซ็นผิดได้ 401</td>
+            </tr>
+            <tr>
+              <td>ตอบช้าเป็นนาที</td>
+              <td>โมเดลโดนไล่จากแรม · ดู ollama ps · อย่ารัน Gemma สองขนาดพร้อมกัน</td>
+            </tr>
+            <tr>
+              <td>ตอบมั่ว / ตอบเรื่องนอกเอกสาร</td>
+              <td>minScore ต่ำเกินไป หรือยังไม่ได้ใช้ bge-m3</td>
+            </tr>
+            <tr>
+              <td>ปฏิเสธทั้งที่ไฟล์มีคำตอบ</td>
+              <td>PDF ไม่มีชั้นข้อความ · หน้าเว็บถูกเก็บเป็นเมนูลิงก์ · ชิ้นไทยถูกตัดครึ่ง</td>
+            </tr>
+            <tr>
+              <td>บอทตายทั้งวัน</td>
+              <td>เครื่องหลับ · ฝาแม็คปิด · Quick Tunnel ถูกสร้างใหม่แล้ว URL เก่าตาย</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 29 -->
+      <section class="slide" data-title="สิ่งที่ยังไม่ทำ">
+        <p class="kicker">28 / ซื่อสัตย์</p>
+        <h2>ชุดนี้ยังไม่ทำ — อย่าพูดว่าทำแล้ว</h2>
+        <ul class="plain">
+          <li><span class="num">1</span><span>เข้ารหัสดิสก์ให้คุณ — FileVault / BitLocker เป็นงานเจ้าของเครื่อง</span></li>
+          <li><span class="num">2</span><span>ทนายอ่านข้อความความเป็นส่วนตัวให้เข้า PDPA และข้อตกลง LINE OA</span></li>
+          <li><span class="num">3</span><span>OCR ลายมือและตารางหนา — รุ่นแรกอ่านไฟล์ที่มีข้อความจริง</span></li>
+          <li><span class="num">4</span><span>ระบบเก็บเงินและการอัปเกรดแผน</span></li>
+          <li><span class="num">5</span><span>มินิแอปไลน์ เมนูรูปสวย ระบบรายงานเรื่องร้องเรียน — นั่นเป็นผลิตภัณฑ์เต็ม ของชุดนี้คือสมอง+ปาก+รั้ว</span></li>
+        </ul>
+        <p class="note" style="margin-top:18px;">ความซื่อตรงเรื่องขอบเขตคือส่วนหนึ่งของรั้ว ชุดที่สัญญาเกินจริงจะเดาในที่ที่เอกสารเงียบ</p>
+      </section>
+
+      <!-- 30 -->
+      <section class="slide" data-title="เริ่มวันนี้">
+        <p class="kicker">29 / ลงมือ</p>
+        <h2>วันนี้ทำห้าอย่างนี้ก็พอ</h2>
+        <ol class="plain">
+          <li><span class="num">01</span><span>สร้างโฟลเดอร์ knowledge แล้วใส่เอกสารสามไฟล์ที่คุณตอบเป็นประจำ</span></li>
+          <li><span class="num">02</span><span>สร้าง LINE OA ที่ manager.line.biz แล้วเปิด Messaging API</span></li>
+          <li><span class="num">03</span><span>คัดลอก Channel Secret และ Access Token ใส่ .env</span></li>
+          <li><span class="num">04</span><span>ติดตั้ง Ollama แล้วรัน <span class="mono">ollama pull bge-m3</span> กับ <span class="mono">ollama pull gemma4:e4b</span> หรือสมัคร Groq</span></li>
+          <li><span class="num">05</span><span>เปิด START เปิดอุโมงค์ วาง webhook สแกนคิวอาร์ ถามเรื่องที่อยู่ในไฟล์ แล้วถามเรื่องมั่ว — ต้องถูกปฏิเสธ</span></li>
+        </ol>
+        <p class="lede">ถ้าขั้นที่ห้าไม่ปฏิเสธเรื่องมั่ว ยังห้ามเปิดให้ลูกค้า</p>
+      </section>
+
+      <!-- 31 -->
+      <section class="slide" data-title="เครดิต">
+        <p class="kicker">30 / ที่มา</p>
+        <div class="two">
+          <div>
+            <h2>ที่มาและเครื่องหมาย</h2>
+            <p class="note">
+              เด็คนี้ใช้ Axiom Design Core (โหมด Editorial) ของ Axiom X Co., Ltd.
+              ตราดร.นนและ Smart City Thailand ในแถบบนใช้เพื่อระบุตัวตนและบริบทงานเมืองอัจฉริยะ
+              ไม่ได้แปลว่า depa หรือสำนักงานเมืองอัจฉริยะรับรองชุดนี้
+            </p>
+            <p class="note" style="margin-top:12px;">
+              LINE, LINE Official Account Manager และ LINE Developers Console เป็นเครื่องหมายของ LY Corporation
+              ใช้แบบชี้ไปที่สินค้าจริงในคู่มือ ไม่ใช่โลโก้ร่วมแบรนด์
+            </p>
+            <p class="note" style="margin-top:12px;">
+              เอกสารอ้างอิง: LINE Messaging API Getting Started และ Build a bot,
+              Cloudflare Quick Tunnels, Ollama library (gemma4:e2b / e4b), Groq Console, Google AI Studio
+            </p>
+          </div>
+          <div class="grid-hair" style="grid-template-columns:1fr;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="logos/axiom-mark.svg" alt="" width="36" height="36">
+              <div>
+                <h3>Axiom X Co., Ltd.</h3>
+                <p class="note">axiom.nonarkara.org</p>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="logos/dr-non.svg" alt="" width="36" height="36">
+              <div>
+                <h3>ดร.นน อัครประเสริฐกุล</h3>
+                <p class="note">nonarkara.org · GitHub @Nonarkara</p>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="logos/smart-city-thailand.svg" alt="" height="28">
+            </div>
+            <div>
+              <p class="kicker">พิมพ์</p>
+              <p class="note">⌘P · Landscape · Background graphics เปิด</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="chrome chrome--bot">
+      <span>โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม</span>
+      <span class="progress" aria-hidden="true"><i></i></span>
+      <span data-counter>01 / 31</span>
+    </footer>
+  </div>
+
+  <p class="help">← → เลื่อน · P พิมพ์</p>
+  <script src="deck.js"></script>
+</body>
+</html>

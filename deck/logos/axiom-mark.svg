@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 76" role="img" aria-label="Axiom">
+  <!-- Flat lockup of the Axiom tile cluster. Color Law: blue enclosed = identity, red bare = the Move. -->
+  <g fill="none" stroke="#191712" stroke-width="1.5">
+    <rect x="4" y="4" width="20" height="20" rx="2"/>
+    <rect x="4" y="28" width="20" height="20" rx="2"/>
+    <rect x="4" y="52" width="20" height="20" rx="2"/>
+    <rect x="28" y="52" width="20" height="20" rx="2"/>
+    <rect x="52" y="4" width="20" height="20" rx="2"/>
+  </g>
+  <rect x="28" y="4" width="20" height="20" rx="2" fill="#26243F"/>
+  <rect x="52" y="52" width="20" height="20" rx="2" fill="#A8322B"/>
+</svg>
