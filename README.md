@@ -28,7 +28,7 @@ Clone this repo, then tell your AI agent:
 
 > Read AGENTS.md and START-HERE.md and walk me through each station until the LINE Official Account answers from the knowledge folder. Do not skip steps. Do not ask me to paste secrets into chat.
 
-A 31-slide Thai briefing (`deck/`) and an 18-slide Axiom PowerPoint/PDF sit in the repo. The bot **answers only from those files** and **refuses when it cannot**.
+A 31-slide Thai briefing (`deck/`) and an 18-slide Axiom PowerPoint/PDF sit in the repo. The bot **answers only from those files** and **refuses when it cannot**. After LINE works, the same folder can speak through Telegram and Discord. Compute is a choice: this computer 24/7, Railway, or paid Render — **not Vercel for the bot**.
 
 Designed in [Axiom Design Core](https://github.com/Nonarkara/Axiom-Design-Core) Editorial mode. This is **not** an official product of depa, the Smart City Thailand Office, or LY Corporation.
 
@@ -43,19 +43,23 @@ Designed in [Axiom Design Core](https://github.com/Nonarkara/Axiom-Design-Core) 
 5. ให้ LINE ถึงเครื่องผ่าน Cloudflare Tunnel (`cloudflared tunnel --url http://127.0.0.1:8000`)
 6. ตรวจลายเซ็นเว็บฮุคทุกครั้ง
 7. รั้ว: ไม่มีหลักฐานในไฟล์ = ปฏิเสธ ไม่เดา
+8. เลือกที่รัน: เครื่องเปิดค้าง / Railway / Render จ่าย — อย่าใช้ Vercel เป็นที่รันบอท
+9. (ไม่บังคับ) Telegram @BotFather และ Discord slash `/ask`
 
-บทเรียนมาจากระบบที่วิ่งอยู่ที่ [rag.nonarkara.org](https://rag.nonarkara.org) ไม่ใช่จากบล็อกทฤษฎี
+บทเรียนมาจากระบบที่วิ่งอยู่ที่ [rag.nonarkara.org](https://rag.nonarkara.org) ไม่ใช่จากบล็อกทฤษฎี คลัง Smart City Thailand คือมาตรฐานการจัดไฟล์ที่ชุดนี้ให้คัดลอก (`knowledge/HOW-WE-FILE.md`)
 
 ---
 
 ## โครงสร้าง
 
 ```
-START-HERE.md            จับมือทีละเว็บ (อ่านไฟล์นี้ก่อน)
+START-HERE.md            จับมือทีละเว็บ รวมที่รัน Telegram Discord
 AGENTS.md                สัญญาของเอเจนต์ — พาทีละสถานี
 LINE_RAG_Claude_Code_Master_Prompt.md   ให้เอเจนต์สร้างเครื่อง
-LINE_RAG_OA_Guide_TH_Axiom.pptx / .pdf  สำเนานำเสนอ 18 หน้า
-deck/                    สไลด์ภาษาไทย 31 หน้า
+knowledge/HOW-WE-FILE.md สัญญาจัดเก็บแบบ Smart City Thailand
+docs/shots/              ภาพหน้าสมัครที่ต้องกดเอง
+LINE_RAG_OA_Guide_TH_Axiom.pptx / .pdf  สำเนานำเสนอ
+deck/                    สไลด์ภาษาไทย
 PROMPT.md                ชี้ไปที่ master prompt
 ```
 

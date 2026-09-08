@@ -1,5 +1,7 @@
 .env
 .venv/
+node_modules/
+package-lock.json
 venv/
 rag_database/
 __pycache__/

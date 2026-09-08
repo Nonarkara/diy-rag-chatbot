@@ -72,6 +72,8 @@ python3 --version
 
 เปิด: https://ollama.com/download
 
+![Ollama](docs/shots/ollama-download.png)
+
 1. ดาวน์โหลด Ollama สำหรับแม็คหรือวินโดวส์
 2. ติดตั้ง แล้วเปิดแอป Ollama ค้างไว้
 3. ใน Terminal:
@@ -88,6 +90,8 @@ ollama pull gemma4:e4b
 
 เปิด: https://console.groq.com/keys
 
+![Groq Console](docs/shots/groq-keys.png)
+
 1. Sign up ด้วย Google / GitHub / อีเมล — **ไม่ต้องบัตร**
 2. เมนูซ้าย **API Keys** → **Create API Key**
 3. ตั้งชื่อ เช่น `diy-rag`
@@ -95,17 +99,31 @@ ollama pull gemma4:e4b
 
 ทางอื่น: https://aistudio.google.com/app/apikey (Gemini)
 
+![Google AI Studio](docs/shots/google-ai-studio.png)
+
+ถ้าจะให้เอเจนต์สร้างเครื่องตาม `LINE_RAG_Claude_Code_Master_Prompt.md` เปิดหน้า Claude Code ที่ต้องสมัครเอง:
+
+เปิด: https://claude.com/product/claude-code
+
+![Claude Code](docs/shots/claude-code.png)
+
 พิมพ์ **เสร็จแล้ว** เมื่อ Ollama โหลดโมเดลครบ หรือมีคีย์อยู่ในโน้ตบนเครื่อง
 
 ---
 
 ## สถานี 3 · สมัคร LINE Business ID
 
-เปิด: https://account.line.biz/
+เปิด: https://account.line.biz/  
+ถ้าเข้าตรงไม่ได้ ให้เปิด https://manager.line.biz/ จะเด้งไปหน้าล็อกอิน Business ID
 
-1. เข้าสู่ระบบด้วยบัญชี LINE ของคุณ หรือสมัครด้วยอีเมล
-2. ถ้าขึ้นแบบฟอร์มนักพัฒนา / ธุรกิจ ให้กรอกชื่อกับอีเมลจริง
-3. จบเมื่อเข้าหน้าบัญชีได้โดยไม่มีหน้า error
+![LINE Business ID](docs/shots/line-business-id.png)
+
+หน้านี้คือปากของระบบ คุณสมัครเอง เอเจนต์กดแทนไม่ได้
+
+1. เลือกภาษาได้ที่มุมบน (ภาษาไทยอยู่ในรายการ)
+2. กด **LINE account** (เขียว) ถ้าจะใช้บัญชีไลน์ส่วนตัว หรือ **Email address** (น้ำเงิน) ถ้ามีอีเมลธุรกิจ
+3. ลิงก์ **Don't have a Business ID?** คือทางสมัครใหม่
+4. จบเมื่อเข้าหน้าบัญชีได้โดยไม่มีหน้า error
 
 แหล่งที่มา: [LINE — Get started with the Messaging API](https://developers.line.biz/en/docs/messaging-api/getting-started/)
 
@@ -151,6 +169,10 @@ ollama pull gemma4:e4b
 
 ล็อกอินด้วย **บัญชีเดียวกับ** ที่ใช้ใน OA Manager
 
+หน้าแรกของนักพัฒนาถ้ายังไม่ล็อกอิน:
+
+![LINE Developers](docs/shots/line-developers.png)
+
 1. คลิก **Provider** ที่เลือกตอนสถานี 5
 2. คลิกชาแนลประเภท **Messaging API** (ชื่อเดียวกับ OA)
 3. แท็บ **Basic settings**
@@ -188,18 +210,32 @@ ollama pull gemma4:e4b
 
 ---
 
-## สถานี 8 · โยนไฟล์ลงสมอง
+## สถานี 8 · โยนไฟล์ลงสมอง — จัดให้ดึงได้
 
-ในโฟลเดอร์โปรเจกต์มี `knowledge/`
+ในโฟลเดอร์โปรเจกต์มี `knowledge/` อ่านสัญญาจัดเก็บก่อน: [knowledge/HOW-WE-FILE.md](knowledge/HOW-WE-FILE.md)
+
+แบบอย่างที่ชุดนี้คัดลอกมาคือคลัง **Smart City Thailand** บน rag.nonarkara.org: ต้นฉบับอยู่ `RAW/` · หน้าที่กลั่นแล้วอยู่ `WIKI/{หมวด}/*.md` · `INDEX.md` สร้างจากบัญชีเอกสาร ห้ามแก้มือ · `APPENDIX.md` เป็นสมุดบัญชี ลบหน้าแล้วแถวไม่หาย
+
+ชุดสอนยุบเป็น `knowledge/` ให้โยนไฟล์ได้ แต่หน้าที่ให้บอทพูดควรเป็นมาร์กดาวน์ที่ดึงแล้วอ่านรู้เรื่อง
 
 1. วาง PDF / Word / Excel / PowerPoint / ข้อความ / Markdown ที่บอทควรตอบได้
-2. ซ้อนโฟลเดอร์ย่อยได้
-3. อย่าวางรหัสผ่าน เลขบัญชี สัญญาลับ ถ้าเครื่องไม่ได้เปิด FileVault / BitLocker
-4. PDF ที่เป็นภาพสแกนล้วน ยังอ่านไม่ได้ในรุ่นนี้ — ส่งออกเป็นข้อความจากเวิร์ดก่อน
+2. จัดหมวดเป็นโฟลเดอร์ย่อยภาษาอังกฤษตัวเล็ก: `faq/` `briefings/` `policies/` `program/` `institutional/` `general/`
+3. หน้าที่สำคัญเขียนสองภาษาในชิ้นเดียวกัน:
 
-เริ่มด้วยสามไฟล์ที่คุณตอบเป็นประจำก็พอ
+```md
+ถาม: …คำถามที่คนจริงถาม…
+Q: …the same question in English…
+A: …คำตอบ และขั้นต่อไปที่ระบุชื่อคนหรือหน่วยงาน…
+```
 
-พิมพ์ **เสร็จแล้ว** เมื่อมีไฟล์ใน `knowledge/`
+4. อย่าวางรหัสผ่าน เลขบัญชี สัญญาลับ ถ้าเครื่องไม่ได้เปิด FileVault / BitLocker
+5. อย่าวางซุปเมนูเว็บ (นำทาง ฟุตเตอร์ คุกกี้ 「Digital service View」) — ถ้าดึงเว็บแล้วเหลือแต่ลิงก์ ทิ้งแล้วเขียนสามประโยคชี้ URL ต้นทาง
+6. PDF ที่เป็นภาพสแกนล้วน ยังอ่านไม่ได้ในรุ่นนี้ — ส่งออกเป็นข้อความจากเวิร์ดก่อน
+7. การปฏิเสธที่อยู่ใน `faq/` ดึงได้ การปฏิเสธที่อยู่ในพรอมต์อย่างเดียว หายเมื่อเปลี่ยนโมเดล — ดูตัวอย่าง `knowledge/faq/example-ask-someone-else.md`
+
+เริ่มด้วยสามไฟล์ที่คุณตอบเป็นประจำก็พอ แก้ไฟล์แล้วรอให้ระบบอ่านใหม่ก่อนคาดว่าบอทจะรู้
+
+พิมพ์ **เสร็จแล้ว** เมื่อมีไฟล์ใน `knowledge/` และอ่าน HOW-WE-FILE แล้ว
 
 ---
 
@@ -250,6 +286,8 @@ OLLAMA_EMBED_MODEL=bge-m3
 ## สถานี 11 · ให้ LINE หาเครื่องคุณเจอ
 
 ติดตั้ง cloudflared: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/
+
+![Cloudflare Tunnel](docs/shots/cloudflare-tunnel.png)
 
 เปิด Terminal **หน้าต่างใหม่** (หน้าต่าง START ต้องเปิดค้าง) แล้ววาง:
 
@@ -307,11 +345,129 @@ Quick Tunnel สำหรับทดสอบ ชื่อสุ่มเปล
 
 ---
 
+## สถานี 14 · เลือกที่รัน — เครื่องบ้าน หรือคลาวด์
+
+บอทตอบได้แล้วบนเครื่องนี้ ตอนนี้เลือกว่างานจริงจะรันที่ไหน คอมปิด = บอทตาย ทุกทาง
+
+เปิดภาพหน้าสมัครใน `docs/shots/` คู่กับ URL ด้านล่าง — นี่คือหน้าที่คุณต้องสมัครเอง จ่ายเอง (หรืออยู่ฟรีเทียร์) เอเจนต์สมัครแทนไม่ได้
+
+### ทาง A — คอมพิวเตอร์ที่เปิดค้าง (ค่าโฮสต์เพิ่มเป็นศูนย์)
+
+แม็ค / แม็คมินิ / มินิพีซี เปิดทั้งคืน + Cloudflare Tunnel ชุดเดียวกับที่เพิ่งทำ
+
+1. ระบบตั้งค่า → แบตเตอรี่ / พลังงาน → กันเครื่องหลับตอนจอปิด (แม็ค: Prevent automatic sleeping when the display is off)
+2. ห้ามปิดฝาแล็ปท็อปถ้าไม่ได้ต่อจอและตั้งให้ฝาปิดแล้วยังไม่หลับ
+3. งานจริงทั้งวัน: Named Tunnel ชี้โดเมนคุณ ไม่ใช่ trycloudflare สุ่มชื่อ
+
+ข้อดี: ไฟล์ `knowledge/` อยู่เครื่องคุณ, Ollama ในบ้านได้, ไม่มีใบแจ้งคลาวด์  
+ข้อเสีย: ไฟดับ ฝาปิด เครื่องหลับ = ลูกค้าทักแล้วเงียบ
+
+### ทาง B — Railway (เหมาะกับเว็บฮุค 24/7 มากกว่าฟรีเทียร์อื่น)
+
+เปิด: https://railway.com/ → ปุ่ม **Deploy**
+
+![Railway](docs/shots/railway.png)
+
+1. Sign up ด้วย GitHub
+2. New Project → Deploy from GitHub repo ชุดนี้
+3. ใส่ตัวแปรจาก `.env` ในหน้า Variables — อย่าวางคีย์ในแชต
+4. ต้องมี volume ถ้าจะเก็บ SQLite ข้ามเดพลอย
+5. ตั้ง `HOST=0.0.0.0` ให้รับเว็บฮุคจาก LINE
+6. วาง HTTPS URL ของ Railway เป็น Webhook URL แทนอุโมงค์
+
+ทดลองมีเครดิต แล้วคิดตามใช้ ไม่ใช่ฟรีตลอด ดีกว่า Render ฟรีตรงที่คอนเทนเนอร์ไม่ถูกปิดเพราะนิ่งสิบห้านาที
+
+บนคลาวด์ **อย่าพึ่ง Ollama ในเครื่อง** — ใช้ Groq / Gemini สำหรับคำตอบ Embeddings `bge-m3` ต้องมีที่รัน (image ที่มี Ollama หรือส่ง embed ไปบริการอื่น) การโยนไฟล์กลายเป็น git push หรืออัปโหลด ไม่ใช่ลากลงโฟลเดอร์
+
+### ทาง C — Render (ฟรีเทียร์หลับ)
+
+เปิด: https://render.com/ → **Start for free**
+
+![Render](docs/shots/render.png)
+
+Web Service ฟรี **ปิดหลังนิ่ง ~15 นาที** สตาร์ทใหม่ 30–60 วินาที LINE รอ webhook ไม่ถึงขนาดนั้น ข้อความแรกหลังหลับจะพลาดหรือหมดเวลา
+
+ถ้าจะใช้ Render จริง จ่ายแผนที่เปิดตลอด (~USD 7/เดือน ณ เวลาเขียน) แล้วติด persistent disk ให้ SQLite
+
+### อย่าใช้ Vercel เป็นที่รันบอทนี้
+
+เปิด: https://vercel.com/signup เพื่อรู้ว่าหน้าตาเป็นอย่างไร แล้ว **อย่าเดพลอย FastAPI ชุดนี้ขึ้น Hobby**
+
+![Vercel Signup](docs/shots/vercel-signup.png)
+
+Vercel ออกแบบมาสำหรับเว็บเซิร์ฟเวอร์เลสและหน้าสแตติก ไม่มีโปรเซส FastAPI ค้าง, ไม่มีตัวเฝ้าโฟลเดอร์, SQLite บนดิสก์ชั่วคราวหายทุกเดพลอย, webhook LINE ยาวเกินเพดาน, Ollama ในเครื่องไม่มี
+
+หน้า GitHub Pages ของชุดสอน (`nonarkara.github.io/diy-rag-chatbot`) เป็นสไลด์ ใช้ Vercel/Pages ได้ — **ตัวบอทใช้ไม่ได้**
+
+### สรุปสั้น
+
+| ที่รัน | เงิน | บอท 24/7 | โฟลเดอร์ knowledge | Ollama ในบ้าน |
+|---|---|---|---|---|
+| แล็ปท็อป/แม็คมินิ + อุโมงค์ | ค่าไฟ | ได้ถ้ายังไม่หลับ | ลากไฟล์ได้ | ได้ |
+| Railway | เครดิตแล้วจ่ายตามใช้ | ใกล้เคียง | git / volume | ไม่ |
+| Render ฟรี | ศูนย์ | ไม่ — หลับ 15 นาที | ไม่มีดิสก์ถาวร | ไม่ |
+| Render จ่าย | ~USD 7/เดือน | ได้ | disk เพิ่ม | ไม่ |
+| Vercel Hobby | ฟรี | ไม่ใช่ที่รันบอทนี้ | ไม่ | ไม่ |
+
+พิมพ์ **เสร็จแล้ว** เมื่อเลือกทางแล้ว (A, B, หรือ C จ่าย) และรู้ว่าคอมปิดบอทตาย
+
+---
+
+## สถานี 15 · ต่อ Telegram (ไม่บังคับ — หลังไลน์ตอบได้)
+
+ไลน์คือปากหลักในไทย Telegram เป็นปากที่สอง โปรโตคอลคล้ายกัน: HTTPS webhook
+
+เปิด: https://core.telegram.org/bots
+
+![Telegram Bots](docs/shots/telegram-bots.png)
+
+1. บนมือถือเปิด Telegram ค้น **@BotFather** (บัญชีทางการ มีเครื่องหมายถูก)
+2. ส่ง `/newbot`
+3. ตั้งชื่อที่คนเห็น แล้วตั้ง username ลงท้าย `bot`
+4. BotFather ส่งโทเคนมาครั้งหนึ่ง หน้าตาประมาณ `123456789:AAH...`
+5. วางใน `.env` ที่ `TELEGRAM_BOT_TOKEN=` เอง อย่าวางในแชต อย่าแคปหน้าจอที่มีโทเคน
+6. อุโมงค์หรือโฮสต์คลาวด์ต้องเป็น `https://` สาธารณะ — Telegram ไม่ยิงเข้า `127.0.0.1`
+7. โปรแกรมเรียก `setWebhook` ไปที่ `https://ที่อยู่คุณ/webhook/telegram` พร้อม `secret_token` ที่เก็บใน `TELEGRAM_WEBHOOK_SECRET`
+8. ทุกคำขอตรวจหัวข้อ `X-Telegram-Bot-Api-Secret-Token` ถ้าไม่ตรงตอบ 403
+9. ตอบด้วย Bot API `sendMessage` ไม่ใช่ LINE Push
+
+ทดสอบ: ทักบอทใน Telegram ด้วยคำถามที่มีในไฟล์ แล้วคำถามมั่ว — ต้องปฏิเสธเหมือนไลน์
+
+พิมพ์ **เสร็จแล้ว** เมื่อ Telegram ตอบจากโฟลเดอร์เดียวกัน หรือเมื่อบอกว่าข้ามสถานีนี้
+
+---
+
+## สถานี 16 · ต่อ Discord (ไม่บังคับ — หลังไลน์ตอบได้)
+
+Discord ไม่ใช่แชตวีบุกแบบไลน์ทั้งก้อน ทางที่ชุดนี้รองรับคือ **slash command** ผ่าน Interactions Endpoint ไม่ใช่ Gateway websocket ทั้งวัน (Gateway ไม่เข้ากับ Vercel และหลับบน Render ฟรี)
+
+เปิด: https://discord.com/developers/applications
+
+![Discord Developer Portal](docs/shots/discord-developers.png)
+
+1. **Log In** หรือ **Create Account**
+2. ปุ่ม **New Application** ตั้งชื่อ เช่น 「บอทความรู้หน่วยงาน」
+3. หน้า General Information คัดลอก **Application ID** และ **Public Key** ไป `.env`: `DISCORD_APP_ID=` `DISCORD_PUBLIC_KEY=`
+4. เมนูซ้าย **Bot** → Reset Token → วาง `DISCORD_BOT_TOKEN=` ใน `.env` เอง
+5. ไม่ต้องเปิด Message Content Intent ถ้าใช้เฉพาะคำสั่ง `/ask`
+6. สร้าง slash command `/ask` พร้อมตัวเลือกข้อความ `q`
+7. ช่อง **Interactions Endpoint URL** วาง `https://ที่อยู่คุณ/webhook/discord`
+8. Discord ส่ง PING (type 1) ตอนเซฟ URL — โปรแกรมต้องตรวจลายเซ็น Ed25519 จาก `X-Signature-Ed25519` + `X-Signature-Timestamp` บน **raw body** แล้วตอบ `{"type":1}`
+9. คำสั่งจริงต้องตอบภายใน 3 วินาที — RAG ช้ากว่านั้น ให้ตอบ type 5 (defer) แล้วส่งคำตอบทีหลังด้วย webhook ของ interaction
+10. เชิญบอทเข้าเซิร์ฟเวอร์ด้วยลิงก์ OAuth2 (scope `applications.commands` + `bot`)
+
+อย่าใช้ Discord เป็นที่วางคีย์ อย่าแคปโทเคน
+
+พิมพ์ **เสร็จแล้ว** เมื่อ `/ask` ตอบจากโฟลเดอร์เดียวกัน หรือเมื่อบอกว่าข้ามสถานีนี้
+
+---
+
 ## หลังวันนี้
 
-- เพิ่มไฟล์ใน `knowledge/` ได้เลย ระบบอ่านเฉพาะไฟล์ที่เปลี่ยน
-- งานจริงทั้งวัน: Named Cloudflare Tunnel + เครื่องที่เปิดค้าง (แม็คมินิ) หรือวีพีเอส — โปรแกรมชุดเดียวกัน
-- ถ้าคีย์ไลน์เคยโผล่ในภาพ ออกโทเคนใหม่ใน Console แล้วลบของเก่า
+- เพิ่มไฟล์ใน `knowledge/` ได้เลย ระบบอ่านเฉพาะไฟล์ที่เปลี่ยน — จัดตาม [knowledge/HOW-WE-FILE.md](knowledge/HOW-WE-FILE.md)
+- งานจริงทั้งวัน: เลือกสถานี 14 ให้จบ (แม็คมินิ / Railway / Render จ่าย) อย่าปล่อย Quick Tunnel
+- Telegram และ Discord เป็นปากเพิ่ม หลังไลน์ตอบได้ (สถานี 15–16)
+- ถ้าคีย์เคยโผล่ในภาพ ออกโทเคนใหม่แล้วลบของเก่า
 - `/privacy` `/forget` `/about` ต้องตอบได้โดยไม่เรียกโมเดล
 
 เมื่อของพัง ดูตารางท้าย `deck/index.html` (สไลด์ 「เมื่อของพัง」) หรือถามเอเจนต์ว่า 「อ่าน START-HERE.md สถานีปัจจุบัน แล้วช่วยดู」
@@ -322,10 +478,12 @@ Quick Tunnel สำหรับทดสอบ ชื่อสุ่มเปล
 
 | ไฟล์ | สำหรับใคร |
 |---|---|
-| `START-HERE.md` | คุณ — จับมือทีละเว็บ |
+| `START-HERE.md` | คุณ — จับมือทีละเว็บ รวมที่รัน, Telegram, Discord |
 | `AGENTS.md` | เอเจนต์ — ห้ามข้ามขั้น |
 | `LINE_RAG_Claude_Code_Master_Prompt.md` | เอเจนต์ — สร้างเครื่อง |
-| `deck/index.html` | สไลด์ภาษาไทย 31 หน้า |
+| `knowledge/HOW-WE-FILE.md` | สัญญาจัดเก็บ — คัดลอกจาก Smart City Thailand |
+| `docs/shots/` | ภาพหน้าสมัครที่ต้องกดเอง |
+| `deck/index.html` | สไลด์ภาษาไทย |
 | `LINE_RAG_OA_Guide_TH_Axiom.pptx` / `.pdf` | สำเนานำเสนอ |
 
-แหล่งอ้างอิงปุ่มและลำดับหน้า: LINE Messaging API Getting Started, Build a bot, Receive messages; Cloudflare Quick Tunnels; Ollama gemma4; Groq Console; Google AI Studio
+แหล่งอ้างอิงปุ่มและลำดับหน้า: LINE Messaging API Getting Started, Build a bot, Receive messages; Cloudflare Quick Tunnels; Ollama gemma4; Groq Console; Google AI Studio; Telegram Bot API; Discord Interactions

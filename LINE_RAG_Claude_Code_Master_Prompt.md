@@ -74,6 +74,14 @@ On startup and on folder change:
 
 Thai chunking: split on blank lines, keep a heading with the following block, break oversized blocks on sentence punctuation (`. ! ? 。 ฯ`), never on spaces.
 
+Filing standard the kit copies from Smart City Thailand (`knowledge/HOW-WE-FILE.md`):
+
+- Categories as lowercase folders: `faq/` `briefings/` `policies/` `program/` `institutional/` `general/`.
+- Distilled pages use one H1 and bilingual `ถาม:` / `Q:` / `A:` lines so Thai and English retrieve the same chunk. Treat `ถาม:` as a heading in the chunker, same as `Q:`.
+- Never index website chrome (nav, footer, cookie banner, generic titles like "Digital service View"). If a fetch is menu soup, replace it with three honest sentences pointing at the source URL.
+- File refusals as short `faq/` pages ("ask someone else"). A refusal only in the system prompt vanishes when the model is swapped.
+- Hand-edited files are not live until the watcher reindexes.
+
 ---
 
 ## 3. RAG
@@ -178,6 +186,13 @@ BOT_NAME=Knowledge Bot
 BOT_LANGUAGE=th
 HANDOFF=ติดต่อผู้ดูแลเพจ
 ADMIN_ENABLED=true
+
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_WEBHOOK_SECRET=
+DISCORD_APP_ID=
+DISCORD_PUBLIC_KEY=
+DISCORD_BOT_TOKEN=
+PUBLIC_URL=
 ```
 
 Add `.env` and `rag_database/` to `.gitignore`.
@@ -217,6 +232,43 @@ cloudflared tunnel --url http://127.0.0.1:8000
 Never use `localhost` as the origin. Quick Tunnels are for testing. Named tunnel or a VPS for a bot that must stay up. **If the computer is off, the bot is dead.**
 
 Walk the owner through `START-HERE.md` stations 11–12 for the webhook URL.
+
+---
+
+## 10b. Where it runs (compute)
+
+Do not default to Vercel. Walk station 14.
+
+- **This computer 24/7** + Cloudflare Tunnel: zero extra host bill; lid-close = dead bot; keep-awake.
+- **Railway**: always-on containers, trial credits then usage billing, persistent volume for SQLite. Best cloud fit for a LINE webhook.
+- **Render free**: spins down after ~15 minutes idle; LINE webhooks fail on cold start. Paid always-on (~USD 7/mo) if they insist on Render.
+- **Vercel Hobby**: serverless, no persistent FastAPI, no folder watcher, no local SQLite/Ollama. Host the **slide deck** there if they want. Do **not** host this bot there.
+
+On a cloud host: no local Ollama unless they run a custom image; `ANSWER_PROVIDER=groq` (or Gemini); `HOST=0.0.0.0`; knowledge arrives by git push or upload, not drag-and-drop.
+
+---
+
+## 10c. Telegram (optional)
+
+After LINE works. `POST /webhook/telegram`.
+
+- Token from @BotFather into `TELEGRAM_BOT_TOKEN` (owner types into `.env`).
+- `setWebhook` only when `PUBLIC_URL` is public HTTPS (not 127.0.0.1).
+- Verify `X-Telegram-Bot-Api-Secret-Token` against `TELEGRAM_WEBHOOK_SECRET`; 403 on mismatch.
+- Reply with Bot API `sendMessage`, 4000-character cap.
+- Same RAG pipeline as LINE. Same refuse-don't-invent. Strip Markdown.
+
+---
+
+## 10d. Discord (optional)
+
+After LINE works. `POST /webhook/discord`.
+
+- Discord Developer Portal → New Application → Public Key + Application ID + bot token.
+- **Interactions Endpoint**, not a Gateway websocket. Slash command `/ask`.
+- Verify Ed25519 over `timestamp + rawBody`. Respond to PING (type 1) with `{"type":1}`.
+- RAG exceeds Discord's 3-second window: respond type 5 (deferred) then follow up.
+- Do not require Message Content Intent if `/ask` is the only surface.
 
 ---
 

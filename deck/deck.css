@@ -316,7 +316,15 @@ pre.cmd {
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
-.warn strong { color: var(--red); font-weight: 600; }
+.shot {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--line);
+  background: #111;
+}
 
 .disc {
   width: 22px;

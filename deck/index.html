@@ -98,7 +98,7 @@
       <!-- 03 -->
       <section class="slide" data-title="สารบัญ">
         <p class="kicker">02 / แผนที่</p>
-        <h2>สิบสองสถานี — ห้าสถานีเป็นงานมือคน</h2>
+        <h2>สิบหกสถานี — ห้าสถานีแรกเป็นงานมือคน</h2>
         <nav class="toc">
           <a href="#4" data-go="4"><span class="n">03</span><span class="t">กฎหนึ่งข้อ</span></a>
           <a href="#8" data-go="8"><span class="n">07</span><span class="t">ห้าการกระทำของมนุษย์</span></a>
@@ -376,7 +376,7 @@
 ├── rag_database/       ← เครื่องทำเอง อย่าแก้
 ├── .env                ← คีย์ อย่าแชร์
 └── START.command</pre>
-            <p class="note" style="margin-top:14px;">ซ้อนโฟลเดอร์ย่อยได้ โปรแกรมเดินลงไปทั้งหมด อย่าวางรหัสผ่าน เลขบัญชี หรือสัญญา NDA ถ้าเครื่องไม่ได้เข้ารหัสดิสก์</p>
+            <p class="note" style="margin-top:14px;">จัดหมวด <span class="mono">faq/ briefings/ policies/ program/</span> ตาม <span class="mono">knowledge/HOW-WE-FILE.md</span> — คัดลอกมาจากคลัง Smart City Thailand อย่าวางซุปเมนูเว็บ</p>
           </div>
           <div>
             <h2 style="font-size:22px;">สิ่งที่เครื่องทำตอนเปิด</h2>
@@ -389,6 +389,40 @@
             <div class="warn">
               <strong>PDF สแกนไม่มีชั้นข้อความ</strong>
               ส่งออกเป็นข้อความจากเวิร์ดก่อน หรือใช้ระบบที่มี OCR ชุดสอนรุ่นแรกไม่ถอดลายมือ
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="จัดไฟล์ให้ดึงได้">
+        <p class="kicker">09b / มาตรฐานคลัง</p>
+        <h2>หน้าหนึ่งหน้า ดึงแล้วอ่านได้</h2>
+        <div class="two" style="margin-top:12px;">
+          <div>
+            <pre class="cmd">---
+title: "ชื่อสั้น"
+category: faq
+source: "url หรือไฟล์.pdf"
+---
+
+# ชื่อสั้น
+
+ถาม: …ที่คนจริงถาม…
+Q: …same question…
+A: …คำตอบ + ขั้นต่อไป…</pre>
+            <p class="note" style="margin-top:12px;">H1 ครั้งเดียว · ไทยกับอังกฤษในชิ้นเดียวกัน · การปฏิเสธอยู่ใน faq/ จึงดึงได้</p>
+          </div>
+          <div>
+            <ol class="plain">
+              <li><span class="num">1</span><span>ต้นฉบับ RAW — บอทไม่วิ่งทับ</span></li>
+              <li><span class="num">2</span><span>ตัดเมนูเว็บ เหลือเนื้อ เก็บ URL</span></li>
+              <li><span class="num">3</span><span>เลือกหมวดจากสิ่งที่หน้าเป็น</span></li>
+              <li><span class="num">4</span><span>INDEX สร้างจากบัญชี ห้ามแก้มือ</span></li>
+              <li><span class="num">5</span><span>แก้ไฟล์แล้ว รอ reindex ก่อนคาดว่าบอทรู้</span></li>
+            </ol>
+            <div class="warn" style="margin-top:14px;">
+              <strong>ซุปเมนูไม่ใช่ความรู้</strong>
+              ถ้าดึงเว็บแล้วเหลือ 「Digital service View」 ให้ทิ้ง แล้วชี้ URL ต้นทางสามประโยค
             </div>
           </div>
         </div>
@@ -725,6 +759,49 @@ RAG_MIN_SCORE=0.46</pre>
         </div>
       </section>
 
+      <section class="slide" data-title="ที่รัน">
+        <p class="kicker">20b / คอมพิวเตอร์</p>
+        <h2>เลือกที่รัน — เครื่องบ้านหรือคลาวด์</h2>
+        <table class="sheet" style="margin-top:14px;">
+          <thead>
+            <tr><th>ที่</th><th>เงิน</th><th>24/7</th><th>หมายเหตุ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>แล็ปท็อป / แม็คมินิ + อุโมงค์</td>
+              <td>ค่าไฟ</td>
+              <td>ได้ถ้าไม่หลับ</td>
+              <td>ลากไฟล์ได้ · Ollama ในบ้านได้ · ฝาปิดบอทตาย</td>
+            </tr>
+            <tr>
+              <td>Railway</td>
+              <td>เครดิตแล้วจ่ายตามใช้</td>
+              <td>ใกล้เคียง</td>
+              <td>คอนเทนเนอร์ + volume · เหมาะกับเว็บฮุค</td>
+            </tr>
+            <tr>
+              <td>Render ฟรี</td>
+              <td>ศูนย์</td>
+              <td>ไม่</td>
+              <td>หลับ ~15 นาที · LINE หมดเวลาตอนสตาร์ทใหม่</td>
+            </tr>
+            <tr>
+              <td>Render จ่าย</td>
+              <td>~USD 7/เดือน</td>
+              <td>ได้</td>
+              <td>ต้องซื้อ disk ให้ SQLite</td>
+            </tr>
+            <tr>
+              <td>Vercel Hobby</td>
+              <td>ฟรี</td>
+              <td>ไม่ใช่ที่รันบอทนี้</td>
+              <td>เซิร์ฟเวอร์เลส · เด็คได้ บอทไม่ได้</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:12px;">สมัครเองที่หน้าใน <span class="mono">docs/shots/</span> — เอเจนต์สมัครแทนไม่ได้</p>
+      </section>
+
       <!-- 22 -->
       <section class="slide" data-title="webhook">
         <p class="kicker">21 / ขั้นที่ 6</p>
@@ -974,6 +1051,34 @@ RAG_MIN_SCORE=0.46</pre>
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <section class="slide" data-title="ปากเพิ่ม">
+        <p class="kicker">21b / Telegram · Discord</p>
+        <h2>ไลน์ตอบได้แล้ว ค่อยต่อปากอื่น</h2>
+        <div class="two" style="margin-top:14px;">
+          <div>
+            <p class="kicker">Telegram</p>
+            <h3>@BotFather → webhook เหมือนไลน์</h3>
+            <ol class="plain">
+              <li><span class="num">1</span><span>ค้น @BotFather ส่ง /newbot</span></li>
+              <li><span class="num">2</span><span>โทเคนวาง TELEGRAM_BOT_TOKEN ใน .env เอง</span></li>
+              <li><span class="num">3</span><span>setWebhook ไปที่ /webhook/telegram บน HTTPS สาธารณะ</span></li>
+              <li><span class="num">4</span><span>ตรวจ X-Telegram-Bot-Api-Secret-Token ทุกคำขอ</span></li>
+            </ol>
+          </div>
+          <div>
+            <p class="kicker">Discord</p>
+            <h3>slash /ask ไม่ใช่ Gateway ทั้งวัน</h3>
+            <ol class="plain">
+              <li><span class="num">1</span><span>discord.com/developers/applications → New Application</span></li>
+              <li><span class="num">2</span><span>Public Key + App ID + Bot token ใน .env</span></li>
+              <li><span class="num">3</span><span>Interactions Endpoint · ตอบ PING ด้วย type 1</span></li>
+              <li><span class="num">4</span><span>RAG ช้ากว่า 3 วินาที → defer type 5 แล้วส่งคำตอบทีหลัง</span></li>
+            </ol>
+          </div>
+        </div>
+        <p class="note" style="margin-top:14px;">สมองยังเป็นโฟลเดอร์เดิม · รั้วเดิม · ห้ามเดาเหมือนกัน</p>
       </section>
 
       <!-- 29 -->
