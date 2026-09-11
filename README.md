@@ -1,12 +1,53 @@
 # Dr Non's DIY RAG / Chatbot-as-a-Self-Service
 
-**แร็กทำเองของดร.นน · แชตบอทบริการตนเอง**
+**แร็กทำเองของดร.นน · แชตบอทบริการตนเอง · สภาที่ปรึกษาในกล่องเดียว**
 
-> โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม
+> โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม · **สภา 19 คนคือที่ปรึกษา**
 
-คู่มือภาษาไทยทีละขั้น สำหรับคนที่ไม่เขียนโค้ด แต่ชี้ URL ได้ สมัครบัญชีได้ และวางข้อความให้เอเจนต์ได้
+![hero](docs/architecture/hero.svg)
 
-> **โหมดสภา (Council mode) — ใหม่:** เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ ของบอท เช่น เพิ่ม Telegram? เปลี่ยน prompt? ตัดไฟล์ไหนทิ้ง? — ใช้ `bin/council "คำถาม"` เพื่อเรียกสภา 18 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)) มาช่วยคิด โดยมีตัวเลือก `--quick`, `--duo`, `--triad architecture` เป็นต้น ดูรายละเอียดที่ [Council mode](#council-mode) ด้านล่าง
+**Single-orchestrator pattern.** คนทัก LINE OA หรือ Telegram bot ของคุณ → บอทดึงจากโฟลเดอร์ `knowledge/` → ตอบจากไฟล์นั้นเท่านั้น → ถ้าไม่มีในไฟล์ พูดว่าไม่มี ไม่เดา
+
+**ที่เพิ่มใหม่ — สภาที่ปรึกษา (Council mode):** เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ ของบอท เช่น เพิ่ม Telegram? เปลี่ยน prompt? ตัดไฟล์ไหนทิ้ง? — ใช้ `bin/council "คำถาม"` เพื่อเรียกสภา 19 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence) + RAG-specific ที่เพิ่มเข้ามา) มาช่วยคิด 5 stages (independent → cross-examine → final → synthesis) — ดู [Council mode](#council-mode-โหมดสภา)
+
+**Telegram bot (in-process):** deploy ได้ทันที — `python -m bot` — ใช้ single-orchestrator pattern ที่แก้ปัญหา "หลายบอทคุยกันไม่ได้" ใน Telegram (อธิบายใน [wrong-vs-right illustration](docs/architecture/wrong-vs-right.svg))
+
+**สไลด์ภาษาไทย 31 สไลด์** พร้อม [English README](#english) ด้านล่าง
+
+---
+
+## Why this repo is on par with top AI-council repos
+
+![why-this-wins](docs/architecture/why-this-wins.svg)
+
+**Three projects** the rest of the world calls "AI council":
+
+- **[0xNyk/council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)** — 4.2k stars. 18 personas, 5-stage protocol, runs in a host CLI.
+- **[karpathy/llm-council](https://github.com/karpathy/llm-council)** — 24.8k stars. Multi-model parallel + review + chairman, web app + OpenRouter.
+- **This repo, `Nonarkara/diy-rag-chatbot`** — the orchestrator pattern as a deployable Telegram bot. The single-process, multi-persona architecture.
+
+What we add that the other two do not:
+
+1. **A RAG-specific 19th persona** (`council-rag-curator`) that opens the cited file before commenting on what it says. The 0xNyk personas are general-purpose; this one is for *this* domain.
+2. **A `bin/llm-council` shim** that auto-detects whether the karpathy app is up and falls back to 0xNyk otherwise. Neither of the upstream projects have a fallback path.
+3. **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo gives you `python -m bot` and you're done.
+4. **The single-orchestrator pattern as a documented anti-pattern fix** for the multi-bot Telegram failure mode. Anyone who has tried the multi-bot approach has hit the same wall. The fix lives here.
+
+What we share:
+
+- The same 5-stage 0xNyk protocol (vendored, MIT).
+- The same 3-stage karpathy pattern (vendored as text, MIT-style upstream).
+- The same 18 personas (vendored, MIT).
+- The same verdict discipline: kill criteria, dissent preserved, concrete next step.
+
+This repo is not a fork of either. It is a third project that
+**adopts both patterns** and ships them in a deployable form for end users,
+with the lessons of trying (and failing) the multi-bot approach
+documented as a guard against the same failure repeating.
+
+รายละเอียดทั้งหมด: [docs/architecture/council-architecture.md](docs/architecture/council-architecture.md) · [docs/architecture/ILLUSTRATIONS.md](docs/architecture/ILLUSTRATIONS.md)
+
+---
 
 เปิดสไลด์ในเบราว์เซอร์:
 

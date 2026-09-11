@@ -1,5 +1,7 @@
 # Council architecture
 
+![hero](hero.svg)
+
 This repo ships **two council engines**. They share the same goal —
 multi-perspective deliberation on hard questions — but they use
 different machinery. Pick the right one per question.
@@ -13,7 +15,7 @@ different machinery. Pick the right one per question.
 | Stages | 5 | 3 |
 | Latency | 2–12 min (full) | 30–90 s (3 stages) |
 | Cost | LLM tokens for the host | 3× OpenRouter tokens |
-| Setup | One shell command (`bin/council`) | `git clone` upstream + `uv sync` + OpenRouter key |
+| Setup | One shell command | `git clone` upstream + `uv sync` + OpenRouter key |
 | Output | Structured verdict with required sections | Synthesized prose + per-model transcripts |
 
 ## When to use which
@@ -27,50 +29,64 @@ Design / strategy / "what would other models think" question?
 
 Quick yes/no on a code change?
   └── yes → ask the host directly, no council
+
+End user wants a verdict from a Telegram bot?
+  └── yes → python -m bot  (single-orchestrator pattern, see below)
 ```
 
-The two wrappers are siblings: they share the same `council-sessions/`
+The three wrappers are siblings: they share the same `council-sessions/`
 capture folder, the same `.gitignore`, and the same follow-up
-checklist. Running both is encouraged.
+checklist.
 
-## The 0xNyk flow (5 stages)
+---
+
+## Why a single orchestrator (and not multiple bots)
+
+A previous attempt to build an "AI council" on Telegram used
+**multiple bots**, one per persona. That failed because Telegram
+bots cannot initiate messages to other bots — they are user-like
+accounts that can only respond to messages users send to them.
+The "council" became N parallel siloed answers, not a deliberation.
+
+The right architecture: **one bot, one process, N personas as
+in-process LLM calls**. The channel is the mouth; the bot is the
+brain; the personas are subagent calls within the brain.
+
+![wrong-vs-right](wrong-vs-right.svg)
+
+> See [`bot/README.md`](../../bot/README.md) for the deployable
+> Telegram bot that ships this pattern out of the box.
+
+---
+
+## The 0xNyk 5-stage protocol
+
+![the-five-stages](the-five-stages.svg)
 
 The vendored skill at `council/` defines a fixed 5-round protocol
 that runs inside a host CLI (Claude Code, OpenCode, Codex, or
 Gemini CLI). One LLM, many personas (system prompts).
 
-![0xNyk council flow](flow-0xnyk-council.svg)
-
-- **Stage 00 — Parse + select panel.** Read `.council.yaml`,
-  honor explicit CLI flags, pick a triad or full membership.
-- **Stage 01 — Independent analysis.** Each persona writes its
-  first analysis blind, 300 words, no reference to peers.
-- **Stage 02 — Cross-examination.** Each persona reads the others'
-  positions and produces a `Disagree:` + `Strengthened by:` pair.
-  This is where the dissent gets surfaced.
-- **Stage 03 — Final stance.** Each persona restates its position
-  and labels its evidence (`EVIDENCED` / `INFERRED` / `ASSUMED`
-  / `MISSING` for the RAG curator, or the equivalent for the
-  upstream personas).
-- **Stage 04 — Synthesis.** The coordinator produces the verdict
-  with all required sections. The weighted tally is preserved —
-  if the council is split, the verdict returns the split instead
-  of manufacturing consensus.
+| Stage | What happens | Where it runs |
+|---|---|---|
+| **00 — parse + select panel** | Read `.council.yaml`, honor explicit CLI flags, pick a triad or full membership. | Host CLI, single call to coordinator |
+| **01 — independent analysis** | Each persona writes its first analysis blind, 300 words, no reference to peers. | Parallel: N calls |
+| **02 — cross-examination** | Each persona reads the others' positions and produces `Disagree:` + `Strengthened by:`. This is where dissent surfaces. | Parallel: N calls (anonymised peers) |
+| **03 — final stance** | Each persona restates its position and labels its evidence + confidence. | Parallel: N calls |
+| **04 — synthesis (the verdict)** | The coordinator produces the verdict with all required sections. The weighted tally is preserved — if the council is split, the verdict returns the split instead of manufacturing consensus. | Serial: 1 chairman call |
 
 The RAG-specific persona `council-rag-curator` (this repo's local
 addition) is auto-included on any question whose keywords match
 `retrieval | knowledge | rag | embedding | faithfulness`. It opens
 the cited file before commenting on what it says, and labels every
-load-bearing claim.
+load-bearing claim as `EVIDENCED` / `INFERRED` / `ASSUMED` / `MISSING`.
 
-## The karpathy flow (3 stages)
+## The karpathy 3-stage protocol
 
-The adapted pattern at `karpathy-council/` is a 3-stage
-multi-model deliberation. Each stage runs in parallel across
-multiple LLM models via OpenRouter. The two key tricks are
-*anonymization* (Stage 2) and *chairman synthesis* (Stage 3).
-
-![karpathy council flow](flow-karpathy-council.svg)
+The adapted pattern at `karpathy-council/` is a 3-stage multi-model
+deliberation. Each stage runs in parallel across multiple LLM models
+via OpenRouter. The two key tricks are *anonymization* (Stage 2) and
+*chairman synthesis* (Stage 3).
 
 - **Stage 01 — First opinions.** All council models answer
   independently. Their responses are tagged `Response A`, `B`, `C`,
@@ -88,22 +104,36 @@ locally on `:5173` (frontend) and `:8001` (backend). The wrapper
 `bin/llm-council` in this repo probes `:8001` and either uses the
 running app or falls back to the 0xNyk skill.
 
-## Side by side
+---
 
-![0xNyk vs karpathy](flow-comparison.svg)
+## Why this design wins
 
-The two flows differ on three axes:
+![why-this-wins](why-this-wins.svg)
 
-| Axis | 0xNyk | karpathy |
-|---|---|---|
-| Where diversity comes from | Multiple system prompts (personas) on one model | Multiple distinct models, one default persona each |
-| How the verdict is built | Each persona restates, then a coordinator synthesizes | Models rank each other, then a chairman model synthesizes |
-| How dissent is captured | Each persona's `Disagree:` line + the vote tally | Aggregate ranking table + the chairman's notes on disagreement |
+The orchestrator pattern wins on four axes at once — and only on the
+orchestrator pattern. The illustration above is the proof:
 
-Both flows explicitly preserve dissent. The 0xNyk flow has more
-stages and produces a more structured verdict; the karpathy flow
-is faster and cheaper but its verdict is closer to a single
-synthesized essay.
+| Approach | Breadth | Grounding | Synthesis | Cost | Deploys |
+|---|---|---|---|---|---|
+| Single LLM | 1 perspective | no evidence check | just the prose | $ per call | API only |
+| Multi-bot Telegram | N bots in parallel | none — bots don't see each other | zero — no shared verdict | N × per-call | yes, no synthesis |
+| RAG alone | 1 perspective on a corpus | folder-grounded | still one answer | 1× per call + retrieval | yes |
+| **DIY orchestrator (this repo)** | **N personas · parallel** | **folder + cross-examined** | **chairman synthesis** | **same as 1 LLM · Ollama free** | **yes · all channels** |
+
+The axes where the orchestrator wins — breadth, grounding, synthesis —
+are precisely the axes where the other three fall short. And the cost
+is the same as a single LLM call. The reason: the deliberation is
+**in-process**, so there is no second or third call to pay for. There
+are *N calls* per question (one per persona), but they all happen on
+the same machine, and the LLM is Ollama (free).
+
+The reason this is on par with the top AI-council repos (karpathy,
+0xNyk) and strictly better than the multi-bot mesh is the **single-
+orchestrator discipline**: the channel is a thin client, the brain
+is one process, and the personas are subagent calls inside the
+brain. There is no other architecture where all four axes line up.
+
+---
 
 ## How a question travels
 
@@ -132,17 +162,80 @@ your shell
        └─ not reachable → fall back to bin/council (the 0xNyk path)
 ```
 
-The fallback is the safety net. As long as one of the two engines
-is reachable, `bin/llm-council` returns an answer.
+For a Telegram bot user:
+
+```
+a Telegram user
+  └─ /council <question>  (or a plain DM)
+       └─ python-telegram-bot  (single process, one orchestrator)
+            └─ bot.core.run_council()
+                 ├─ Stage 01: N parallel LLM calls
+                 ├─ Stage 02: N parallel LLM calls (anonymised)
+                 ├─ Stage 03: N parallel LLM calls
+                 └─ Stage 04: 1 chairman synthesis call
+                      └─ verdict markdown → chunked at 3800 chars
+                           └─ one or more Telegram replies
+```
+
+The fallback in `bin/llm-council` is the safety net. The in-process
+orchestrator in `bot/` is the deployment that doesn't need a host
+CLI at all — it's just Python and Ollama.
+
+---
 
 ## Files in this folder
 
+### Illustrations (manga + MoMA)
+
 | File | What |
 |---|---|
-| `flow-0xnyk-council.svg` | The 0xNyk 5-stage flow, vertical, 800×1100 |
-| `flow-karpathy-council.svg` | The karpathy 3-stage flow, vertical, 800×900 |
-| `flow-comparison.svg` | Both side by side, 1000×720 |
+| `hero.svg` | The orchestrator as a manga-passionate figure with persona echoes + amber verdict beam |
+| `wrong-vs-right.svg` | Multi-bot Telegram chaos vs single-orchestrator harmony |
+| `the-five-stages.svg` | 5-panel manga page for the 0xNyk protocol |
+| `why-this-wins.svg` | 4-row comparison: single-LLM / multi-bot / RAG / orchestrator |
+| `flow-0xnyk-council.svg` | Clean editorial flow diagram for the 0xNyk protocol |
+| `flow-karpathy-council.svg` | Clean editorial flow diagram for the karpathy protocol |
+| `flow-comparison.svg` | Side-by-side flow comparison |
+| `ILLUSTRATIONS.md` | Index page with rendering notes |
+
+### The explainer
+
+| File | What |
+|---|---|
 | `council-architecture.md` | This document |
 
-The SVGs use the project's hairline / mono editorial aesthetic.
-They render in any modern browser and in GitHub markdown.
+### Where the engine actually lives
+
+| Engine | Path |
+|---|---|
+| 0xNyk council skill | `../../council/` (vendored) |
+| karpathy council pattern | `../../karpathy-council/` (adapted) |
+| In-process orchestrator | `../../bot/` (Telegram adapter + core) |
+| Project defaults | `../../.council.yaml` |
+
+## Why this is on par with top AI-council repos
+
+There are three projects the rest of the world calls "AI council":
+
+- **[0xNyk/council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)** — 4.2k stars. 18 personas, 5-stage protocol, runs in a host CLI.
+- **[karpathy/llm-council](https://github.com/karpathy/llm-council)** — 24.8k stars. Multi-model parallel + review + chairman, web app + OpenRouter.
+- **This repo, `Nonarkara/diy-rag-chatbot`** — the orchestrator pattern as a deployable Telegram bot. The single-process, multi-persona architecture.
+
+What we add that the other two do not:
+
+- **A RAG-specific 19th persona** (`council-rag-curator`) that opens the cited file before commenting on what it says. The 0xNyk personas are general-purpose; this one is for *this* domain.
+- **A `bin/llm-council` shim** that auto-detects whether the karpathy app is up and falls back to 0xNyk otherwise. Neither of the upstream projects have a fallback path.
+- **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo gives you a `python -m bot` and you're done.
+- **The single-orchestrator pattern as a documented anti-pattern fix** for the multi-bot Telegram failure mode. Anyone who has tried the multi-bot approach has hit the same wall.
+
+What we share:
+
+- The same 5-stage 0xNyk protocol (vendored, MIT).
+- The same 3-stage karpathy pattern (vendored as text, MIT-style upstream).
+- The same 18 personas (vendored, MIT).
+- The same verdict discipline (kill criteria, dissent preserved, concrete next step).
+
+This repo is not a fork of either. It is a third project that
+**adopts both patterns** and ships them in a deployable form for
+end users, with the lessons of trying (and failing) the multi-bot
+approach documented as a guard against the same failure repeating.

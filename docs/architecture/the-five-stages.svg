@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 720" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
+  <title>The 5 stages — manga page</title>
+  <desc>A manga-style 5-panel page showing the 0xNyk council protocol: parse → independent analysis → cross-examination → final stance → chairman synthesis.</desc>
+
+  <defs>
+    <radialGradient id="panel-glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#ff9500" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ff9500" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .frame       { fill: none; stroke: #111; stroke-width: 1; }
+      .frame-hair  { fill: none; stroke: #111; stroke-width: 0.5; }
+      .frame-bold  { fill: none; stroke: #111; stroke-width: 3; }
+      .frame-amber { fill: none; stroke: #ff9500; stroke-width: 2; }
+      .ink         { fill: #111; }
+      .paper       { fill: #fafaf7; }
+      .manga-line  { fill: none; stroke: #111; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .manga-thin  { fill: none; stroke: #111; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .manga-hair  { fill: none; stroke: #111; stroke-width: 0.5; }
+      .text-mono   { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 11px; fill: #111; }
+      .text-tiny   { font-family: -apple-system, sans-serif; font-size: 9px; fill: #111; letter-spacing: 0.12em; text-transform: uppercase; }
+      .text-tiny-amber { font-family: -apple-system, sans-serif; font-size: 9px; fill: #ff9500; letter-spacing: 0.12em; text-transform: uppercase; }
+      .text-label  { font-family: -apple-system, sans-serif; font-size: 10px; fill: #111; letter-spacing: 0.05em; text-transform: uppercase; }
+      .text-faint  { font-family: -apple-system, sans-serif; font-size: 9px; fill: #555; font-style: italic; }
+      .text-title  { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 22px; font-weight: 700; fill: #111; letter-spacing: -0.01em; }
+      .text-onoma  { font-family: 'Impact', 'Helvetica Neue', sans-serif; font-size: 22px; font-weight: 900; fill: #111; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="720" fill="#fafaf7"/>
+  <rect x="20" y="20" width="1360" height="680" class="frame"/>
+  <rect x="28" y="28" width="1344" height="664" class="frame-hair"/>
+
+  <!-- TOP STRIP -->
+  <rect x="40" y="40" width="1320" height="48" class="frame-hair"/>
+  <text x="56" y="62" class="text-tiny">fig 02 · the five stages</text>
+  <text x="56" y="80" class="text-title">The Council Protocol · one manga page</text>
+  <text x="1340" y="80" text-anchor="end" class="text-faint">parse → analyse → cross-examine → stance → synthesise</text>
+
+  <!-- ============ PANEL 1: STAGE 00 — PARSE ============ -->
+  <g transform="translate(40, 110)">
+    <rect x="0" y="0" width="260" height="500" fill="#fafaf7" class="frame"/>
+    <rect x="6" y="6" width="248" height="488" class="frame-hair"/>
+    <!-- Amber accent on the stage badge -->
+    <rect x="0" y="0" width="260" height="36" fill="#111"/>
+    <text x="14" y="24" class="text-tiny" fill="#fafaf7">▶ stage 00 · parse</text>
+    <text x="246" y="24" text-anchor="end" class="text-tiny" fill="#ff9500">SELECT PANEL</text>
+
+    <!-- Character: a calm reader of cards -->
+    <g transform="translate(130, 200)">
+      <!-- Robe -->
+      <path d="M -70,100 L -80,30 L -50,-30 L -30,-80 L 30,-80 L 50,-30 L 80,30 L 70,100 Z"
+            fill="#fafaf7" class="manga-line"/>
+      <!-- Head -->
+      <ellipse cx="0" cy="-115" rx="38" ry="44" fill="#fafaf7" class="manga-line"/>
+      <!-- Calm hair -->
+      <path d="M -38,-130 L -25,-160 L 25,-160 L 38,-130 L 30,-115 L -30,-115 Z" class="ink"/>
+      <!-- Calm eyes (gentle) -->
+      <path d="M -16,-120 Q -10,-124 -4,-120" class="manga-line" fill="none"/>
+      <path d="M 4,-120 Q 10,-124 16,-120" class="manga-line" fill="none"/>
+      <!-- Small smile -->
+      <path d="M -6,-100 Q 0,-96 6,-100" class="manga-line" fill="none"/>
+      <!-- Hands holding cards (personas) -->
+      <rect x="-60" y="-50" width="40" height="50" fill="#fafaf7" class="manga-line"/>
+      <text x="-40" y="-32" text-anchor="middle" class="text-tiny">T</text>
+      <text x="-40" y="-15" text-anchor="middle" class="text-faint">torvalds</text>
+      <rect x="20" y="-50" width="40" height="50" fill="#fafaf7" class="manga-line"/>
+      <text x="40" y="-32" text-anchor="middle" class="text-tiny">F</text>
+      <text x="40" y="-15" text-anchor="middle" class="text-faint">feynman</text>
+      <rect x="-20" y="-10" width="40" height="50" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="8" text-anchor="middle" class="text-tiny">A</text>
+      <text x="0" y="25" text-anchor="middle" class="text-faint">aurelius</text>
+    </g>
+
+    <!-- Caption -->
+    <text x="14" y="420" class="text-mono">Read .council.yaml,</text>
+    <text x="14" y="434" class="text-mono">pick a triad or</text>
+    <text x="14" y="448" class="text-mono">full membership,</text>
+    <text x="14" y="462" class="text-mono">auto-include curator</text>
+    <text x="14" y="476" class="text-mono">if the question matches.</text>
+    <!-- Data strip -->
+    <line x1="0" y1="400" x2="260" y2="400" class="frame-hair"/>
+  </g>
+
+  <!-- ============ PANEL 2: STAGE 01 — INDEPENDENT ANALYSIS ============ -->
+  <g transform="translate(310, 110)">
+    <rect x="0" y="0" width="260" height="500" fill="#fafaf7" class="frame"/>
+    <rect x="6" y="6" width="248" height="488" class="frame-hair"/>
+    <rect x="0" y="0" width="260" height="36" fill="#111"/>
+    <text x="14" y="24" class="text-tiny" fill="#fafaf7">▶ stage 01 · analyse</text>
+    <text x="246" y="24" text-anchor="end" class="text-tiny" fill="#ff9500">INDEPENDENT</text>
+
+    <!-- 3 figures each thinking on their own — separate thought bubbles -->
+    <g transform="translate(60, 150)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">torvalds</text>
+      <!-- Thought bubble: SHIP IT -->
+      <ellipse cx="0" cy="-58" rx="30" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">ship it</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-faint">first</text>
+    </g>
+    <g transform="translate(140, 180)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <!-- Question mark above head (curious Feynman) -->
+      <text x="0" y="-32" text-anchor="middle" class="text-onoma" font-size="20">?!</text>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">feynman</text>
+      <ellipse cx="0" cy="-58" rx="34" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">show me</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-faint">the data</text>
+    </g>
+    <g transform="translate(220, 160)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">aurelius</text>
+      <ellipse cx="0" cy="-58" rx="34" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">what's</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-faint">the cost</text>
+    </g>
+
+    <!-- Bottom: 3 separate thought clouds, no cross-talk -->
+    <text x="14" y="380" class="text-faint">no peer reference</text>
+    <text x="14" y="396" class="text-faint">parallel · 300 words each</text>
+    <line x1="0" y1="400" x2="260" y2="400" class="frame-hair"/>
+
+    <text x="14" y="420" class="text-mono">Each persona analyses</text>
+    <text x="14" y="434" class="text-mono">the question blind.</text>
+    <text x="14" y="448" class="text-mono">300-word limit. No</text>
+    <text x="14" y="462" class="text-mono">reference to peers.</text>
+    <text x="14" y="476" class="text-mono">This is where diversity</text>
+    <text x="14" y="490" class="text-mono">starts.</text>
+
+    <!-- Manga onomatopoeia: ドドド (rumble of independent thought) -->
+    <text x="14" y="290" class="text-onoma" font-size="20" opacity="0.6">ドドド</text>
+  </g>
+
+  <!-- ============ PANEL 3: STAGE 02 — CROSS-EXAMINATION ============ -->
+  <g transform="translate(580, 110)">
+    <rect x="0" y="0" width="260" height="500" fill="#fafaf7" class="frame"/>
+    <rect x="6" y="6" width="248" height="488" class="frame-hair"/>
+    <rect x="0" y="0" width="260" height="36" fill="#111"/>
+    <text x="14" y="24" class="text-tiny" fill="#fafaf7">▶ stage 02 · cross-examine</text>
+    <text x="246" y="24" text-anchor="end" class="text-tiny" fill="#ff9500">DISAGREE + STRENGTHEN</text>
+
+    <!-- Halftone shading for intensity -->
+    <rect x="10" y="40" width="240" height="350" fill="url(#panel-glow)"/>
+
+    <!-- Two figures pointing at each other (manga debate) -->
+    <g transform="translate(70, 180)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <!-- Fierce eyebrows -->
+      <line x1="-14" y1="-12" x2="-4" y2="-8" class="manga-line"/>
+      <line x1="14" y1="-12" x2="4" y2="-8" class="manga-line"/>
+      <!-- Angry eyes -->
+      <ellipse cx="-8" cy="-4" rx="3" ry="2" class="ink"/>
+      <ellipse cx="8" cy="-4" rx="3" ry="2" class="ink"/>
+      <!-- Open shouting mouth -->
+      <ellipse cx="0" cy="8" rx="5" ry="4" class="ink"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">torvalds</text>
+      <!-- Pointing finger -->
+      <line x1="22" y1="2" x2="60" y2="2" class="manga-line"/>
+      <path d="M 60,-2 L 68,2 L 60,6 Z" class="ink"/>
+    </g>
+    <g transform="translate(190, 180)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <!-- Determined eyes -->
+      <ellipse cx="-8" cy="-4" rx="3" ry="2" class="ink"/>
+      <ellipse cx="8" cy="-4" rx="3" ry="2" class="ink"/>
+      <!-- Open mouth (also shouting back) -->
+      <ellipse cx="0" cy="8" rx="5" ry="4" class="ink"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">feynman</text>
+      <line x1="-22" y1="2" x2="-60" y2="2" class="manga-line"/>
+      <path d="M -60,-2 L -68,2 L -60,6 Z" class="ink"/>
+    </g>
+
+    <!-- Speed lines / clash marks -->
+    <g transform="translate(130, 180)">
+      <line x1="-10" y1="-30" x2="10" y2="-50" class="manga-line"/>
+      <line x1="10" y1="-30" x2="-10" y2="-50" class="manga-line"/>
+      <line x1="0" y1="-40" x2="0" y2="-60" class="manga-line"/>
+      <path d="M -8,-10 L 0,-25 L 8,-10 Z" class="ink"/>
+    </g>
+
+    <!-- Sweat drop / vein mark between them -->
+    <path d="M 130,140 Q 126,148 130,156 Q 134,148 130,140 Z" class="ink"/>
+
+    <!-- Manga onomatopoeia -->
+    <text x="100" y="270" class="text-onoma" font-size="32" fill="#111">ガッ</text>
+
+    <line x1="0" y1="400" x2="260" y2="400" class="frame-hair"/>
+    <text x="14" y="420" class="text-mono">Each persona reads</text>
+    <text x="14" y="434" class="text-mono">others' positions</text>
+    <text x="14" y="448" class="text-mono">(anonymised), then</text>
+    <text x="14" y="462" class="text-mono">writes:</text>
+    <text x="14" y="476" class="text-mono" fill="#ff9500">Disagree: &lt;who&gt;</text>
+    <text x="14" y="490" class="text-mono" fill="#ff9500">Strengthened by: &lt;who&gt;</text>
+  </g>
+
+  <!-- ============ PANEL 4: STAGE 03 — FINAL STANCE ============ -->
+  <g transform="translate(850, 110)">
+    <rect x="0" y="0" width="260" height="500" fill="#fafaf7" class="frame"/>
+    <rect x="6" y="6" width="248" height="488" class="frame-hair"/>
+    <rect x="0" y="0" width="260" height="36" fill="#111"/>
+    <text x="14" y="24" class="text-tiny" fill="#fafaf7">▶ stage 03 · stance</text>
+    <text x="246" y="24" text-anchor="end" class="text-tiny" fill="#ff9500">RESTATED POSITION</text>
+
+    <!-- Three figures in a calmer, resolved pose -->
+    <g transform="translate(60, 150)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">torvalds</text>
+      <!-- Resolved bubble -->
+      <ellipse cx="0" cy="-58" rx="36" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">ship</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-mono">benchmark</text>
+    </g>
+    <g transform="translate(140, 180)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">feynman</text>
+      <ellipse cx="0" cy="-58" rx="36" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">30 lines</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-mono">of code</text>
+    </g>
+    <g transform="translate(220, 160)">
+      <circle cx="0" cy="0" r="22" fill="#fafaf7" class="manga-line"/>
+      <path d="M -22,-10 L -10,-30 L 10,-30 L 22,-10" class="ink"/>
+      <path d="M -12,-2 Q -6,-6 0,-2" class="manga-line" fill="none"/>
+      <path d="M 0,-2 Q 6,-6 12,-2" class="manga-line" fill="none"/>
+      <text x="0" y="48" text-anchor="middle" class="text-tiny">aurelius</text>
+      <ellipse cx="0" cy="-58" rx="36" ry="18" fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="-55" text-anchor="middle" class="text-mono">cost?</text>
+      <text x="0" y="-43" text-anchor="middle" class="text-mono">+ kill</text>
+    </g>
+
+    <line x1="0" y1="400" x2="260" y2="400" class="frame-hair"/>
+    <text x="14" y="420" class="text-mono">After seeing the</text>
+    <text x="14" y="434" class="text-mono">cross-examination,</text>
+    <text x="14" y="448" class="text-mono">each persona restates:</text>
+    <text x="14" y="462" class="text-mono">position + evidence</text>
+    <text x="14" y="476" class="text-mono">label + confidence.</text>
+    <text x="14" y="490" class="text-mono">Dissent is preserved.</text>
+  </g>
+
+  <!-- ============ PANEL 5: STAGE 04 — CHAIRMAN SYNTHESIZE ============ -->
+  <g transform="translate(1120, 110)">
+    <rect x="0" y="0" width="240" height="500" fill="#fafaf7" class="frame"/>
+    <rect x="6" y="6" width="228" height="488" class="frame-hair"/>
+    <rect x="0" y="0" width="240" height="36" fill="#ff9500"/>
+    <text x="14" y="24" class="text-tiny" fill="#fafaf7">▶ stage 04 · synthesise</text>
+    <text x="226" y="24" text-anchor="end" class="text-tiny" fill="#fafaf7">CHAIRMAN</text>
+
+    <!-- Amber halo + the chairman figure with halo -->
+    <circle cx="120" cy="220" r="100" fill="url(#panel-glow)"/>
+
+    <!-- The chairman — bigger, centred, with halo ring -->
+    <g transform="translate(120, 200)">
+      <circle cx="0" cy="0" r="38" fill="#fafaf7" class="frame-bold"/>
+      <circle cx="0" cy="0" r="32" fill="none" class="frame-amber"/>
+      <!-- Head with calm/wise expression -->
+      <ellipse cx="0" cy="-90" rx="32" ry="36" fill="#fafaf7" class="manga-line"/>
+      <!-- Bald/shaved head (Moriarty / Aurelius / wise archetype) -->
+      <path d="M -30,-100 Q -30,-122 0,-128 Q 30,-122 30,-100" class="ink"/>
+      <!-- Calm wise eyes -->
+      <path d="M -14,-95 Q -8,-99 -2,-95" class="manga-line" fill="none"/>
+      <path d="M 2,-95 Q 8,-99 14,-95" class="manga-line" fill="none"/>
+      <!-- Serene smile -->
+      <path d="M -8,-78 Q 0,-72 8,-78" class="manga-line" fill="none"/>
+      <!-- Robe -->
+      <path d="M -60,60 L -70,15 L -45,-20 L -30,-50 L 30,-50 L 45,-20 L 70,15 L 60,60 Z"
+            fill="#fafaf7" class="manga-line"/>
+      <text x="0" y="92" text-anchor="middle" class="text-tiny-amber">chairman</text>
+    </g>
+
+    <!-- Verdict document emerging from the chairman -->
+    <g transform="translate(120, 360)">
+      <rect x="-50" y="-20" width="100" height="50" fill="#fafaf7" class="frame-amber"/>
+      <line x1="-40" y1="-8" x2="40" y2="-8" class="frame-amber"/>
+      <line x1="-40" y1="2" x2="30" y2="2" class="manga-hair"/>
+      <line x1="-40" y1="10" x2="40" y2="10" class="manga-hair"/>
+      <line x1="-40" y1="18" x2="20" y2="18" class="manga-hair"/>
+      <text x="0" y="50" text-anchor="middle" class="text-tiny-amber">verdict</text>
+    </g>
+
+    <!-- Sparkle accents -->
+    <g transform="translate(50, 130)">
+      <path d="M 0,-8 L 2,-2 L 8,0 L 2,2 L 0,8 L -2,2 L -8,0 L -2,-2 Z" class="ink"/>
+    </g>
+    <g transform="translate(190, 140)">
+      <path d="M 0,-6 L 1,-1 L 6,0 L 1,1 L 0,6 L -1,1 L -6,0 L -1,-1 Z" class="ink"/>
+    </g>
+
+    <line x1="0" y1="400" x2="240" y2="400" class="frame-hair"/>
+    <text x="14" y="420" class="text-mono">The chairman reads</text>
+    <text x="14" y="434" class="text-mono">all of Stage 1-3 and</text>
+    <text x="14" y="448" class="text-mono">produces:</text>
+    <text x="14" y="462" class="text-mono" fill="#ff9500">verdict + compromises</text>
+    <text x="14" y="476" class="text-mono" fill="#ff9500">+ kill criteria + next</text>
+    <text x="14" y="490" class="text-mono" fill="#ff9500">step + unresolved</text>
+
+    <!-- Sparkle onomatopoeia -->
+    <text x="14" y="280" class="text-onoma" font-size="22" fill="#ff9500">キラ</text>
+  </g>
+
+  <!-- ARROWS BETWEEN PANELS -->
+  <g class="manga-line" opacity="0.7">
+    <path d="M 304,360 L 308,360 M 304,370 L 308,370"/>
+    <path d="M 574,360 L 578,360 M 574,370 L 578,370"/>
+    <path d="M 844,360 L 848,360 M 844,370 L 848,370"/>
+    <path d="M 1114,360 L 1118,360 M 1114,370 L 1118,370"/>
+  </g>
+
+  <!-- BOTTOM MoMA STRIP -->
+  <rect x="40" y="630" width="1320" height="50" class="frame-hair"/>
+  <text x="56" y="652" class="text-tiny-amber">▶ reading order</text>
+  <text x="170" y="652" class="text-mono">left → right. each stage hands its output to the next. dissent preserved as a first-class citizen.</text>
+  <text x="56" y="672" class="text-faint">Wall time on warm Ollama qwen3:4b · 5 personas · ~2–4 min · ~16 LLM calls in parallel (Stage 01/02/03) + 1 chairman (Stage 04).</text>
+</svg>
