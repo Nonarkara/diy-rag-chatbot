@@ -11,3 +11,6 @@ python-pptx>=1.0
 watchdog>=4.0
 numpy>=2.0
 PyYAML>=6.0
+
+# Telegram council bot (bot/) — optional, only if you run python -m bot
+python-telegram-bot>=20.0

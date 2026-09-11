@@ -464,6 +464,37 @@ Discord ไม่ใช่แชตวีบุกแบบไลน์ทั้
 
 ---
 
+## สถานี 17 · สภาที่ปรึกษาบน Telegram (Council bot · ไม่บังคับ)
+
+ถ้าอยาก deploy **สภาที่ปรึกษา 18 คน** ให้คนทักทามบน Telegram — repo นี้มี `bot/` ที่ใช้ได้เลย
+
+**ทำไมต้องบอทเดียว:** ครั้งก่อนพยายามใช้หลายบอท (บอทละ 1 persona) มันไม่ทำงาน เพราะ Telegram API ไม่ให้บอทส่งข้อความหาบอทด้วยกัน — คำตอบจึงออกมาเป็น N คำตอบคู่ขนาน ไม่ใช่ "การปรึกษา" `bot/` แก้ด้วย **single orchestrator pattern**: บอทเดียว, process เดียว, เรียก personas เป็น LLM call ภายใน 5 stages (independent → cross-examine → final → synthesis)
+
+ติดตั้ง:
+
+1. `pip install -r requirements.txt` (เพิ่ม `python-telegram-bot` เข้ามา)
+2. สร้าง Telegram bot ผ่าน [@BotFather](https://t.me/BotFather) → copy **Bot Token**
+3. ตั้งใน `.env`:
+
+```bash
+TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+LLM_PROVIDER=ollama            # หรือ openai สำหรับ Groq/OpenRouter
+LLM_MODEL=qwen3:4b             # หรือ gemma4:e4b
+```
+
+4. รัน: `python -m bot`
+5. ทดสอบ: DM หาบอท หรือพิมพ์ `/council <คำถาม>`
+
+**เวลา:** ~2–4 นาทีต่อคำถาม (Ollama local, 5 personas, 5 stages) — บอทจะ edit status message ทุก stage เพื่อให้เห็น progress
+
+**ค่าใช้จ่าย:** ฟรี (Ollama local) หรือ Groq free tier
+
+ถ้ามีบอท Telegram อยู่แล้ว และอยากให้คนถามคำถาม "ยาก ๆ" กับสภาที่ปรึกษาแทนที่จะคุยกับบอท LINE RAG เดิม — `bot/` คือจุดเริ่ม
+
+รายละเอียด: [bot/README.md](bot/README.md)
+
+---
+
 ## หลังวันนี้
 
 - เพิ่มไฟล์ใน `knowledge/` ได้เลย ระบบอ่านเฉพาะไฟล์ที่เปลี่ยน — จัดตาม [knowledge/HOW-WE-FILE.md](knowledge/HOW-WE-FILE.md)

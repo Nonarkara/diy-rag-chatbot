@@ -26,3 +26,8 @@ council-sessions/
 # Council host-side caches (opencode state, etc.)
 .opencode/
 .claude/
+
+# Telegram bot local state (downloaded files, etc.)
+# Keep the code in bot/ tracked, but exclude runtime artefacts.
+bot/__pycache__/
+bot/.cache/

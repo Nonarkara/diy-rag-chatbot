@@ -54,7 +54,7 @@ Knowledge standard the kit copies from Smart City Thailand: bilingual `ถาม
 
 ## Council (โหมดสภา)
 
-The repo ships **two engines**. Pick the right one for the question.
+The repo ships **two engines + one deployable bot**. Pick the right one for the question.
 
 - **`bin/council`** (0xNyk, vendored) — for RAG / bot / corpus / prompt
   questions. One LLM, 18 personas, 5-stage protocol, RAG-aware via
@@ -63,6 +63,11 @@ The repo ships **two engines**. Pick the right one for the question.
   cross-model-family questions. Many LLMs, 3-stage protocol, runs
   only when the upstream karpathy app is on `localhost:8001`. Falls
   back to `bin/council` if the app is not running.
+- **`bot/`** (in-process 0xNyk + Telegram adapter) — the
+  *deployable* council. One Telegram bot, one Python process, the
+  5-stage deliberation happens internally. End users who message
+  the bot get a council verdict without needing a host CLI. See
+  [`bot/README.md`](bot/README.md).
 
 Full comparison, decision rule, and flow diagrams:
 [`docs/architecture/council-architecture.md`](docs/architecture/council-architecture.md).
@@ -73,6 +78,32 @@ Full comparison, decision rule, and flow diagrams:
 - **Do not manufacture consensus.** A split verdict (`2-1-1-1`) is more useful than a forced "agreed". The skill already returns splits; do not paper over them.
 
 Default triad for this repo: `ship-now` (Torvalds + Feynman + Aurelius). Override with `./bin/council --profile exploration-orthogonal --full "..."` when the question is about strategy or "unknown unknowns".
+
+## Deployable council bot (bot/)
+
+A previous attempt to build an "AI council" on Telegram used **multiple
+bots**, one per persona. That failed because Telegram bots cannot
+initiate messages to other bots — they are user-like accounts that
+only respond to messages users send to them. The "council" became
+N parallel siloed answers, not a deliberation.
+
+The right architecture: **one bot, one process, N personas as
+in-process LLM calls**. `bot/` is that architecture:
+
+- `bot/core.py` — channel-agnostic 5-stage orchestrator
+- `bot/personas.py` — loads the same 19 personas from `council/agents/`
+- `bot/llm.py` — Ollama (default) + OpenAI-compatible LLM client
+- `bot/verdict.py` — verdict assembly + Telegram-safe chunking
+- `bot/telegram.py` — the python-telegram-bot adapter
+- `bot/__main__.py` — `python -m bot`
+
+To add Discord or a web `/council` endpoint, copy `bot/telegram.py`
+and replace the channel calls. `core.py` is the reusable brain.
+
+When the owner asks about Telegram bot deployment, RAG-bot-as-a-service,
+or "council-as-a-product", point at `bot/` and the architecture
+explainer. When they ask about host-CLI deliberation for themselves,
+point at `bin/council` or the vendored `council/` skill.
 
 ## Tone
 

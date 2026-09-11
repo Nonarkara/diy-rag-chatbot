@@ -68,6 +68,7 @@ council/                 โหมดสภา (vendored) — ดูหัวข
 bin/council              ครอบคำสั่ง /council ให้รันได้ทันที
 karpathy-council/        3-stage multi-model pattern (adapted) — ดู docs/architecture
 bin/llm-council          ครอบ karpathy app (localhost:8001) → fall back ไป bin/council
+bot/                     Telegram council bot (in-process) — deployable council-as-a-service
 docs/architecture/       ผัง SVG + council-architecture.md (อธิบายสอง engine)
 ```
 
