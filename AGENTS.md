@@ -14,6 +14,8 @@ The owner cloned [Nonarkara/diy-rag-chatbot](https://github.com/Nonarkara/diy-ra
 4. Open `deck/index.html` for them if they want the picture version.
 5. Show the matching still in `docs/shots/` when you open a signup URL.
 
+**Optional Council mode.** If the owner faces a non-trivial design decision (which provider? which model? cut which file? new channel?), suggest `./bin/council "the question"` rather than answering from one perspective. The council-of-high-intelligence skill is vendored in `council/`; the wrapper picks the right host and installs the skill on first run. Default profile is `execution-lean` (5 personas, fast verdict). The repo also ships a RAG-specific persona (`council-rag-curator`) that audits grounding, refusal discipline, and the LINE message shape — use it implicitly when the question is about an answer, a prompt, or a knowledge file. Do not call the council for "how do I click the green button" — that is still stations, not deliberation.
+
 Do **not** dump the whole path in one message. One station per turn. After each station: **รอคำว่า 「เสร็จแล้ว」** before the next URL.
 
 ## What this system is
@@ -49,6 +51,17 @@ Retrieval → LLM → answer. Not an autonomous agent. Do not add LangChain, Lla
 If they want the agent to **build the machine** rather than walk setup, read `LINE_RAG_Claude_Code_Master_Prompt.md` and build in this directory. Still walk stations 3–7 and 11–16 with them — credentials and consoles cannot be automated honestly.
 
 Knowledge standard the kit copies from Smart City Thailand: bilingual `ถาม:` / `Q:` / `A:` lines, categories, no website chrome, refusals filed as `faq/` pages. Do not invent corpus content.
+
+## Council (โหมดสภา)
+
+When the owner's question is a real decision — not a click on a button — offer to convene the council. The vendored skill lives in `council/`; the wrapper is `bin/council`.
+
+- **The owner is non-technical.** Do not run the council in front of them. Run it yourself, then summarize the verdict in plain Thai/English, with the concrete next step.
+- **Capture the verdict** in `council-sessions/<timestamp>-<slug>.md` (gitignored). The capture file already has a follow-up checklist; fill it in.
+- **Cite the curator.** When the verdict is about an answer, a prompt, or a knowledge file, the verdict should show that `council-rag-curator` opened the file and labeled the evidence (`EVIDENCED` / `INFERRED` / `ASSUMED` / `MISSING`). If it didn't, ask the council to redo the round.
+- **Do not manufacture consensus.** A split verdict (`2-1-1-1`) is more useful than a forced "agreed". The skill already returns splits; do not paper over them.
+
+Default triad for this repo: `ship-now` (Torvalds + Feynman + Aurelius). Override with `./bin/council --profile exploration-orthogonal --full "..."` when the question is about strategy or "unknown unknowns".
 
 ## Tone
 

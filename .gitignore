@@ -16,3 +16,13 @@ __pycache__/
 dist/
 build/
 cloudflared.log
+.env.*
+!.env.example
+logs/
+
+# Council session captures (verdicts go here; not committed by default)
+council-sessions/
+
+# Council host-side caches (opencode state, etc.)
+.opencode/
+.claude/

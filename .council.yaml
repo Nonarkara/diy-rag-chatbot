@@ -1,0 +1,37 @@
+# .council.yaml — diy-rag-chatbot project council defaults
+#
+# Consumed by the Council of High Intelligence skill (council/SKILL.md).
+# Explicit CLI flags on the /council invocation always win over this file.
+# Precedence: CLI flags > .council.yaml > built-in defaults.
+#
+# See council/SKILL.md "Project Overrides" for the full key list.
+
+# This is a shipping project, not an exploration one. Lean profile by default
+# — fewer personas, faster verdicts, less ceremony for "should we ship X".
+profile: execution-lean
+
+# Default triad: pragmatic engineering + first-principles check + resilience.
+# Covers 80% of the decisions this repo actually makes (ship this fix? drop
+# this file? answer this way?).
+triad: ship-now
+
+# Chairman: the highest-tier model on the active host. In Claude Code, the
+# coordinator host synthesizes the verdict — no separate chairman override.
+# When more hosts are added (Codex, Gemini CLI), uncomment the line below
+# to route the chairman to Gemini.
+# chairman: gemini
+
+# Point the council at the project-local configs. The auto-route file
+# in council/configs/auto-route-defaults.yaml is also a valid option if
+# the user has only Claude + OpenCode available.
+# models: council/configs/provider-model-slots.claude-opencode.yaml
+
+# The agent in council/agents/council-rag-curator.md is the project's
+# domain voice. It is auto-included when the question matches its
+# duo_keywords (retrieval, knowledge, rag, embedding, faithfulness).
+# No manual members[] listing is required for it to be added.
+
+# When true, do not auto-route across providers — use the host's native
+# model for every seat. Default behavior already does this when only
+# Claude Code is in use; set to true explicitly to lock that in.
+no_auto_route: true

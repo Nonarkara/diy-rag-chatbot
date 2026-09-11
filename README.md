@@ -6,6 +6,8 @@
 
 คู่มือภาษาไทยทีละขั้น สำหรับคนที่ไม่เขียนโค้ด แต่ชี้ URL ได้ สมัครบัญชีได้ และวางข้อความให้เอเจนต์ได้
 
+> **โหมดสภา (Council mode) — ใหม่:** เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ ของบอท เช่น เพิ่ม Telegram? เปลี่ยน prompt? ตัดไฟล์ไหนทิ้ง? — ใช้ `bin/council "คำถาม"` เพื่อเรียกสภา 18 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)) มาช่วยคิด โดยมีตัวเลือก `--quick`, `--duo`, `--triad architecture` เป็นต้น ดูรายละเอียดที่ [Council mode](#council-mode) ด้านล่าง
+
 เปิดสไลด์ในเบราว์เซอร์:
 
 - ไฟล์ท้องถิ่น: `open deck/index.html`
@@ -61,6 +63,9 @@ docs/shots/              ภาพหน้าสมัครที่ต้อ�
 LINE_RAG_OA_Guide_TH_Axiom.pptx / .pdf  สำเนานำเสนอ
 deck/                    สไลด์ภาษาไทย
 PROMPT.md                ชี้ไปที่ master prompt
+council/                 โหมดสภา (vendored) — ดูหัวข้อถัดไป
+.council.yaml           ค่าตั้งต้นของสภาสำหรับ repo นี้
+bin/council              ครอบคำสั่ง /council ให้รันได้ทันที
 ```
 
 ทางลัด: โคลน repo นี้ แล้วบอกเอเจนต์ว่า
@@ -69,6 +74,38 @@ PROMPT.md                ชี้ไปที่ master prompt
 > จนกว่า LINE Official Account จะตอบจากโฟลเดอร์ knowledge ได้
 > อย่าข้ามขั้น อย่าให้ฉันวางคีย์ลงในแชต
 
+
+---
+
+## Council mode (โหมดสภา)
+
+เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เกี่ยวกับบอท เช่น เปลี่ยน prompt, เพิ่ม Telegram, ตัดไฟล์เก่าทิ้ง, เลือก embedding ตัวใหม่ — ใช้สภา 18 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)) ช่วยคิด
+
+```bash
+# จาก root ของ repo
+./bin/council "Should we add streaming responses to the LINE bot?"
+./bin/council --quick --triad ship-now "Ship today with the flaky test?"
+./bin/council --duo --members torvalds,rams "Is the prompt under 1,500 chars?"
+./bin/council --triad architecture "Monorepo or polyrepo for adapters?"
+```
+
+ตัวเลือกที่ใช้บ่อย:
+
+| Flag | ความหมาย |
+|---|---|
+| `--quick` | โหมดเร็ว 2 รอบ ไม่มี cross-examination |
+| `--duo` | สภา 2 คน เน้นดึงกัน (Torvalds vs Musashi, Rams vs Ada, …) |
+| `--triad <name>` | สภา 3 คนตามโดเมน (architecture, ship-now, ai-product, …) |
+| `--full` | สภาครบ 18 คน (overrides `.council.yaml`) |
+| `--members a,b,c` | เลือกคนเอง (2–11 คน) |
+
+ค่าตั้งต้นของ repo นี้อยู่ใน [`.council.yaml`](.council.yaml) — `profile: execution-lean`, `triad: ship-now`, `no_auto_route: true` เพราะเป็นโปรเจกต์ที่ต้อง ship
+
+โฮสต์ที่รองรับ: **Claude Code** (ติดตั้งอยู่) และ **OpenCode** (ติดตั้งอยู่) — `bin/council` ตรวจให้อัตโนมัติว่าใช้ตัวไหน และติดตั้ง skill ให้เมื่อยังไม่มี (ดูตัวเลือก `--no-install` เมื่อไม่อยากให้ติดตั้ง)
+
+เอเจนต์พิเศษที่เพิ่มเข้ามาสำหรับโปรเจกต์ RAG นี้: `council-rag-curator` — ผู้คุมคลังความรู้ ที่จะถามว่า "คำตอบนี้ยืนอยู่บนไฟล์จริงหรือเปล่า" ทุกครั้ง (ดู [council/agents/council-rag-curator.md](council/agents/council-rag-curator.md))
+
+รายละเอียดทั้งหมดของโปรโตคอล: [council/SKILL.md](council/SKILL.md)  ·  ที่มาและใบอนุญาต: [council/VENDORED-FROM.md](council/VENDORED-FROM.md)
 
 ---
 

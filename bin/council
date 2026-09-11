@@ -1,0 +1,260 @@
+#!/usr/bin/env bash
+# bin/council — one-shot wrapper for invoking the vendored Council of
+# High Intelligence skill from the diy-rag-chatbot project root.
+#
+# Usage:
+#   bin/council "Should we add a /reset command to the LINE bot?"
+#   bin/council --duo --members torvalds,rams Is the prompt too long?
+#   bin/council --triad architecture Monorepo or polyrepo for adapters?
+#   bin/council --quick --triad ship-now Ship today or block?
+#   bin/council --help
+#
+# How it works:
+#   - Detects which host CLI is on PATH (claude, opencode, codex, gemini).
+#   - Detects whether the council skill is installed at the host's expected
+#     path (e.g. ~/.claude/skills/council/SKILL.md for Claude Code).
+#   - If installed: prints the exact /council command the host will run.
+#   - If NOT installed: runs the vendored installer first, then prints the
+#     command. Use --no-install to skip and just print.
+#   - Optionally captures the verdict to council-sessions/<timestamp>.md
+#     so the project has a record of what the council decided.
+#
+# This is a thin wrapper. The actual deliberation is run by the host CLI
+# (Claude Code, OpenCode, etc.) reading the SKILL.md at the host's skill
+# resolution path. The wrapper exists so that the project never has to
+# remember "which host am I on" and "did I install the skill yet".
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+COUNCIL_DIR="${PROJECT_ROOT}/council"
+
+# ---- flags ----
+DO_INSTALL=true
+CAPTURE_VERDICT=true
+COUNCIL_FLAGS=()
+QUESTION_PARTS=()
+
+usage() {
+  cat <<'EOF'
+Usage: bin/council [council-flags...] "the question"
+       bin/council --help
+       bin/council --no-install --no-capture [council-flags...] "the question"
+
+Council flags are passed through to the /council skill. Common ones:
+  --full           All 18 members (overrides .council.yaml profile)
+  --quick          Fast 2-round mode
+  --duo            2-member dialectic
+  --triad <name>   Predefined 3-member combination (e.g. architecture, ship-now)
+  --members a,b,c  Manual selection
+  --profile <name> classic | exploration-orthogonal | execution-lean
+  --models <path>  Seat-mapping YAML
+
+Project-level defaults live in .council.yaml. Explicit flags win.
+
+Examples:
+  bin/council "Should we add streaming responses to the LINE bot?"
+  bin/council --quick --triad ship-now "Ship today with the flaky test?"
+  bin/council --duo --members torvalds,rams "Is the prompt under 1,500 chars?"
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --no-install)
+      DO_INSTALL=false
+      shift
+      ;;
+    --no-capture)
+      CAPTURE_VERDICT=false
+      shift
+      ;;
+    *)
+      # Everything else is a council flag or part of the question.
+      COUNCIL_FLAGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# Reassemble the question from the remaining flags.
+QUESTION=""
+for token in "${COUNCIL_FLAGS[@]}"; do
+  QUESTION="${QUESTION}${QUESTION:+ }${token}"
+done
+
+if [[ -z "${QUESTION}" ]]; then
+  echo "Error: no question provided." >&2
+  usage
+  exit 1
+fi
+
+# ---- host detection ----
+HOST=""
+HOST_CMD=""
+if command -v claude >/dev/null 2>&1; then
+  HOST="claude-code"
+  HOST_CMD="claude"
+elif command -v opencode >/dev/null 2>&1; then
+  HOST="opencode"
+  HOST_CMD="opencode"
+elif command -v codex >/dev/null 2>&1; then
+  HOST="codex"
+  HOST_CMD="codex"
+elif command -v gemini >/dev/null 2>&1; then
+  HOST="gemini-cli"
+  HOST_CMD="gemini"
+else
+  echo "Error: no council host CLI found on PATH." >&2
+  echo "Install one of: claude (Claude Code), opencode, codex, gemini (Gemini CLI)." >&2
+  exit 1
+fi
+
+echo "[council] host: ${HOST} (${HOST_CMD})"
+echo "[council] project: ${PROJECT_ROOT}"
+echo "[council] question: ${QUESTION}"
+echo ""
+
+# ---- install check ----
+COUNCIL_INSTALLED=false
+case "${HOST}" in
+  claude-code)
+    [[ -f "${HOME}/.claude/skills/council/SKILL.md" ]] && COUNCIL_INSTALLED=true
+    INSTALL_CMD="${COUNCIL_DIR}/install.sh"
+    INSTALL_DESC="./council/install.sh"
+    ;;
+  opencode)
+    [[ -f "${HOME}/.config/opencode/skills/council/SKILL.md" ]] && COUNCIL_INSTALLED=true
+    INSTALL_CMD="${COUNCIL_DIR}/install.sh --opencode"
+    INSTALL_DESC="./council/install.sh --opencode"
+    ;;
+  codex)
+    [[ -f "${HOME}/.codex/skills/council/SKILL.md" ]] && COUNCIL_INSTALLED=true
+    INSTALL_CMD="${COUNCIL_DIR}/install.sh --codex"
+    INSTALL_DESC="./council/install.sh --codex"
+    ;;
+  gemini-cli)
+    [[ -f "${HOME}/.gemini/skills/council/SKILL.md" ]] && COUNCIL_INSTALLED=true
+    INSTALL_CMD="${COUNCIL_DIR}/install.sh --gemini"
+    INSTALL_DESC="./council/install.sh --gemini"
+    ;;
+esac
+
+if [[ "${COUNCIL_INSTALLED}" == "false" ]]; then
+  if [[ "${DO_INSTALL}" == "true" ]]; then
+    echo "[council] skill not installed for ${HOST} — running ${INSTALL_DESC}"
+    echo ""
+    if ! "${INSTALL_CMD}"; then
+      echo "" >&2
+      echo "Error: install failed. Re-run with --no-install to skip," >&2
+      echo "or run ${INSTALL_DESC} manually with --dry-run to debug." >&2
+      exit 1
+    fi
+    echo ""
+  else
+    echo "Error: council skill not installed for ${HOST} and --no-install set." >&2
+    echo "Run ${INSTALL_DESC} first, then re-invoke." >&2
+    exit 1
+  fi
+fi
+
+# ---- the actual invocation ----
+# Each host CLI accepts a prompt that begins with /council ... and routes
+# it to the council skill via the host's slash-command resolver. The
+# coordinator SKILL.md (council/SKILL.md, resolved to the host's skill
+# directory) handles the deliberation.
+COUNCIL_INVOCATION="/council ${QUESTION}"
+
+echo "[council] invocation: ${COUNCIL_INVOCATION}"
+echo "[council] running..."
+echo ""
+echo "────────────────────────────────────────────────────────────────────"
+echo ""
+
+# Pass through to the host. We do not pipe the invocation through stdin —
+# each host CLI has its own way of accepting a slash command. The most
+# portable approach is to use the host's "non-interactive prompt" mode
+# when available, falling back to instructing the user to paste.
+case "${HOST}" in
+  claude-code)
+    # Claude Code: `claude -p "/council ..."` runs in non-interactive mode.
+    # The skill resolution picks up ~/.claude/skills/council/SKILL.md.
+    if "${HOST_CMD}" -p "${COUNCIL_INVOCATION}"; then
+      : # ran cleanly
+    else
+      echo "" >&2
+      echo "Tip: if /council was not recognized, run 'claude' interactively" >&2
+      echo "and paste: ${COUNCIL_INVOCATION}" >&2
+      exit 1
+    fi
+    ;;
+  opencode)
+    # OpenCode: `opencode run "/council ..."` runs in non-interactive mode.
+    if "${HOST_CMD}" run "${COUNCIL_INVOCATION}"; then
+      : # ran cleanly
+    else
+      echo "" >&2
+      echo "Tip: if /council was not recognized, run 'opencode' interactively" >&2
+      echo "and paste: ${COUNCIL_INVOCATION}" >&2
+      exit 1
+    fi
+    ;;
+  codex)
+    if "${HOST_CMD}" -q "${COUNCIL_INVOCATION}"; then
+      : # ran cleanly
+    else
+      echo "" >&2
+      echo "Tip: run 'codex' interactively and paste: ${COUNCIL_INVOCATION}" >&2
+      exit 1
+    fi
+    ;;
+  gemini-cli)
+    if "${HOST_CMD}" -p "${COUNCIL_INVOCATION}"; then
+      : # ran cleanly
+    else
+      echo "" >&2
+      echo "Tip: run 'gemini' interactively and paste: ${COUNCIL_INVOCATION}" >&2
+      exit 1
+    fi
+    ;;
+esac
+
+echo ""
+echo "────────────────────────────────────────────────────────────────────"
+echo ""
+echo "[council] verdict produced."
+if [[ "${CAPTURE_VERDICT}" == "true" ]]; then
+  SESSIONS_DIR="${PROJECT_ROOT}/council-sessions"
+  mkdir -p "${SESSIONS_DIR}"
+  TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+  SLUG="$(echo "${QUESTION}" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '-' | head -c 60)"
+  CAPTURE_FILE="${SESSIONS_DIR}/${TIMESTAMP}-${SLUG}.md"
+  cat > "${CAPTURE_FILE}" <<EOF
+# Council session — ${TIMESTAMP}
+
+**Question:** ${QUESTION}
+**Host:** ${HOST}
+**Invocation:** \`${COUNCIL_INVOCATION}\`
+**Project:** ${PROJECT_ROOT}
+
+## Verdict
+
+_Paste the verdict from the host above this line._
+
+## Follow-up
+
+- [ ] Did the verdict name a concrete next step?
+- [ ] Did the verdict name kill criteria?
+- [ ] Did the verdict leave any questions UNRESOLVED?
+- [ ] Did the council cite the RAG-specific curator (council-rag-curator)?
+- [ ] If the verdict changes the knowledge folder, update \`knowledge/HOW-WE-FILE.md\`.
+
+EOF
+  echo "[council] verdict template written to: ${CAPTURE_FILE}"
+  echo "[council] gitignored — does NOT get committed unless you decide to."
+fi
