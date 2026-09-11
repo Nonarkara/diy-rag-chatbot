@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
+  <title>Council architectures side by side — 0xNyk vs karpathy</title>
+  <desc>Side-by-side comparison of the two council architectures vendored / adapted in diy-rag-chatbot.</desc>
+
+  <defs>
+    <style>
+      .frame { fill: none; stroke: #111; stroke-width: 1; }
+      .frame-thin { fill: none; stroke: #111; stroke-width: 0.5; }
+      .frame-dashed { fill: none; stroke: #111; stroke-width: 0.5; stroke-dasharray: 3 2; }
+      .hatch { fill: #111; }
+      .text-mono { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 10px; fill: #111; }
+      .text-sans { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; font-size: 11px; fill: #111; }
+      .text-tiny { font-family: -apple-system, sans-serif; font-size: 9px; fill: #111; letter-spacing: 0.1em; text-transform: uppercase; }
+      .text-label { font-family: -apple-system, sans-serif; font-size: 10px; fill: #111; letter-spacing: 0.05em; text-transform: uppercase; }
+      .text-faint { font-family: -apple-system, sans-serif; font-size: 9px; fill: #666; font-style: italic; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="720" fill="#fafaf7"/>
+
+  <!-- HEADER -->
+  <rect x="40" y="40" width="920" height="60" class="frame"/>
+  <text x="60" y="65" class="text-tiny">fig 03 · side by side</text>
+  <text x="60" y="86" class="text-sans" style="font-size: 16px; font-weight: 500;">Two council architectures · same goal · different engine</text>
+
+  <!-- LEFT COLUMN: 0xNyk -->
+  <g transform="translate(60, 130)">
+    <text x="0" y="0" class="text-tiny">column a · 0xNyk (vendored)</text>
+    <rect x="0" y="15" width="420" height="540" class="frame"/>
+
+    <!-- engine box -->
+    <text x="20" y="50" class="text-label">engine</text>
+    <rect x="20" y="60" width="380" height="40" class="frame-thin"/>
+    <text x="40" y="86" class="text-mono">prompt-only · host CLI · no API key</text>
+
+    <!-- models box -->
+    <text x="20" y="125" class="text-label">models used</text>
+    <rect x="20" y="135" width="380" height="40" class="frame-thin"/>
+    <text x="40" y="161" class="text-mono">1 LLM × 18 personas (system prompts)</text>
+
+    <!-- stages -->
+    <text x="20" y="200" class="text-label">stages</text>
+    <g transform="translate(20, 215)">
+      <rect x="0" y="0" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="15" text-anchor="middle" class="text-mono">00</text>
+      <text x="75" y="15" class="text-mono">parse + select panel</text>
+      <line x1="30" y1="22" x2="30" y2="40" class="frame-thin"/>
+      <polygon points="27,38 33,38 30,44" class="hatch"/>
+
+      <rect x="0" y="48" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="63" text-anchor="middle" class="text-mono">01</text>
+      <text x="75" y="63" class="text-mono">independent analysis (parallel)</text>
+      <line x1="30" y1="70" x2="30" y2="88" class="frame-thin"/>
+      <polygon points="27,86 33,86 30,92" class="hatch"/>
+
+      <rect x="0" y="96" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="111" text-anchor="middle" class="text-mono">02</text>
+      <text x="75" y="111" class="text-mono">cross-examination (parallel)</text>
+      <line x1="30" y1="118" x2="30" y2="136" class="frame-thin"/>
+      <polygon points="27,134 33,134 30,140" class="hatch"/>
+
+      <rect x="0" y="144" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="159" text-anchor="middle" class="text-mono">03</text>
+      <text x="75" y="159" class="text-mono">final stance (parallel)</text>
+      <line x1="30" y1="166" x2="30" y2="184" class="frame-thin"/>
+      <polygon points="27,182 33,182 30,188" class="hatch"/>
+
+      <rect x="0" y="192" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="207" text-anchor="middle" class="text-mono">04</text>
+      <text x="75" y="207" class="text-mono">synthesis → verdict (serial)</text>
+    </g>
+
+    <!-- output -->
+    <text x="20" y="455" class="text-label">output</text>
+    <rect x="20" y="465" width="380" height="50" class="frame-thin"/>
+    <text x="40" y="485" class="text-mono">structured verdict · sections required</text>
+    <text x="40" y="503" class="text-faint">dissent preserved · vote tally kept if split</text>
+
+    <!-- cost/latency -->
+    <text x="20" y="540" class="text-label">cost · latency</text>
+    <rect x="20" y="548" width="380" height="0" class="frame-thin"/>
+  </g>
+
+  <!-- RIGHT COLUMN: karpathy -->
+  <g transform="translate(520, 130)">
+    <text x="0" y="0" class="text-tiny">column b · karpathy (adapted)</text>
+    <rect x="0" y="15" width="420" height="540" class="frame"/>
+
+    <text x="20" y="50" class="text-label">engine</text>
+    <rect x="20" y="60" width="380" height="40" class="frame-thin"/>
+    <text x="40" y="86" class="text-mono">FastAPI + OpenRouter + React UI</text>
+
+    <text x="20" y="125" class="text-label">models used</text>
+    <rect x="20" y="135" width="380" height="40" class="frame-thin"/>
+    <text x="40" y="161" class="text-mono">N LLMs × 1 default persona each</text>
+
+    <text x="20" y="200" class="text-label">stages</text>
+    <g transform="translate(20, 215)">
+      <rect x="0" y="0" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="15" text-anchor="middle" class="text-mono">01</text>
+      <text x="75" y="15" class="text-mono">first opinions (parallel, 4+ models)</text>
+      <line x1="30" y1="22" x2="30" y2="40" class="frame-thin"/>
+      <polygon points="27,38 33,38 30,44" class="hatch"/>
+
+      <rect x="0" y="48" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="63" text-anchor="middle" class="text-mono">02</text>
+      <text x="75" y="63" class="text-mono">anonymized review (parallel, 4+ models)</text>
+      <line x1="30" y1="70" x2="30" y2="88" class="frame-thin"/>
+      <polygon points="27,86 33,86 30,92" class="hatch"/>
+
+      <rect x="0" y="96" width="60" height="22" class="frame-thin"/>
+      <text x="30" y="111" text-anchor="middle" class="text-mono">03</text>
+      <text x="75" y="111" class="text-mono">chairman synthesis (serial, 1 model)</text>
+    </g>
+
+    <!-- empty gap (intentional) -->
+    <text x="20" y="335" class="text-faint">… no further stages.</text>
+    <text x="20" y="350" class="text-faint">the 3-stage flow IS the whole protocol.</text>
+
+    <text x="20" y="395" class="text-label">output</text>
+    <rect x="20" y="405" width="380" height="50" class="frame-thin"/>
+    <text x="40" y="425" class="text-mono">synthesized prose + per-model transcripts</text>
+    <text x="40" y="443" class="text-faint">aggregate ranking shown as a small table</text>
+
+    <text x="20" y="480" class="text-label">cost · latency</text>
+    <rect x="20" y="490" width="380" height="40" class="frame-thin"/>
+    <text x="40" y="510" class="text-mono">3× OpenRouter calls per question</text>
+    <text x="40" y="525" class="text-faint">fast (~30–90s for 4 models)</text>
+  </g>
+
+  <!-- BOTTOM: when to use which -->
+  <g transform="translate(60, 690)">
+    <text x="0" y="0" class="text-tiny">decision rule</text>
+    <text x="0" y="20" class="text-sans" style="font-size: 11px;">RAG / bot / corpus → 0xNyk · design / strategy / "what would other models think" → karpathy</text>
+  </g>
+</svg>

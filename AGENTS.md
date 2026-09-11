@@ -54,7 +54,18 @@ Knowledge standard the kit copies from Smart City Thailand: bilingual `ถาม
 
 ## Council (โหมดสภา)
 
-When the owner's question is a real decision — not a click on a button — offer to convene the council. The vendored skill lives in `council/`; the wrapper is `bin/council`.
+The repo ships **two engines**. Pick the right one for the question.
+
+- **`bin/council`** (0xNyk, vendored) — for RAG / bot / corpus / prompt
+  questions. One LLM, 18 personas, 5-stage protocol, RAG-aware via
+  the local `council-rag-curator` persona. Default for this repo.
+- **`bin/llm-council`** (karpathy, adapted) — for design / strategy /
+  cross-model-family questions. Many LLMs, 3-stage protocol, runs
+  only when the upstream karpathy app is on `localhost:8001`. Falls
+  back to `bin/council` if the app is not running.
+
+Full comparison, decision rule, and flow diagrams:
+[`docs/architecture/council-architecture.md`](docs/architecture/council-architecture.md).
 
 - **The owner is non-technical.** Do not run the council in front of them. Run it yourself, then summarize the verdict in plain Thai/English, with the concrete next step.
 - **Capture the verdict** in `council-sessions/<timestamp>-<slug>.md` (gitignored). The capture file already has a follow-up checklist; fill it in.

@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+# bin/llm-council — delegate to a running karpathy/llm-council app,
+# fall back to bin/council (0xNyk) when the app is not reachable.
+#
+# Usage:
+#   bin/llm-council "the question"
+#   bin/llm-council --karpathy=off "the question"   # skip the probe
+#   bin/llm-council --karpathy=force "the question" # require the app
+#   bin/llm-council --help
+#
+# How it works:
+#   1. If --karpathy=off: jump straight to bin/council.
+#   2. Else, probe http://localhost:8001/ with a 1.5s timeout.
+#      - 200 OK → POST the question, print the 3-stage result.
+#      - fail/timeout → fall back to bin/council (or fail if --karpathy=force).
+#   3. Capture the verdict to council-sessions/<timestamp>-<slug>-karpathy.md
+#      (or -0xnyk.md for the fallback path).
+#
+# This is a sibling to bin/council, not a replacement. They share the
+# `council-sessions/` capture folder and the gitignore.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+KARPATHY_HOST="${KARPATHY_HOST:-localhost}"
+KARPATHY_PORT="${KARPATHY_PORT:-8001}"
+KARPATHY_URL="http://${KARPATHY_HOST}:${KARPATHY_PORT}"
+PROBE_TIMEOUT="${COUNCIL_PROBE_TIMEOUT:-1.5}"
+KARPATHY_MODE="${COUNCIL_KARPATHY:-auto}"   # auto | off | force
+
+usage() {
+  cat <<'EOF'
+Usage: bin/llm-council [flags] "the question"
+       bin/llm-council --help
+
+Flags:
+  --karpathy=auto   (default) probe localhost:8001, use if reachable, else fall back to 0xNyk
+  --karpathy=off    skip the probe, always use the 0xNyk council (same as bin/council)
+  --karpathy=force  require the karpathy app, fail if not reachable
+
+Env vars:
+  KARPATHY_HOST      default: localhost
+  KARPATHY_PORT      default: 8001
+  COUNCIL_KARPATHY   same as --karpathy= (overrides flag if both are set)
+  COUNCIL_PROBE_TIMEOUT  seconds, default 1.5
+
+Examples:
+  bin/llm-council "What do Claude, GPT, and Gemini each think of this prompt?"
+  bin/llm-council --karpathy=off "Should we drop the Smart City standards section?"
+  COUNCIL_KARPATHY=force bin/llm-council "..."   # fail loudly if app is down
+EOF
+}
+
+QUESTION_PARTS=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --karpathy=*)
+      KARPATHY_MODE="${1#--karpathy=}"
+      shift
+      ;;
+    --karpathy)
+      KARPATHY_MODE="$2"
+      shift 2
+      ;;
+    *)
+      QUESTION_PARTS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+QUESTION=""
+for token in "${QUESTION_PARTS[@]}"; do
+  QUESTION="${QUESTION}${QUESTION:+ }${token}"
+done
+
+if [[ -z "${QUESTION}" ]]; then
+  echo "Error: no question provided." >&2
+  usage
+  exit 1
+fi
+
+# Override via env var if set
+if [[ -n "${COUNCIL_KARPATHY:-}" ]]; then
+  KARPATHY_MODE="${COUNCIL_KARPATHY}"
+fi
+
+# Validate the mode
+case "${KARPATHY_MODE}" in
+  auto|off|force) ;;
+  *)
+    echo "Error: --karpathy must be auto, off, or force (got: ${KARPATHY_MODE})" >&2
+    exit 1
+    ;;
+esac
+
+echo "[llm-council] question: ${QUESTION}"
+echo "[llm-council] karpathy mode: ${KARPATHY_MODE} (probing ${KARPATHY_URL}/)"
+
+# If user wants to skip, go straight to 0xNyk
+if [[ "${KARPATHY_MODE}" == "off" ]]; then
+  echo "[llm-council] karpathy disabled — delegating to bin/council (0xNyk)"
+  exec "${SCRIPT_DIR}/council" --no-capture "${QUESTION}"
+fi
+
+# Probe the karpathy app
+PROBE_OK=false
+if command -v curl >/dev/null 2>&1; then
+  if curl --silent --max-time "${PROBE_TIMEOUT}" --output /dev/null --write-out "%{http_code}" "${KARPATHY_URL}/" 2>/dev/null | grep -qE "^(2|3)[0-9]{2}$"; then
+    PROBE_OK=true
+  fi
+fi
+
+if [[ "${PROBE_OK}" != "true" ]]; then
+  if [[ "${KARPATHY_MODE}" == "force" ]]; then
+    echo "Error: --karpathy=force but ${KARPATHY_URL}/ is not reachable." >&2
+    echo "Start the app first: cd ~/work/llm-council && ./start.sh" >&2
+    exit 1
+  fi
+  echo "[llm-council] karpathy app not reachable — falling back to bin/council (0xNyk)"
+  exec "${SCRIPT_DIR}/council" --no-capture "${QUESTION}"
+fi
+
+# Karpathy app is up. POST the question.
+echo "[llm-council] karpathy app reachable — running 3-stage deliberation"
+echo ""
+echo "────────────────────────────────────────────────────────────────────"
+echo ""
+
+PAYLOAD=$(printf '{"query": %s}' "$(printf '%s' "${QUESTION}" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')")
+
+RESPONSE_FILE="$(mktemp -t llm-council-XXXXXX.json)"
+trap 'rm -f "${RESPONSE_FILE}"' EXIT
+
+HTTP_CODE=$(curl --silent --max-time 120 --output "${RESPONSE_FILE}" --write-out "%{http_code}" \
+  -X POST -H "Content-Type: application/json" \
+  --data "${PAYLOAD}" \
+  "${KARPATHY_URL}/api/query" || echo "000")
+
+if [[ "${HTTP_CODE}" != "200" ]] || [[ ! -s "${RESPONSE_FILE}" ]]; then
+  echo "Error: karpathy app returned HTTP ${HTTP_CODE} or empty body" >&2
+  if [[ "${KARPATHY_MODE}" == "force" ]]; then
+    cat "${RESPONSE_FILE}" >&2
+    exit 1
+  fi
+  echo "Falling back to bin/council (0xNyk)..." >&2
+  exec "${SCRIPT_DIR}/council" --no-capture "${QUESTION}"
+fi
+
+# Pretty-print the JSON response
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<PY 2>/dev/null || cat "${RESPONSE_FILE}"
+import json, sys
+with open("${RESPONSE_FILE}") as f:
+    data = json.load(f)
+
+# Schema is upstream-dependent. Render what we have.
+print("=" * 70)
+print("KARPATHY 3-STAGE COUNCIL VERDICT")
+print("=" * 70)
+
+if "stage3" in data and isinstance(data["stage3"], dict):
+    print()
+    print("── CHAIRMAN'S FINAL ANSWER ──")
+    print()
+    print(data["stage3"].get("response", data["stage3"].get("content", "(no content)")))
+    print()
+
+if "metadata" in data and isinstance(data["metadata"], dict):
+    if "aggregate_rankings" in data["metadata"]:
+        print("── AGGREGATE PEER RANKINGS ──")
+        for row in data["metadata"]["aggregate_rankings"]:
+            model = row.get("model", "?")
+            avg = row.get("average_rank", "?")
+            n = row.get("rankings_count", "?")
+            print(f"  {model:50s}  avg rank {avg}  ({n} votes)")
+        print()
+
+if "stage1" in data and isinstance(data["stage1"], list):
+    print("── STAGE 1: FIRST OPINIONS ──")
+    for i, item in enumerate(data["stage1"], 1):
+        model = item.get("model", "model?")
+        response = item.get("response", item.get("content", ""))
+        snippet = response[:300].replace("\n", " ")
+        if len(response) > 300:
+            snippet += "…"
+        print(f"  [{i}] {model}")
+        print(f"      {snippet}")
+        print()
+PY
+else
+  cat "${RESPONSE_FILE}"
+fi
+
+echo ""
+echo "────────────────────────────────────────────────────────────────────"
+echo ""
+echo "[llm-council] verdict produced via karpathy 3-stage."
+
+# Capture to council-sessions/ (gitignored)
+SESSIONS_DIR="${PROJECT_ROOT}/council-sessions"
+mkdir -p "${SESSIONS_DIR}"
+TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+SLUG="$(echo "${QUESTION}" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '-' | head -c 60)"
+CAPTURE_FILE="${SESSIONS_DIR}/${TIMESTAMP}-${SLUG}-karpathy.md"
+cat > "${CAPTURE_FILE}" <<EOF
+# Council session — ${TIMESTAMP} (karpathy 3-stage)
+
+**Question:** ${QUESTION}
+**Engine:** karpathy/llm-council via ${KARPATHY_URL}
+**Mode:** 3-stage (first opinions → review → chairman)
+**Project:** ${PROJECT_ROOT}
+
+## Verdict
+
+_Paste the verdict from the response above this line._
+
+## Follow-up
+
+- [ ] Did the chairman's answer cite the strongest evidence from Stage 1?
+- [ ] Did the peer rankings show real divergence (not all models agreeing)?
+- [ ] If a model failed, was the failure surfaced or silently dropped?
+- [ ] If the verdict contradicts the 0xNyk council's view, capture why.
+
+## Raw response
+
+The full JSON response from the karpathy app is in:
+
+\`\`\`
+${RESPONSE_FILE}
+\`\`\`
+EOF
+
+echo "[llm-council] verdict template written to: ${CAPTURE_FILE}"

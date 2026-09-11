@@ -66,6 +66,9 @@ PROMPT.md                ชี้ไปที่ master prompt
 council/                 โหมดสภา (vendored) — ดูหัวข้อถัดไป
 .council.yaml           ค่าตั้งต้นของสภาสำหรับ repo นี้
 bin/council              ครอบคำสั่ง /council ให้รันได้ทันที
+karpathy-council/        3-stage multi-model pattern (adapted) — ดู docs/architecture
+bin/llm-council          ครอบ karpathy app (localhost:8001) → fall back ไป bin/council
+docs/architecture/       ผัง SVG + council-architecture.md (อธิบายสอง engine)
 ```
 
 ทางลัด: โคลน repo นี้ แล้วบอกเอเจนต์ว่า
@@ -79,17 +82,25 @@ bin/council              ครอบคำสั่ง /council ให้รั
 
 ## Council mode (โหมดสภา)
 
-เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เกี่ยวกับบอท เช่น เปลี่ยน prompt, เพิ่ม Telegram, ตัดไฟล์เก่าทิ้ง, เลือก embedding ตัวใหม่ — ใช้สภา 18 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)) ช่วยคิด
+เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เกี่ยวกับบอท เช่น เปลี่ยน prompt, เพิ่ม Telegram, ตัดไฟล์เก่าทิ้ง, เลือก embedding ตัวใหม่ — ใช้สภาช่วยคิด repo นี้มี **สอง engine** ให้เลือก
 
 ```bash
-# จาก root ของ repo
+# Engine A — 0xNyk Council (vendored, default)
+#   one LLM × 18 personas · 5-stage protocol · RAG-aware (rag-curator)
 ./bin/council "Should we add streaming responses to the LINE bot?"
 ./bin/council --quick --triad ship-now "Ship today with the flaky test?"
 ./bin/council --duo --members torvalds,rams "Is the prompt under 1,500 chars?"
 ./bin/council --triad architecture "Monorepo or polyrepo for adapters?"
+
+# Engine B — karpathy LLM Council (adapted, when its app is on localhost:8001)
+#   many LLMs × 3-stage protocol · cross-model-family review
+./bin/llm-council "What do Claude, GPT, and Gemini each think of this prompt?"
+./bin/llm-council --karpathy=off "Should we drop the Smart City standards section?"
 ```
 
-ตัวเลือกที่ใช้บ่อย:
+สอง engine นี้ต่างกัน — ดู [docs/architecture/council-architecture.md](docs/architecture/council-architecture.md) สำหรับผังเปรียบเทียบและ decision rule ว่าเมื่อไหร่ใช้ตัวไหน
+
+ตัวเลือกที่ใช้บ่อย (0xNyk):
 
 | Flag | ความหมาย |
 |---|---|
@@ -105,7 +116,7 @@ bin/council              ครอบคำสั่ง /council ให้รั
 
 เอเจนต์พิเศษที่เพิ่มเข้ามาสำหรับโปรเจกต์ RAG นี้: `council-rag-curator` — ผู้คุมคลังความรู้ ที่จะถามว่า "คำตอบนี้ยืนอยู่บนไฟล์จริงหรือเปล่า" ทุกครั้ง (ดู [council/agents/council-rag-curator.md](council/agents/council-rag-curator.md))
 
-รายละเอียดทั้งหมดของโปรโตคอล: [council/SKILL.md](council/SKILL.md)  ·  ที่มาและใบอนุญาต: [council/VENDORED-FROM.md](council/VENDORED-FROM.md)
+รายละเอียดทั้งหมดของโปรโตคอล: [council/SKILL.md](council/SKILL.md)  ·  ที่มาและใบอนุญาต: [council/VENDORED-FROM.md](council/VENDORED-FROM.md)  ·  แผนผัง: [docs/architecture/council-architecture.md](docs/architecture/council-architecture.md)
 
 ---
 

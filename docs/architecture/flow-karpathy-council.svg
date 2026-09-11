@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 900" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
+  <title>karpathy/llm-council — 3-stage multi-model deliberation</title>
+  <desc>How the karpathy council runs three stages of deliberation across multiple LLM models via OpenRouter. Adapted into diy-rag-chatbot at karpathy-council/.</desc>
+
+  <defs>
+    <style>
+      .frame { fill: none; stroke: #111; stroke-width: 1; }
+      .frame-thin { fill: none; stroke: #111; stroke-width: 0.5; }
+      .hatch { fill: #111; }
+      .text-mono { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 11px; fill: #111; }
+      .text-sans { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; font-size: 13px; fill: #111; }
+      .text-num { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 28px; font-weight: 300; fill: #111; }
+      .text-tiny { font-family: -apple-system, sans-serif; font-size: 9px; fill: #111; letter-spacing: 0.1em; text-transform: uppercase; }
+      .text-label { font-family: -apple-system, sans-serif; font-size: 11px; fill: #111; letter-spacing: 0.05em; text-transform: uppercase; }
+      .text-faint { font-family: -apple-system, sans-serif; font-size: 10px; fill: #666; font-style: italic; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect width="800" height="900" fill="#fafaf7"/>
+
+  <!-- HEADER BAND -->
+  <rect x="40" y="40" width="720" height="80" class="frame"/>
+  <text x="60" y="70" class="text-tiny">fig 02 · council flow</text>
+  <text x="60" y="92" class="text-sans" style="font-size: 18px; font-weight: 500;">LLM Council (karpathy)</text>
+  <text x="60" y="112" class="text-faint">3-stage multi-model deliberation · many LLMs · one web app + OpenRouter</text>
+
+  <!-- IN -->
+  <text x="40" y="160" class="text-label">INPUT</text>
+  <rect x="40" y="170" width="720" height="40" class="frame"/>
+  <text x="60" y="195" class="text-mono">$ bin/llm-council "What do Claude, GPT, and Gemini each think of this prompt?"</text>
+
+  <!-- ARROW DOWN -->
+  <line x1="400" y1="210" x2="400" y2="240" class="frame"/>
+  <polygon points="395,238 405,238 400,250" class="hatch"/>
+
+  <!-- STAGE 1 -->
+  <text x="40" y="290" class="text-num">01</text>
+  <text x="100" y="280" class="text-label">first opinions · parallel</text>
+  <text x="100" y="298" class="text-sans">each model answers independently · labels stay anonymous to other models</text>
+  <rect x="40" y="310" width="720" height="100" class="frame"/>
+  <g transform="translate(60, 325)">
+    <text x="0" y="0" class="text-tiny">models (OpenRouter)</text>
+    <!-- model boxes -->
+    <rect x="0" y="15" width="160" height="55" class="frame-thin"/>
+    <text x="80" y="40" text-anchor="middle" class="text-mono">gpt-5.1</text>
+    <text x="80" y="60" text-anchor="middle" class="text-faint">→ "Response A"</text>
+
+    <rect x="170" y="15" width="160" height="55" class="frame-thin"/>
+    <text x="250" y="40" text-anchor="middle" class="text-mono">claude-sonnet-4.5</text>
+    <text x="250" y="60" text-anchor="middle" class="text-faint">→ "Response B"</text>
+
+    <rect x="340" y="15" width="160" height="55" class="frame-thin"/>
+    <text x="420" y="40" text-anchor="middle" class="text-mono">gemini-3-pro</text>
+    <text x="420" y="60" text-anchor="middle" class="text-faint">→ "Response C"</text>
+
+    <rect x="510" y="15" width="160" height="55" class="frame-thin"/>
+    <text x="590" y="40" text-anchor="middle" class="text-mono">grok-4</text>
+    <text x="590" y="60" text-anchor="middle" class="text-faint">→ "Response D"</text>
+  </g>
+
+  <line x1="400" y1="410" x2="400" y2="440" class="frame"/>
+  <polygon points="395,438 405,438 400,450" class="hatch"/>
+
+  <!-- STAGE 2 -->
+  <text x="40" y="490" class="text-num">02</text>
+  <text x="100" y="480" class="text-label">review · anonymized peer ranking</text>
+  <text x="100" y="498" class="text-sans">each model ranks the others · labels (A/B/C/D) prevent model-name bias</text>
+  <rect x="40" y="510" width="720" height="100" class="frame"/>
+  <g transform="translate(60, 525)">
+    <text x="0" y="0" class="text-tiny">final ranking output (each model)</text>
+    <text x="0" y="22" class="text-mono">Response A: deep but slow, cites the wrong case law…</text>
+    <text x="0" y="40" class="text-mono">Response B: best grounded, missing one counterfactual…</text>
+    <text x="0" y="60" class="text-mono" style="fill: #666;">FINAL RANKING:</text>
+    <text x="0" y="76" class="text-mono">1. Response B</text>
+    <text x="100" y="76" class="text-mono">2. Response D</text>
+    <text x="200" y="76" class="text-mono">3. Response A</text>
+    <text x="300" y="76" class="text-mono">4. Response C</text>
+  </g>
+
+  <line x1="400" y1="610" x2="400" y2="640" class="frame"/>
+  <polygon points="395,638 405,638 400,650" class="hatch"/>
+
+  <!-- STAGE 3 -->
+  <text x="40" y="690" class="text-num">03</text>
+  <text x="100" y="680" class="text-label">chairman synthesis</text>
+  <text x="100" y="698" class="text-sans">one designated model reads all Stage 1 + Stage 2 and produces the final answer</text>
+  <rect x="40" y="710" width="720" height="80" class="frame"/>
+  <g transform="translate(60, 725)">
+    <text x="0" y="0" class="text-tiny">chairman</text>
+    <rect x="0" y="10" width="200" height="50" class="frame-thin" style="stroke-width: 1.5;"/>
+    <text x="100" y="35" text-anchor="middle" class="text-mono">gemini-3-pro</text>
+    <text x="100" y="52" text-anchor="middle" class="text-faint">(synthesizes)</text>
+    <text x="220" y="35" class="text-mono">→ single final answer + the per-model</text>
+    <text x="220" y="52" class="text-mono">  Stage 1 answers + Stage 2 rankings</text>
+  </g>
+
+  <!-- OUT -->
+  <line x1="400" y1="790" x2="400" y2="820" class="frame"/>
+  <polygon points="395,818 405,818 400,830" class="hatch"/>
+  <text x="40" y="860" class="text-label">OUTPUT</text>
+  <rect x="40" y="870" width="720" height="0" class="frame-thin"/>
+</svg>

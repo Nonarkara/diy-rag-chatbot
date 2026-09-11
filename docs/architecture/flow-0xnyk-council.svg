@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
+  <title>0xNyk Council of High Intelligence — 5-stage deliberation flow</title>
+  <desc>How the 0xNyk council skill (vendored in council/) runs a structured multi-persona deliberation inside a host CLI (Claude Code, OpenCode, etc.).</desc>
+
+  <defs>
+    <style>
+      .frame { fill: none; stroke: #111; stroke-width: 1; }
+      .frame-thin { fill: none; stroke: #111; stroke-width: 0.5; }
+      .hatch { fill: #111; }
+      .text-mono { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 11px; fill: #111; }
+      .text-sans { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; font-size: 13px; fill: #111; }
+      .text-num { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 28px; font-weight: 300; fill: #111; }
+      .text-tiny { font-family: -apple-system, sans-serif; font-size: 9px; fill: #111; letter-spacing: 0.1em; text-transform: uppercase; }
+      .text-label { font-family: -apple-system, sans-serif; font-size: 11px; fill: #111; letter-spacing: 0.05em; text-transform: uppercase; }
+      .text-faint { font-family: -apple-system, sans-serif; font-size: 10px; fill: #666; font-style: italic; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect width="800" height="1100" fill="#fafaf7"/>
+
+  <!-- HEADER BAND -->
+  <rect x="40" y="40" width="720" height="80" class="frame"/>
+  <text x="60" y="70" class="text-tiny">fig 01 · council flow</text>
+  <text x="60" y="92" class="text-sans" style="font-size: 18px; font-weight: 500;">Council of High Intelligence (0xNyk)</text>
+  <text x="60" y="112" class="text-faint">5-stage prompt-based deliberation · one LLM · many personas · runs in host CLI</text>
+
+  <!-- IN -->
+  <text x="40" y="160" class="text-label">INPUT</text>
+  <rect x="40" y="170" width="720" height="40" class="frame"/>
+  <text x="60" y="195" class="text-mono">$ bin/council "Should we add streaming responses to the LINE bot?"</text>
+
+  <!-- ARROW DOWN -->
+  <line x1="400" y1="210" x2="400" y2="240" class="frame"/>
+  <polygon points="395,238 405,238 400,250" class="hatch"/>
+
+  <!-- STAGE 0 -->
+  <text x="40" y="290" class="text-num">00</text>
+  <text x="100" y="280" class="text-label">parse + select panel</text>
+  <text x="100" y="298" class="text-sans">read .council.yaml, pick triad / members, choose mode (full/quick/duo)</text>
+  <rect x="40" y="310" width="720" height="50" class="frame"/>
+  <text x="60" y="335" class="text-mono">.council.yaml → profile: execution-lean, triad: ship-now, no_auto_route: true</text>
+  <text x="60" y="352" class="text-faint">flag priority: --quick/--duo set mode, --full/--triad/--members/--profile set panel, --models overrides routing</text>
+
+  <line x1="400" y1="360" x2="400" y2="390" class="frame"/>
+  <polygon points="395,388 405,388 400,400" class="hatch"/>
+
+  <!-- STAGE 1 -->
+  <text x="40" y="430" class="text-num">01</text>
+  <text x="100" y="420" class="text-label">independent analysis</text>
+  <text x="100" y="438" class="text-sans">each persona analyses the question blind · 300-word limit · no peer reference</text>
+  <rect x="40" y="450" width="720" height="60" class="frame"/>
+  <!-- personas row -->
+  <g transform="translate(60, 470)">
+    <rect x="0" y="0" width="100" height="30" class="frame-thin"/>
+    <text x="50" y="20" text-anchor="middle" class="text-mono">torvalds</text>
+    <rect x="110" y="0" width="100" height="30" class="frame-thin"/>
+    <text x="160" y="20" text-anchor="middle" class="text-mono">feynman</text>
+    <rect x="220" y="0" width="100" height="30" class="frame-thin"/>
+    <text x="270" y="20" text-anchor="middle" class="text-mono">aurelius</text>
+    <rect x="330" y="0" width="100" height="30" class="frame-thin" style="stroke-dasharray: 2 2;"/>
+    <text x="380" y="20" text-anchor="middle" class="text-mono" style="fill: #666;">+ rag-curator</text>
+    <text x="450" y="20" class="text-faint">… up to 18 personas (full mode)</text>
+  </g>
+
+  <line x1="400" y1="510" x2="400" y2="540" class="frame"/>
+  <polygon points="395,538 405,538 400,550" class="hatch"/>
+
+  <!-- STAGE 2 -->
+  <text x="40" y="580" class="text-num">02</text>
+  <text x="100" y="570" class="text-label">cross-examination</text>
+  <text x="100" y="588" class="text-sans">each persona reads others' positions, names a Disagree + Strengthened</text>
+  <rect x="40" y="600" width="720" height="60" class="frame"/>
+  <g transform="translate(60, 615)">
+    <text x="0" y="15" class="text-mono">Disagree: feynman — your 200ms latency claim hides the 4s retrieval cost</text>
+    <text x="0" y="32" class="text-mono">Strengthened by: torvalds — your 'ship the benchmark first' matches my rule</text>
+  </g>
+
+  <line x1="400" y1="660" x2="400" y2="690" class="frame"/>
+  <polygon points="395,688 405,688 400,700" class="hatch"/>
+
+  <!-- STAGE 3 -->
+  <text x="40" y="730" class="text-num">03</text>
+  <text x="100" y="720" class="text-label">final stance</text>
+  <text x="100" y="738" class="text-sans">each persona declares their restated position, evidence label, confidence</text>
+  <rect x="40" y="750" width="720" height="50" class="frame"/>
+  <text x="60" y="775" class="text-mono">torvalds: ship a 30-line benchmark first, NOT a swap · confidence: high</text>
+  <text x="60" y="792" class="text-faint">rag-curator: the corpus has 412 files · none cited bge-m3 by name · evidence: ASSUMED</text>
+
+  <line x1="400" y1="800" x2="400" y2="830" class="frame"/>
+  <polygon points="395,828 405,828 400,840" class="hatch"/>
+
+  <!-- STAGE 4 -->
+  <text x="40" y="870" class="text-num">04</text>
+  <text x="100" y="860" class="text-label">synthesis · the verdict</text>
+  <text x="100" y="878" class="text-sans">coordinator produces verdict with required sections · weighted tally kept</text>
+  <rect x="40" y="890" width="720" height="120" class="frame"/>
+  <g transform="translate(60, 905)">
+    <text x="0" y="12" class="text-tiny">verdict sections</text>
+    <text x="0" y="32" class="text-mono">· Problem · Council Composition · Provider Routing</text>
+    <text x="0" y="50" class="text-mono">· Acceptable Compromises · Kill Criteria · Concrete Next Step</text>
+    <text x="0" y="68" class="text-mono">· Unresolved Questions · Recommended Next Steps</text>
+    <text x="0" y="86" class="text-mono">· Consensus &amp; Agreement · Vote Tally (split if no consensus)</text>
+    <text x="0" y="104" class="text-mono">· Key Insights by Member · Points of Disagreement · Minority Report</text>
+  </g>
+
+  <!-- OUT -->
+  <line x1="400" y1="1010" x2="400" y2="1040" class="frame"/>
+  <polygon points="395,1038 405,1038 400,1050" class="hatch"/>
+  <text x="40" y="1075" class="text-label">OUTPUT</text>
+  <rect x="40" y="1085" width="720" height="0" class="frame-thin"/>
+</svg>
