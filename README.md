@@ -2,15 +2,61 @@
 
 **แร็กทำเองของดร.นน · แชตบอทบริการตนเอง · สภาที่ปรึกษาในกล่องเดียว**
 
-> โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม · **สภา 19 คนคือที่ปรึกษา**
+<p align="center">
+  <img src="assets/hero-banner.svg" alt="DIY RAG / AI Council — single-orchestrator pattern" width="100%">
+</p>
 
-![hero](docs/architecture/hero.svg)
+<p align="center">
+  <em><strong>โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม · สภา 19 คนคือที่ปรึกษา</strong></em>
+</p>
 
-**Single-orchestrator pattern.** คนทัก LINE OA หรือ Telegram bot ของคุณ → บอทดึงจากโฟลเดอร์ `knowledge/` → ตอบจากไฟล์นั้นเท่านั้น → ถ้าไม่มีในไฟล์ พูดว่าไม่มี ไม่เดา
+<p align="center">
+  Turn any knowledge folder into a LINE / Telegram bot that answers <em>only</em> from the folder — plus a deployable in-process AI council for hard decisions. One Python process. 19 personas. MIT.
+</p>
 
-**ที่เพิ่มใหม่ — สภาที่ปรึกษา (Council mode):** เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ ของบอท เช่น เพิ่ม Telegram? เปลี่ยน prompt? ตัดไฟล์ไหนทิ้ง? — ใช้ `bin/council "คำถาม"` เพื่อเรียกสภา 19 คน (vendored จาก [council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence) + RAG-specific ที่เพิ่มเข้ามา) มาช่วยคิด 5 stages (independent → cross-examine → final → synthesis) — ดู [Council mode](#council-mode-โหมดสภา)
+<p align="center">
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/START-HERE.md"><img src="https://img.shields.io/badge/START-วิธีใช้-7c3aed?style=for-the-badge" alt="start"></a>
+  &nbsp;
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/AGENTS.md"><img src="https://img.shields.io/badge/AGENTS.md-สัญญาของเอเจนต์-7c3aed?style=for-the-badge" alt="agents"></a>
+  &nbsp;
+  <a href="https://nonarkara.github.io/diy-rag-chatbot/"><img src="https://img.shields.io/badge/สไลด์-31_สไลด์ภาษาไทย-22c55e?style=for-the-badge" alt="deck"></a>
+</p>
 
-**Telegram bot (in-process):** deploy ได้ทันที — `python -m bot` — ใช้ single-orchestrator pattern ที่แก้ปัญหา "หลายบอทคุยกันไม่ได้" ใน Telegram (อธิบายใน [wrong-vs-right illustration](docs/architecture/wrong-vs-right.svg))
+<p align="center">
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/START-HERE.md">Start</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/AGENTS.md">AGENTS.md</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/council/SKILL.md">Council skill</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/bot/README.md">Telegram bot</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/docs/architecture/council-architecture.md">Architecture</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/docs/architecture/ILLUSTRATIONS.md">Illustrations</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/START-HERE.md#station-17--optional-council-bot-on-telegram">Deploy</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/AGENTS.md#deployable-council-bot-bot">FAQ</a>
+</p>
+
+<p align="center">
+  <img src="assets/badges/dr-non-1.jpg" alt="Dr Non's #1 Repository Of The Day" width="49%">
+  &nbsp;
+  <img src="assets/badges/dr-non-2.jpg" alt="Dr Non's #2 Repository Of The Day" width="49%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/release-v1.0.0-7c3aed?style=flat-square" alt="release">
+  <img src="https://img.shields.io/badge/council-19_personas-7c3aed?style=flat-square" alt="council">
+  <img src="https://img.shields.io/badge/engine-0xNyk_+_karpathy-7c3aed?style=flat-square" alt="engine">
+  <img src="https://img.shields.io/badge/formats-SVG·MD·PY·YAML-1f2937?style=flat-square" alt="formats">
+  <img src="https://img.shields.io/badge/supported-✓-22c55e?style=flat-square" alt="supported">
+  <br>
+  <img src="https://img.shields.io/badge/license-MIT-2563eb?style=flat-square" alt="license">
+  <img src="https://img.shields.io/badge/♡_sponsors-0-ec4899?style=flat-square" alt="sponsors">
+  <img src="https://img.shields.io/badge/python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white" alt="python">
+  <img src="https://img.shields.io/badge/license_of_vendored_0xNyk-MIT-4c1?style=flat-square" alt="vendored-license">
+</p>
+
+---
+
+**TL;DR (Thai):** โยนไฟล์ลงโฟลเดอร์ `knowledge/` → บอท LINE ตอบจากไฟล์นั้นเท่านั้น (ถ้าไม่มีก็บอกว่าไม่มี ไม่เดา) → เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เรียกสภา 19 คนผ่าน `bin/council "คำถาม"` หรือส่งข้อความไปที่ Telegram bot (`python -m bot`) — ทั้งหมดนี้คือ **single-orchestrator pattern** ที่แก้ปัญหา "หลายบอทคุยกันไม่ได้" ของ Telegram
+
+**TL;DR (English):** Drop files into `knowledge/` → the LINE bot answers only from those files (refuses when not there, never guesses) → for hard decisions, convene the 19-persona council via `bin/council "question"` or message the Telegram bot (`python -m bot`). This is the **single-orchestrator pattern** — the answer to the multi-bot Telegram failure where bots can't address each other.
 
 **สไลด์ภาษาไทย 31 สไลด์** พร้อม [English README](#english) ด้านล่าง
 

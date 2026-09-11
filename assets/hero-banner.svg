@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 500" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
+  <title>Dr Non's DIY RAG — hero banner</title>
+  <desc>Wide hero banner for the GitHub README. Left: title + tagline + key facts. Right: manga orchestrator figure with persona echoes + amber verdict beam. MoMA discipline throughout.</desc>
+
+  <defs>
+    <pattern id="halftone-banner" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="0.7" fill="#111"/>
+    </pattern>
+    <radialGradient id="banner-amber" cx="0%" cy="50%" r="100%">
+      <stop offset="0%" stop-color="#ff9500" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="#ff9500" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff9500" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .frame       { fill: none; stroke: #111; stroke-width: 1; }
+      .frame-hair  { fill: none; stroke: #111; stroke-width: 0.5; }
+      .frame-bold  { fill: none; stroke: #111; stroke-width: 3; }
+      .frame-amber { fill: none; stroke: #ff9500; stroke-width: 2; }
+      .ink         { fill: #111; }
+      .amber       { fill: #ff9500; }
+      .paper       { fill: #fafaf7; }
+      .manga-line  { fill: none; stroke: #111; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .manga-thin  { fill: none; stroke: #111; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .manga-hair  { fill: none; stroke: #111; stroke-width: 0.5; }
+      .text-mono   { font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace; font-size: 12px; fill: #111; }
+      .text-tiny   { font-family: -apple-system, sans-serif; font-size: 10px; fill: #111; letter-spacing: 0.12em; text-transform: uppercase; }
+      .text-tiny-amber { font-family: -apple-system, sans-serif; font-size: 10px; fill: #ff9500; letter-spacing: 0.12em; text-transform: uppercase; }
+      .text-label  { font-family: -apple-system, sans-serif; font-size: 11px; fill: #111; letter-spacing: 0.05em; text-transform: uppercase; }
+      .text-faint  { font-family: -apple-system, sans-serif; font-size: 10px; fill: #555; font-style: italic; }
+      .text-h1     { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; font-size: 56px; font-weight: 800; fill: #111; letter-spacing: -0.02em; }
+      .text-h2     { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 22px; font-weight: 600; fill: #111; }
+      .text-onoma  { font-family: 'Impact', 'Helvetica Neue', sans-serif; font-size: 28px; font-weight: 900; fill: #111; }
+    </style>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="1400" height="500" fill="#fafaf7"/>
+
+  <!-- OUTER FRAME -->
+  <rect x="20" y="20" width="1360" height="460" class="frame"/>
+  <rect x="28" y="28" width="1344" height="444" class="frame-hair"/>
+
+  <!-- TOP MoMA STRIP -->
+  <rect x="40" y="40" width="1320" height="36" class="frame-hair"/>
+  <text x="56" y="63" class="text-tiny-amber">▶ diy-rag-chatbot</text>
+  <text x="1340" y="63" text-anchor="end" class="text-tiny">nonarkara.org · mit · v1.0.0</text>
+
+  <!-- HALFTONE background band (right side) -->
+  <ellipse cx="1050" cy="260" rx="380" ry="180" fill="url(#halftone-banner)" opacity="0.35"/>
+
+  <!-- SPEED LINES radiating from the orchestrator -->
+  <g opacity="0.7">
+    <line x1="1050" y1="100" x2="1050" y2="140" class="manga-line"/>
+    <line x1="990"  y1="105" x2="1005" y2="145" class="manga-line"/>
+    <line x1="1110" y1="105" x2="1095" y2="145" class="manga-line"/>
+    <line x1="930"  y1="115" x2="960"  y2="150" class="manga-thin"/>
+    <line x1="1170" y1="115" x2="1140" y2="150" class="manga-thin"/>
+    <line x1="1050" y1="380" x2="1050" y2="420" class="manga-line"/>
+    <line x1="990"  y1="375" x2="1005" y2="415" class="manga-line"/>
+    <line x1="1110" y1="375" x2="1095" y2="415" class="manga-line"/>
+  </g>
+
+  <!-- LEFT: TITLE + TAGLINE + KEY FACTS -->
+  <g transform="translate(60, 100)">
+    <text class="text-h1" y="50">Dr Non's</text>
+    <text class="text-h1" y="110" fill="#ff9500">DIY RAG</text>
+    <text class="text-h2" y="148" font-size="18" fill="#555">Chatbot-as-a-Self-Service · แชตบอทบริการตนเอง</text>
+
+    <!-- Bracket terminator separator -->
+    <line x1="0" y1="170" x2="540" y2="170" class="frame-amber"/>
+    <text x="0" y="195" class="text-tiny-amber">▶ tl;dr</text>
+    <text x="60" y="195" class="text-mono">knowledge folder → LINE bot. telegram bot → AI council.</text>
+
+    <text x="0" y="225" class="text-tiny-amber">▶ engine</text>
+    <text x="60" y="225" class="text-mono">1 LLM × 19 personas · 5-stage protocol · single-orchestrator pattern.</text>
+
+    <text x="0" y="255" class="text-tiny-amber">▶ ships</text>
+    <text x="60" y="255" class="text-mono">Python package + Telegram bot + LINE webhook + Discord-ready.</text>
+
+    <text x="0" y="285" class="text-tiny-amber">▶ license</text>
+    <text x="60" y="285" class="text-mono">MIT · vendored 0xNyk + karpathy + local rag-curator persona.</text>
+  </g>
+
+  <!-- RIGHT: AMBER VERDICT BEAM (shooting right, off-canvas) -->
+  <g opacity="0.9">
+    <path d="M 1060,230 L 1380,150 L 1380,330 L 1060,310 Z" fill="url(#banner-amber)"/>
+    <line x1="1060" y1="270" x2="1380" y2="260" class="frame-amber" stroke="#ff9500"/>
+    <g fill="#ff9500">
+      <polygon points="1140,250 1152,256 1140,262 1128,256"/>
+      <polygon points="1220,240 1232,246 1220,252 1208,246"/>
+      <polygon points="1300,232 1312,238 1300,244 1288,238"/>
+    </g>
+  </g>
+
+  <!-- RIGHT: MANGA ORCHESTRATOR (smaller, side panel) -->
+  <g transform="translate(1050, 250)">
+    <!-- Robe -->
+    <path d="M -75,120 L -90,30 L -55,-15 L -40,-70 L 40,-70 L 55,-15 L 90,30 L 75,120 Z"
+          fill="#fafaf7" class="manga-line"/>
+    <g class="manga-hair" opacity="0.7">
+      <line x1="-70" y1="20" x2="-50" y2="0"/>
+      <line x1="-78" y1="40" x2="-58" y2="20"/>
+      <line x1="70" y1="20" x2="50" y2="0"/>
+      <line x1="78" y1="40" x2="58" y2="20"/>
+    </g>
+    <!-- Belt -->
+    <rect x="-45" y="20" width="90" height="12" class="ink"/>
+    <rect x="-45" y="20" width="90" height="12" fill="none" class="manga-line"/>
+    <!-- Arms (passionate pose) -->
+    <path d="M -40,28 L -110,75 L -118,68 L -50,12 Z" fill="#fafaf7" class="manga-line"/>
+    <path d="M 40,28 L 110,75 L 118,68 L 50,12 Z" fill="#fafaf7" class="manga-line"/>
+    <!-- Fists -->
+    <circle cx="-115" cy="72" r="11" fill="#fafaf7" class="manga-line"/>
+    <circle cx="115"  cy="72" r="11" fill="#fafaf7" class="manga-line"/>
+    <!-- Neck -->
+    <rect x="-12" y="-72" width="24" height="10" class="ink"/>
+    <!-- Head -->
+    <ellipse cx="0" cy="-100" rx="40" ry="46" fill="#fafaf7" class="manga-line"/>
+    <!-- Hair (spiky) -->
+    <path d="M -42,-115 L -34,-140 L -20,-122 L -8,-150 L 8,-122 L 20,-145 L 34,-122 L 42,-115
+             L 36,-100 L -36,-100 Z" class="ink"/>
+    <!-- Manga eyes -->
+    <ellipse cx="-14" cy="-108" rx="11" ry="13" fill="#fafaf7" class="manga-line"/>
+    <ellipse cx="-14" cy="-108" rx="8" ry="11" class="ink"/>
+    <circle cx="-12" cy="-112" r="2.5" fill="#fafaf7"/>
+    <ellipse cx="14" cy="-108" rx="11" ry="13" fill="#fafaf7" class="manga-line"/>
+    <ellipse cx="14" cy="-108" rx="8" ry="11" class="ink"/>
+    <circle cx="16" cy="-112" r="2.5" fill="#fafaf7"/>
+    <!-- Fierce eyebrows -->
+    <line x1="-26" y1="-128" x2="-2" y2="-126" class="manga-line"/>
+    <line x1="2" y1="-126" x2="26" y2="-128" class="manga-line"/>
+    <!-- Clenched mouth -->
+    <path d="M -8,-84 L 8,-84 L 6,-78 L -6,-78 Z" class="ink"/>
+    <!-- Sweat drop -->
+    <path d="M -44,-108 Q -48,-100 -44,-92 Q -40,-100 -44,-108 Z" class="ink"/>
+    <line x1="-44" y1="-98" x2="-44" y2="-92" class="manga-hair" stroke="#fafaf7"/>
+  </g>
+
+  <!-- ONOMATOPOEIA -->
+  <g transform="translate(880, 200)" opacity="0.9">
+    <text class="text-onoma" font-size="22">決断</text>
+  </g>
+
+  <!-- BOTTOM MoMA STRIP -->
+  <rect x="40" y="410" width="1320" height="50" class="frame-hair"/>
+  <line x1="40" y1="430" x2="1360" y2="430" class="manga-hair"/>
+
+  <text x="56" y="427" class="text-tiny-amber">▶ operating</text>
+
+  <g transform="translate(56, 450)">
+    <text class="text-mono">PROFILE   </text>
+    <text x="78" class="text-mono" fill="#ff9500">execution-lean</text>
+  </g>
+  <g transform="translate(230, 450)">
+    <text class="text-mono">TRIAD     </text>
+    <text x="78" class="text-mono" fill="#ff9500">ship-now</text>
+  </g>
+  <g transform="translate(360, 450)">
+    <text class="text-mono">PERSONAS  </text>
+    <text x="78" class="text-mono" fill="#ff9500">19</text>
+  </g>
+  <g transform="translate(460, 450)">
+    <text class="text-mono">STAGES    </text>
+    <text x="78" class="text-mono" fill="#ff9500">5</text>
+  </g>
+  <g transform="translate(550, 450)">
+    <text class="text-mono">CHANNELS  </text>
+    <text x="78" class="text-mono" fill="#ff9500">line · telegram</text>
+  </g>
+  <g transform="translate(780, 450)">
+    <text class="text-mono">LLM       </text>
+    <text x="78" class="text-mono" fill="#ff9500">ollama free · openai compatible</text>
+  </g>
+  <g transform="translate(1080, 450)">
+    <text class="text-mono">LATENCY   </text>
+    <text x="78" class="text-mono" fill="#ff9500">~2–4 min</text>
+  </g>
+
+  <text x="1340" y="450" text-anchor="end" class="text-faint">[ single-orchestrator pattern ]</text>
+</svg>
