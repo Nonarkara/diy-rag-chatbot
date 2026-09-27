@@ -1,0 +1,20 @@
+# Workshop v2 defaults. Environment variables override this file.
+# Secrets do not belong here — put tokens in .env (see .env.example).
+
+# lite: one agent at a time, 8 GB installed floor, small local model.
+# full: up to 4 agents in flight, 32 GB installed floor.
+mode: lite
+
+# scripted  — offline demo, no model process (proves the orchestrator)
+# ollama    — local model via http://127.0.0.1:11434
+# openai    — any OpenAI-compatible API (OpenAI, Groq, LM Studio, …)
+provider: scripted
+
+# Used when provider is ollama or openai. Ignored by the scripted demo.
+model: qwen2.5:3b
+
+knowledge_dir: knowledge
+
+# Hard stop so a confused model cannot chat all afternoon.
+max_turns: 8
+max_revisions: 1
