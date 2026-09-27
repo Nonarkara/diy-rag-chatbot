@@ -18,9 +18,20 @@ The owner cloned [Nonarkara/diy-rag-chatbot](https://github.com/Nonarkara/diy-ra
 
 Do **not** dump the whole path in one message. One station per turn. After each station: **รอคำว่า 「เสร็จแล้ว」** before the next URL.
 
+## Workshop v2 — work, not a chat loop
+
+If the owner wants agents that finish a job on this machine, do not walk the LINE stations. Point them at the README section **Workshop v2** and run:
+
+```bash
+python -m workshop demo
+python scripts/smoke_workshop.py
+```
+
+The primary path is a cheap OpenAI-compatible API plus tool calls (`python -m workshop demo`). An ordinary laptop is enough. `python -m workshop demo --offline` rehearses the same tools with no key. `python -m workshop demo --local` is optional Ollama; RAM is checked only then. `lite` and `full` are concurrency, not memory floors. The council (`./bin/council`, `python -m bot`) only deliberates. It must not be described as a system that executes tasks.
+
 ## What this system is
 
-> โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม
+> โฟลเดอร์คือสมอง · เอเจนต์คือมือ · โมเดลคือล่าม · ไลน์คือปาก
 
 Telegram และ Discord เป็นปากเพิ่มได้ หลังไลน์ตอบได้ สมองยังเป็นโฟลเดอร์เดิม
 

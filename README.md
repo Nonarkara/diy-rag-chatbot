@@ -7,8 +7,107 @@
 </p>
 
 <p align="center">
-  <em><strong>โฟลเดอร์คือสมอง · ไลน์คือปาก · โมเดลคือล่าม · สภา 19 คนคือที่ปรึกษา</strong></em>
+  <em><strong>โฟลเดอร์คือสมอง · เอเจนต์คือมือ · โมเดลคือล่าม</strong></em>
 </p>
+
+Workshop **v2** is a DIY multi-agent orchestrator. Agents take jobs, call tools, write files, and stop. The primary path is a cheap OpenAI-compatible API (OpenAI, OpenRouter, Groq, LM Studio). An ordinary laptop is enough, because the model weights stay on the API. Local Ollama is optional if you have the silicon. This is not Grok Bot, OpenClaw, or any hosted product.
+
+The LINE walkthrough and the 19-persona council are still in this repo. The council **deliberates**. The workshop **does the job**.
+
+## Workshop v2
+
+Put a key in `.env` yourself. Do not paste it into chat. Placeholders are in `.env.example`.
+
+```bash
+git clone https://github.com/Nonarkara/diy-rag-chatbot.git
+cd diy-rag-chatbot
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+```bash
+# .env
+WORKSHOP_PROVIDER=openai
+WORKSHOP_MODEL=gpt-4o-mini
+LLM_API_KEY=replace-me
+# OpenRouter: LLM_BASE_URL=https://openrouter.ai/api/v1
+#             WORKSHOP_MODEL=openai/gpt-4o-mini
+# Groq:       LLM_BASE_URL=https://api.groq.com/openai/v1
+#             WORKSHOP_MODEL=llama-3.1-8b-instant
+
+python -m workshop demo
+```
+
+Agents call tools: `search_knowledge`, `read_knowledge_file`, `read_artifact`, `write_artifact`, and an optional `fetch_url` that allows public https only. The demo searches `knowledge/`, writes a short brief, reviews it, and exits. Output lands in `workshop-runs/<timestamp>/`.
+
+```bash
+python -m workshop demo --offline   # same tools, scripted worker, no key
+python scripts/smoke_workshop.py    # tool round-trip plus the failure cases
+python -m workshop check            # API path skips the RAM check
+```
+
+One room message (a greeting gets silence; a job runs the same bounded pipeline):
+
+```bash
+python -m workshop room --offline "write a brief on what the knowledge kit refuses"
+```
+
+### Optional local models
+
+`python -m workshop demo --local` talks to Ollama at `http://127.0.0.1:11434`. RAM is checked **only** in that mode, against the model's weight budget (`python -m workshop models`). A small or unknown local model fails with a clear message. API users are not asked for 8 GB or 32 GB.
+
+| Mode | In flight | What it means |
+|---|---|---|
+| `lite` | 1 | one agent at a time; the cheap default |
+| `full` | up to 4 | researcher and scout in parallel, then writer, then reviewer |
+
+`lite` and `full` are concurrency. On an API they do not change how much RAM you need.
+
+### What a turn is allowed to do
+
+Each assigned turn calls tools, then returns one JSON object: **advance** (artifact changed), **ask** (one question, then the mission blocks), **yield** (silence), or **done**. Chat text is discarded. Two rejected turns fail the task. The demo allows one reviewer → writer revision, then stops. The turn cap defaults to 8. There is no shell tool.
+
+### Architecture
+
+```mermaid
+flowchart TD
+  user[User message in the room] --> gate{Is it a job?}
+  gate -->|greeting| quiet[Agents stay silent]
+  gate -->|job| api[OpenAI-compatible API]
+  api --> tools[Tool calls]
+  tools --> search[search_knowledge]
+  tools --> files[read_artifact / write_artifact]
+  search --> research[Researcher notes]
+  files --> writer[Writer brief]
+  research --> writer
+  writer --> reviewer[Reviewer reads the file]
+  reviewer -->|one revision| writer
+  reviewer -->|checks pass| brief[brief.md and stop]
+  local[Optional Ollama] -.->|only if you opt in| api
+  local --> ram{Weights fit in free RAM?}
+  ram -->|no| refuse[Refusal for local models only]
+```
+
+Search is lexical over the local folder. No LangChain, LlamaIndex, or Chroma. Embeddings are not required.
+
+### What works
+
+- API demo: agents finish a brief by calling tools. `scripts/smoke_workshop.py` proves the OpenAI tool payload, the file sandbox, and that chatter fails closed. The offline flag runs that loop with no key.
+- Room semantics: `@writer` is delivered to the writer; other agents do not reply to it; `hi` produces no agent speech.
+- Optional Ollama, with a RAM check that does not apply to API runs.
+- LINE setup guide (`START-HERE.md`) and the council (`./bin/council`, `python -m bot`) for **decisions**, not for executing a task queue.
+
+### What does not work
+
+- There is no LINE server package in this repo. `.env.example` mentions `app/` because the walkthrough builds that process from `LINE_RAG_Claude_Code_Master_Prompt.md`. Cloning the repo does not start a LINE bot by itself.
+- `python -m bot` does not assign tasks. It runs a 5-stage persona discussion and a chairman summary.
+- This project does not embed with `bge-m3` on the workshop path. The workshop cites files the search tool returned.
+- Vercel is not a host for this bot. The workshop demo itself is a batch job on your laptop.
+- No fleet of always-on chat bots, no unrestricted shell, and no claim to be Grok Bot or OpenClaw.
+
+More detail: [docs/architecture/workshop.md](docs/architecture/workshop.md).
+
+---
 
 <p align="center">
   Turn any knowledge folder into a LINE / Telegram bot that answers <em>only</em> from the folder — plus a deployable in-process AI council for hard decisions. One Python process. 19 personas. MIT.
@@ -26,7 +125,8 @@
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/START-HERE.md">Start</a> ·
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/AGENTS.md">AGENTS.md</a> ·
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/council/SKILL.md">Council skill</a> ·
-  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/bot/README.md">Telegram bot</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/docs/architecture/workshop.md">Workshop</a> ·
+  <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/bot/README.md">Telegram council</a> ·
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/docs/architecture/council-architecture.md">Architecture</a> ·
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/docs/architecture/ILLUSTRATIONS.md">Illustrations</a> ·
   <a href="https://github.com/Nonarkara/diy-rag-chatbot/blob/main/START-HERE.md#station-17--optional-council-bot-on-telegram">Deploy</a> ·
@@ -40,7 +140,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/release-v1.0.0-7c3aed?style=flat-square" alt="release">
+  <img src="https://img.shields.io/badge/workshop-v2.0.0-0f766e?style=flat-square" alt="workshop">
+  <img src="https://img.shields.io/badge/council-v1-7c3aed?style=flat-square" alt="council-v1">
   <img src="https://img.shields.io/badge/council-19_personas-7c3aed?style=flat-square" alt="council">
   <img src="https://img.shields.io/badge/engine-0xNyk_+_karpathy-7c3aed?style=flat-square" alt="engine">
   <img src="https://img.shields.io/badge/formats-SVG·MD·PY·YAML-1f2937?style=flat-square" alt="formats">
@@ -54,15 +155,19 @@
 
 ---
 
-**TL;DR (Thai):** โยนไฟล์ลงโฟลเดอร์ `knowledge/` → บอท LINE ตอบจากไฟล์นั้นเท่านั้น (ถ้าไม่มีก็บอกว่าไม่มี ไม่เดา) → เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เรียกสภา 19 คนผ่าน `bin/council "คำถาม"` หรือส่งข้อความไปที่ Telegram bot (`python -m bot`) — ทั้งหมดนี้คือ **single-orchestrator pattern** ที่แก้ปัญหา "หลายบอทคุยกันไม่ได้" ของ Telegram
+## LINE Official Account and the council (v1)
 
-**TL;DR (English):** Drop files into `knowledge/` → the LINE bot answers only from those files (refuses when not there, never guesses) → for hard decisions, convene the 19-persona council via `bin/council "question"` or message the Telegram bot (`python -m bot`). This is the **single-orchestrator pattern** — the answer to the multi-bot Telegram failure where bots can't address each other.
+**TL;DR (Thai):** โยนไฟล์ลงโฟลเดอร์ `knowledge/` → ตามสถานีใน `START-HERE.md` จน LINE ตอบจากไฟล์นั้น (ถ้าไม่มีก็บอกว่าไม่มี ไม่เดา) → เมื่อต้อง**ตัดสินใจ** เรียกสภาผ่าน `bin/council "คำถาม"` หรือ `python -m bot` — สภาให้คำวินิจฉัย ไม่ได้รับงานไปทำให้เสร็จ งานที่ต้องมีชิ้นส่งใช้ `python -m workshop demo`
+
+**TL;DR (English):** The LINE path is the station guide in `START-HERE.md`: the bot answers only from `knowledge/` and refuses when the files are silent. `bin/council` and `python -m bot` are a deliberation council (personas argue, a chairman writes a verdict). They do not execute a task queue. For a finished artifact, use the workshop above.
 
 **สไลด์ภาษาไทย 31 สไลด์** พร้อม [English README](#english) ด้านล่าง
 
 ---
 
-## Why this repo is on par with top AI-council repos
+## Council lineage (v1 deliberation)
+
+The notes below are about the **council** — personas that argue and a chairman that writes a verdict. They are not a claim that those personas finish a task. Finished work is [Workshop v2](#workshop-v2).
 
 ![why-this-wins](docs/architecture/why-this-wins.svg)
 
@@ -70,14 +175,14 @@
 
 - **[0xNyk/council-of-high-intelligence](https://github.com/0xnyk/council-of-high-intelligence)** — 4.2k stars. 18 personas, 5-stage protocol, runs in a host CLI.
 - **[karpathy/llm-council](https://github.com/karpathy/llm-council)** — 24.8k stars. Multi-model parallel + review + chairman, web app + OpenRouter.
-- **This repo, `Nonarkara/diy-rag-chatbot`** — the orchestrator pattern as a deployable Telegram bot. The single-process, multi-persona architecture.
+- **This repo's council** — the same kind of deliberation, runnable as one Telegram process (`bot/`). Workshop v2 is a separate task queue in `workshop/`.
 
 What we add that the other two do not:
 
 1. **A RAG-specific 19th persona** (`council-rag-curator`) that opens the cited file before commenting on what it says. The 0xNyk personas are general-purpose; this one is for *this* domain.
 2. **A `bin/llm-council` shim** that auto-detects whether the karpathy app is up and falls back to 0xNyk otherwise. Neither of the upstream projects have a fallback path.
 3. **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo gives you `python -m bot` and you're done.
-4. **The single-orchestrator pattern as a documented anti-pattern fix** for the multi-bot Telegram failure mode. Anyone who has tried the multi-bot approach has hit the same wall. The fix lives here.
+4. **A written record of the multi-bot Telegram failure** — bots cannot message other bots, so a "council" of separate bot accounts never deliberates. `bot/` keeps every persona inside one process. That fixes deliberation. It does not, by itself, assign work; the workshop does.
 
 What we share:
 
@@ -142,6 +247,9 @@ Designed in [Axiom Design Core](https://github.com/Nonarkara/Axiom-Design-Core) 
 ## โครงสร้าง
 
 ```
+workshop/                v2 — task queue, room, RAM check, demo
+workshop.yaml            lite / full defaults (env overrides)
+scripts/smoke_workshop.py
 START-HERE.md            จับมือทีละเว็บ รวมที่รัน Telegram Discord
 AGENTS.md                สัญญาของเอเจนต์ — พาทีละสถานี
 LINE_RAG_Claude_Code_Master_Prompt.md   ให้เอเจนต์สร้างเครื่อง
