@@ -1,8 +1,8 @@
-"""Modes, model weight estimates, and the RAM refusal.
+"""Modes and the local-only RAM check.
 
-Sizes are approximate Q4 weight footprints used as a planning budget,
-not a measurement of a particular build. Remote providers (an
-OpenAI-compatible API) add no local weight RAM.
+The primary provider is an OpenAI-compatible API. It loads no weights,
+so RAM is not consulted. Ollama is optional: only then do we compare
+available memory with the model's weight budget.
 
 Environment variables override ``workshop.yaml``.
 """
@@ -38,13 +38,14 @@ KNOWN_MODELS_GB: dict[str, float] = {
 REMOTE_PROVIDERS = frozenset({"openai", "scripted"})
 LOCAL_PROVIDERS = frozenset({"ollama"})
 
-# Installed-RAM floor. Below this we refuse the mode instead of swapping
-# into a slow loop that looks like the agents are "just talking".
-MODE_FLOOR_GB = {"lite": 8.0, "full": 32.0}
+# lite / full is how many agents may run at once. On an API that is a
+# concurrency cap, not a memory requirement.
 MODE_CONCURRENCY = {"lite": 1, "full": 4}
 
-OVERHEAD_GB = 2.0
-KV_GB_PER_INFLIGHT = 0.6
+# Headroom when a local model is actually loaded. One weight footprint,
+# plus a little extra per in-flight request. Not used for API providers.
+LOCAL_HEADROOM_GB = 1.5
+KV_GB_PER_EXTRA = 0.5
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_YAML = REPO_ROOT / "workshop.yaml"
@@ -182,14 +183,11 @@ def load_config(
         provider
         or os.environ.get("WORKSHOP_PROVIDER")
         or defaults.get("provider")
-        or "scripted"
+        or "openai"
     ).strip().lower()
-    # `.env.example` sets WORKSHOP_PROVIDER=scripted so the keyless demo
-    # stays offline. `--live` asks for a real model anyway.
+    # `--live` means the API path. The offline rehearsal is `--offline`.
     if live and provider == "scripted":
-        provider = (os.environ.get("LLM_PROVIDER") or "ollama").strip().lower()
-        if provider == "scripted":
-            provider = "ollama"
+        provider = "openai"
     if provider not in REMOTE_PROVIDERS | LOCAL_PROVIDERS:
         raise WorkshopConfigError(
             f"WORKSHOP_PROVIDER must be scripted, ollama, or openai, got {provider!r}"
@@ -198,9 +196,9 @@ def load_config(
     model = (
         model
         or os.environ.get("WORKSHOP_MODEL")
-        or os.environ.get("LLM_MODEL")
         or defaults.get("model")
-        or "qwen2.5:3b"
+        or os.environ.get("LLM_MODEL")
+        or ("qwen2.5:3b" if provider == "ollama" else "gpt-4o-mini")
     ).strip()
 
     knowledge = knowledge_dir or Path(
@@ -234,9 +232,8 @@ def load_config(
 def plan_resources(cfg: WorkshopConfig) -> ResourcePlan:
     if cfg.provider in REMOTE_PROVIDERS:
         summary = (
-            f"mode={cfg.mode} provider={cfg.provider} model={cfg.model}: "
-            "no local weight RAM. Concurrency cap is "
-            f"{cfg.max_concurrent}."
+            f"provider={cfg.provider} model={cfg.model}: API path, no local weights, "
+            f"RAM check skipped. Concurrency cap is {cfg.max_concurrent}."
         )
         return ResourcePlan(
             mode=cfg.mode,
@@ -252,13 +249,13 @@ def plan_resources(cfg: WorkshopConfig) -> ResourcePlan:
         )
 
     assert cfg.model_gb is not None
-    required = OVERHEAD_GB + cfg.model_gb + KV_GB_PER_INFLIGHT * cfg.max_concurrent
-    floor = MODE_FLOOR_GB[cfg.mode]
+    extra = max(0, cfg.max_concurrent - 1)
+    required = cfg.model_gb + LOCAL_HEADROOM_GB + KV_GB_PER_EXTRA * extra
     summary = (
-        f"mode={cfg.mode} needs about {required:.1f} GB free "
-        f"({OVERHEAD_GB:.0f} GB process headroom + {cfg.model_gb:.1f} GB for {cfg.model} "
-        f"+ {KV_GB_PER_INFLIGHT:.1f} GB × {cfg.max_concurrent} in-flight requests) "
-        f"and at least {floor:.0f} GB installed RAM."
+        f"local model {cfg.model} needs about {required:.1f} GB free "
+        f"({cfg.model_gb:.1f} GB weights + {LOCAL_HEADROOM_GB:.1f} GB headroom"
+        + (f" + {KV_GB_PER_EXTRA:.1f} GB × {extra} extra in-flight" if extra else "")
+        + "). This check runs only for Ollama."
     )
     return ResourcePlan(
         mode=cfg.mode,
@@ -267,7 +264,7 @@ def plan_resources(cfg: WorkshopConfig) -> ResourcePlan:
         model_gb=cfg.model_gb,
         concurrent=cfg.max_concurrent,
         required_gb=required,
-        floor_gb=floor,
+        floor_gb=0.0,
         total_gb=cfg.ram_total_gb,
         available_gb=cfg.ram_available_gb,
         summary=summary,
@@ -275,62 +272,48 @@ def plan_resources(cfg: WorkshopConfig) -> ResourcePlan:
 
 
 def assert_resources(cfg: WorkshopConfig) -> ResourcePlan:
-    """Refuse to start when the machine cannot hold the configured mode.
+    """Skip RAM entirely for API providers. Check it only for local weights.
 
-    ``WORKSHOP_I_ACCEPT_RISK=1`` skips the refusal and returns the plan
-    anyway. The estimate is still computed so the log stays honest.
+    ``WORKSHOP_I_ACCEPT_RISK=1`` skips the local refusal.
     """
     plan = plan_resources(cfg)
     if cfg.provider in REMOTE_PROVIDERS:
         return plan
 
     problems: list[str] = []
-    if plan.total_gb is None or plan.available_gb is None:
+    if plan.available_gb is None:
         problems.append(
-            "Could not read RAM. Set WORKSHOP_RAM_GB (available) and "
-            "WORKSHOP_RAM_TOTAL_GB (installed), both in gigabytes."
+            "Could not read available RAM. Set WORKSHOP_RAM_GB in gigabytes, "
+            "or switch to WORKSHOP_PROVIDER=openai."
         )
-    else:
-        if plan.total_gb + 1e-6 < plan.floor_gb:
-            problems.append(
-                f"Installed RAM is {plan.total_gb:.1f} GB. "
-                f"{cfg.mode} mode requires {plan.floor_gb:.0f} GB installed "
-                "so several local agents are not forced to swap."
-            )
-        if plan.available_gb + 1e-6 < plan.required_gb:
-            problems.append(
-                f"Available RAM is {plan.available_gb:.1f} GB, which is under "
-                f"the {plan.required_gb:.1f} GB estimate for {cfg.model} "
-                f"with {cfg.max_concurrent} agent(s) in flight."
-            )
+    elif plan.available_gb + 1e-6 < plan.required_gb:
+        problems.append(
+            f"Available RAM is {plan.available_gb:.1f} GB, under the "
+            f"{plan.required_gb:.1f} GB estimate for local model {cfg.model}."
+        )
 
     if not problems:
         return plan
     if cfg.accept_risk:
-        plan = ResourcePlan(
+        return ResourcePlan(
             **{
                 **plan.__dict__,
-                "summary": plan.summary + " WORKSHOP_I_ACCEPT_RISK=1 so the refusal was skipped.",
+                "summary": plan.summary + " WORKSHOP_I_ACCEPT_RISK=1 so the local refusal was skipped.",
             }
         )
-        return plan
 
-    other = "full" if cfg.mode == "lite" else "lite"
-    hint_mode = (
-        "WORKSHOP_MODE=lite runs one agent at a time on a 3B-class model (8 GB installed floor)."
-        if cfg.mode == "full"
-        else "Use a smaller model (see KNOWN_MODELS_GB in workshop/config.py) or a remote provider."
-    )
     message = (
-        f"Refusing to start the workshop in {cfg.mode} mode.\n"
+        f"Refusing to load local model {cfg.model}.\n"
         f"{plan.summary}\n"
         + "\n".join(f"- {p}" for p in problems)
         + "\n"
-        f"{hint_mode}\n"
-        "A remote model does not load weights on this machine: "
-        "WORKSHOP_PROVIDER=openai with LLM_API_KEY and LLM_BASE_URL in .env "
-        "(placeholders only — do not commit secrets).\n"
-        "Set WORKSHOP_I_ACCEPT_RISK=1 only after you have measured this machine. "
-        f"Switching to {other} is the supported path."
+        "This check applies only when WORKSHOP_PROVIDER=ollama.\n"
+        "An ordinary laptop can run the workshop on a cheap API with tool calls:\n"
+        "  WORKSHOP_PROVIDER=openai\n"
+        "  LLM_API_KEY=replace-me\n"
+        "  # optional LLM_BASE_URL=https://openrouter.ai/api/v1\n"
+        "Put the real key in .env yourself. Do not paste it into chat.\n"
+        "Or pick a smaller local model from KNOWN_MODELS_GB in workshop/config.py.\n"
+        "Set WORKSHOP_I_ACCEPT_RISK=1 only after you have measured this machine."
     )
     raise InsufficientResources(message)

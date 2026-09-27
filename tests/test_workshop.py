@@ -46,6 +46,9 @@ class DemoTests(unittest.TestCase):
         self.assertLessEqual(len(report.brief.split()), 220)
         self.assertGreaterEqual(len(report.brief.split()), 40)
         self.assertLessEqual(report.llm_turns, 8)
+        self.assertIn("search_knowledge", report.tool_calls)
+        self.assertIn("write_artifact", report.tool_calls)
+        self.assertIn("read_artifact", report.tool_calls)
         self.assertTrue(all(len(wave) == 1 for wave in report.waves))
         self.assertEqual(
             [wave[0] for wave in report.waves],
@@ -172,9 +175,10 @@ class ResourceTests(unittest.TestCase):
             with self.assertRaises(InsufficientResources) as caught:
                 assert_resources(cfg)
         message = str(caught.exception)
-        self.assertIn("lite", message)
-        self.assertIn("32", message)
+        self.assertIn("ollama", message.lower())
         self.assertIn("qwen2.5:14b", message)
+        self.assertIn("LLM_API_KEY", message)
+        self.assertNotIn("32 GB", message)
 
     def test_unknown_local_model_fails_loudly(self) -> None:
         with patch.dict(os.environ, _env(), clear=False):
@@ -196,15 +200,15 @@ class ResourceTests(unittest.TestCase):
             plan = assert_resources(cfg)
         self.assertIn("WORKSHOP_I_ACCEPT_RISK", plan.summary)
 
-    def test_live_flag_upgrades_scripted_provider(self) -> None:
+    def test_live_flag_upgrades_scripted_provider_to_api(self) -> None:
         with patch.dict(
             os.environ,
             _env(WORKSHOP_PROVIDER="scripted", LLM_PROVIDER="ollama"),
             clear=False,
         ):
-            cfg = load_config(live=True, model="qwen2.5:3b")
-        self.assertEqual(cfg.provider, "ollama")
-        self.assertEqual(cfg.model, "qwen2.5:3b")
+            cfg = load_config(live=True, model="gpt-4o-mini")
+        self.assertEqual(cfg.provider, "openai")
+        self.assertEqual(cfg.model, "gpt-4o-mini")
 
     def test_remote_provider_has_no_weight_floor(self) -> None:
         with patch.dict(
@@ -216,6 +220,117 @@ class ResourceTests(unittest.TestCase):
             plan = assert_resources(cfg)
         self.assertEqual(plan.required_gb, 0.0)
         self.assertEqual(plan.model_gb, 0.0)
+
+
+class ToolTests(unittest.TestCase):
+    def test_openai_tool_roundtrip_searches_and_saves(self) -> None:
+        import tempfile
+
+        from workshop.llm import OpenAICompatibleLLM, completions_url
+        from workshop.tools import ToolBox, drive
+
+        self.assertEqual(
+            completions_url("https://openrouter.ai/api/v1"),
+            "https://openrouter.ai/api/v1/chat/completions",
+        )
+        self.assertEqual(
+            completions_url("https://api.openai.com"),
+            "https://api.openai.com/v1/chat/completions",
+        )
+        payloads: list[dict] = []
+
+        def post(url: str, payload: dict, headers: dict) -> dict:
+            del url, headers
+            payloads.append(payload)
+            if len(payloads) == 1:
+                return {
+                    "choices": [
+                        {
+                            "message": {
+                                "role": "assistant",
+                                "content": "",
+                                "tool_calls": [
+                                    {
+                                        "id": "call_search",
+                                        "type": "function",
+                                        "function": {
+                                            "name": "search_knowledge",
+                                            "arguments": '{"query": "how a page should be filed and what the kit refuses"}',
+                                        },
+                                    }
+                                ],
+                            }
+                        }
+                    ]
+                }
+            return {
+                "choices": [
+                    {
+                        "message": {
+                            "content": (
+                                '{"action":"done","note":"saved","artifact":"'
+                                + "Notes cite knowledge/GUARDRAILS.md and knowledge/HOW-WE-FILE.md. "
+                                + "The kit will not invent an answer when the file is silent. "
+                                + 'This note is long enough to count as the work product.",'
+                                + '"question":null,"handoff_to":null,"decision":null}'
+                            )
+                        }
+                    }
+                ]
+            }
+
+        llm = OpenAICompatibleLLM(model="gpt-4o-mini", api_key="test-key", post=post)
+        box = ToolBox(ROOT / "knowledge", Path(tempfile.mkdtemp()))
+        raw, used = drive(
+            llm,
+            "You search then stop.",
+            "Find the filing rules.",
+            box,
+        )
+        self.assertEqual(used, ["search_knowledge"])
+        self.assertIn("tools", payloads[0])
+        self.assertEqual(payloads[0]["tools"][0]["function"]["name"], "search_knowledge")
+        followup = payloads[1]["messages"]
+        self.assertTrue(any(message.get("role") == "tool" for message in followup))
+        tool_body = next(message["content"] for message in followup if message.get("role") == "tool")
+        self.assertIn("knowledge/", tool_body)
+        self.assertIn("done", raw)
+
+    def test_file_tools_stay_inside_the_workspace(self) -> None:
+        from workshop.tools import ToolBox
+
+        workspace = ROOT / "workshop-runs-sandbox"
+        workspace.mkdir(exist_ok=True)
+        box = ToolBox(ROOT / "knowledge", workspace)
+        try:
+            saved = box.run("write_artifact", {"name": "notes.md", "content": "hello from the tool"})
+            self.assertIn("wrote notes.md", saved)
+            self.assertIn("hello", box.run("read_artifact", {"name": "notes.md"}))
+            self.assertIn("ERROR", box.run("write_artifact", {"name": "../escape.md", "content": "nope"}))
+            self.assertIn("ERROR", box.run("read_knowledge_file", {"path": "../.env"}))
+            self.assertIn("https", box.run("fetch_url", {"url": "http://example.com"}).lower())
+            self.assertIn("blocked", box.run("fetch_url", {"url": "https://127.0.0.1/secret"}).lower())
+        finally:
+            import shutil
+
+            shutil.rmtree(workspace, ignore_errors=True)
+
+    def test_ollama_tool_payload_parses(self) -> None:
+        from workshop.llm import parse_ollama_chat
+
+        result = parse_ollama_chat(
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": [
+                        {"function": {"name": "write_artifact", "arguments": {"name": "brief.md", "content": "hi"}}}
+                    ],
+                }
+            }
+        )
+        self.assertEqual(result.tool_calls[0].name, "write_artifact")
+        self.assertEqual(result.tool_calls[0].arguments["name"], "brief.md")
 
 
 class ProtocolTests(unittest.TestCase):

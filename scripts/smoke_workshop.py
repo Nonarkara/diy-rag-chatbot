@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Prove the orchestrator assigns work and the demo finishes.
+"""Prove the orchestrator assigns work and agents finish it with tools.
 
 Run from the repo root:
 
     python scripts/smoke_workshop.py
 
-Uses the scripted workers, so it does not download a model and does not
-need an API key. Exit 0 means the brief was approved inside the turn cap.
+The suite includes an OpenAI-compatible tool round-trip (fake HTTP, no key)
+and an offline demo that calls search_knowledge, read_artifact, and
+write_artifact. Exit 0 means the brief was approved inside the turn cap.
 """
 
 from __future__ import annotations

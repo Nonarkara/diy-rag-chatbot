@@ -10,69 +10,62 @@
   <em><strong>โฟลเดอร์คือสมอง · เอเจนต์คือมือ · โมเดลคือล่าม</strong></em>
 </p>
 
-Workshop **v2** is a local multi-agent orchestrator: named agents take jobs, write artifacts, and stop. It is a DIY system for a computer with enough RAM. It is not Grok Bot, OpenClaw, or any hosted product.
+Workshop **v2** is a DIY multi-agent orchestrator. Agents take jobs, call tools, write files, and stop. The primary path is a cheap OpenAI-compatible API (OpenAI, OpenRouter, Groq, LM Studio). An ordinary laptop is enough, because the model weights stay on the API. Local Ollama is optional if you have the silicon. This is not Grok Bot, OpenClaw, or any hosted product.
 
 The LINE walkthrough and the 19-persona council are still in this repo. The council **deliberates**. The workshop **does the job**.
 
 ## Workshop v2
+
+Put a key in `.env` yourself. Do not paste it into chat. Placeholders are in `.env.example`.
 
 ```bash
 git clone https://github.com/Nonarkara/diy-rag-chatbot.git
 cd diy-rag-chatbot
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+```bash
+# .env
+WORKSHOP_PROVIDER=openai
+WORKSHOP_MODEL=gpt-4o-mini
+LLM_API_KEY=replace-me
+# OpenRouter: LLM_BASE_URL=https://openrouter.ai/api/v1
+#             WORKSHOP_MODEL=openai/gpt-4o-mini
+# Groq:       LLM_BASE_URL=https://api.groq.com/openai/v1
+#             WORKSHOP_MODEL=llama-3.1-8b-instant
+
 python -m workshop demo
 ```
 
-That command uses scripted workers. No model download, no API key. It searches `knowledge/`, writes a short brief, reviews it, and exits. Output lands in `workshop-runs/<timestamp>/brief.md`.
+Agents call tools: `search_knowledge`, `read_knowledge_file`, `read_artifact`, `write_artifact`, and an optional `fetch_url` that allows public https only. The demo searches `knowledge/`, writes a short brief, reviews it, and exits. Output lands in `workshop-runs/<timestamp>/`.
 
 ```bash
-python scripts/smoke_workshop.py    # same proof, plus the failure cases
-python -m workshop models           # approximate local weight sizes
-python -m workshop check            # refuse to start if this machine is too small
-```
-
-Live model, after you pull one that fits:
-
-```bash
-# .env — you type the values. Do not paste tokens into chat.
-# WORKSHOP_PROVIDER=ollama
-# WORKSHOP_MODE=lite
-# WORKSHOP_MODEL=qwen2.5:3b
-ollama serve
-ollama pull qwen2.5:3b
-python -m workshop demo --live
+python -m workshop demo --offline   # same tools, scripted worker, no key
+python scripts/smoke_workshop.py    # tool round-trip plus the failure cases
+python -m workshop check            # API path skips the RAM check
 ```
 
 One room message (a greeting gets silence; a job runs the same bounded pipeline):
 
 ```bash
-python -m workshop room "write a brief on what the knowledge kit refuses"
+python -m workshop room --offline "write a brief on what the knowledge kit refuses"
 ```
 
-### Hardware
+### Optional local models
 
-Estimates are Q4 weight budgets from `workshop/config.py`, plus 2 GB process headroom and 0.6 GB per in-flight request. `python -m workshop check` prints the plan for this machine and exits with an error when it does not fit.
+`python -m workshop demo --local` talks to Ollama at `http://127.0.0.1:11434`. RAM is checked **only** in that mode, against the model's weight budget (`python -m workshop models`). A small or unknown local model fails with a clear message. API users are not asked for 8 GB or 32 GB.
 
-| Mode | In flight | Installed RAM floor | Default shape |
-|---|---|---|---|
-| `lite` | 1 agent | 8 GB | one shared 3B-class model, agents take turns |
-| `full` | up to 4 | 32 GB | researcher and scout run together, then writer, then reviewer |
+| Mode | In flight | What it means |
+|---|---|---|
+| `lite` | 1 | one agent at a time; the cheap default |
+| `full` | up to 4 | researcher and scout in parallel, then writer, then reviewer |
 
-| Model (examples) | Weight budget |
-|---|---|
-| `qwen2.5:3b`, `llama3.2:3b` | ~2 GB — lite |
-| `gemma3:4b`, `gemma4:e4b` | ~3–5 GB — lite if the machine has the free RAM |
-| `qwen2.5:14b` | ~9 GB — full, and only when free RAM covers the estimate |
-| `qwen2.5:32b` | ~20 GB — full, high-RAM machines |
-
-`WORKSHOP_PROVIDER=openai` (OpenAI-compatible: OpenAI, Groq, LM Studio, …) loads **no** local weights. Set `LLM_API_KEY` and, when needed, `LLM_BASE_URL` in `.env`. Placeholders only — never commit the key.
-
-Unknown local model names fail until you set `WORKSHOP_MODEL_GB`. A machine under the floor fails with a message that names lite mode, instead of drifting into chatter. `WORKSHOP_I_ACCEPT_RISK=1` skips that refusal after you have measured the box yourself.
+`lite` and `full` are concurrency. On an API they do not change how much RAM you need.
 
 ### What a turn is allowed to do
 
-Each assigned turn returns one JSON object: **advance** (artifact changed), **ask** (one question, then the mission blocks), **yield** (silence), or **done**. Chat text is discarded. Two rejected turns fail the task. The demo allows one reviewer → writer revision, then stops. The turn cap defaults to 8.
+Each assigned turn calls tools, then returns one JSON object: **advance** (artifact changed), **ask** (one question, then the mission blocks), **yield** (silence), or **done**. Chat text is discarded. Two rejected turns fail the task. The demo allows one reviewer → writer revision, then stops. The turn cap defaults to 8. There is no shell tool.
 
 ### Architecture
 
@@ -80,35 +73,37 @@ Each assigned turn returns one JSON object: **advance** (artifact changed), **as
 flowchart TD
   user[User message in the room] --> gate{Is it a job?}
   gate -->|greeting| quiet[Agents stay silent]
-  gate -->|job| ram{RAM plan}
-  ram -->|too small| refuse[Loud refusal]
-  ram -->|fits| lib[Librarian searches knowledge/]
-  lib --> research[Researcher notes]
-  lib --> scout[Scout notes — full mode, same wave]
-  research --> writer[Writer brief]
-  scout --> writer
-  writer --> reviewer[Reviewer]
+  gate -->|job| api[OpenAI-compatible API]
+  api --> tools[Tool calls]
+  tools --> search[search_knowledge]
+  tools --> files[read_artifact / write_artifact]
+  search --> research[Researcher notes]
+  files --> writer[Writer brief]
+  research --> writer
+  writer --> reviewer[Reviewer reads the file]
   reviewer -->|one revision| writer
   reviewer -->|checks pass| brief[brief.md and stop]
+  local[Optional Ollama] -.->|only if you opt in| api
+  local --> ram{Weights fit in free RAM?}
+  ram -->|no| refuse[Refusal for local models only]
 ```
 
-Librarian search is lexical over the local folder. No LangChain, LlamaIndex, or Chroma. Embeddings are not required.
+Search is lexical over the local folder. No LangChain, LlamaIndex, or Chroma. Embeddings are not required.
 
 ### What works
 
-- Offline demo and `scripts/smoke_workshop.py` (orchestrator assigns work, brief is approved, chatter fails closed).
-- Live runs against Ollama or an OpenAI-compatible endpoint, same turn contract.
+- API demo: agents finish a brief by calling tools. `scripts/smoke_workshop.py` proves the OpenAI tool payload, the file sandbox, and that chatter fails closed. The offline flag runs that loop with no key.
 - Room semantics: `@writer` is delivered to the writer; other agents do not reply to it; `hi` produces no agent speech.
-- RAM refusal for local models, with `lite` and `full` documented above.
+- Optional Ollama, with a RAM check that does not apply to API runs.
 - LINE setup guide (`START-HERE.md`) and the council (`./bin/council`, `python -m bot`) for **decisions**, not for executing a task queue.
 
 ### What does not work
 
 - There is no LINE server package in this repo. `.env.example` mentions `app/` because the walkthrough builds that process from `LINE_RAG_Claude_Code_Master_Prompt.md`. Cloning the repo does not start a LINE bot by itself.
-- `python -m bot` does not assign tasks. It runs a 5-stage persona discussion and a chairman summary. On a small machine that discussion is slow, and it never had a completion check.
-- This project does not embed with `bge-m3` on the workshop path. The workshop cites files by search, not by a vector index.
-- Vercel is not a host for this bot. A laptop, Railway, or paid Render can run a long-lived process; the workshop demo itself is a batch job.
-- No fleet of always-on chat bots, and no claim to be Grok Bot or OpenClaw.
+- `python -m bot` does not assign tasks. It runs a 5-stage persona discussion and a chairman summary.
+- This project does not embed with `bge-m3` on the workshop path. The workshop cites files the search tool returned.
+- Vercel is not a host for this bot. The workshop demo itself is a batch job on your laptop.
+- No fleet of always-on chat bots, no unrestricted shell, and no claim to be Grok Bot or OpenClaw.
 
 More detail: [docs/architecture/workshop.md](docs/architecture/workshop.md).
 

@@ -27,7 +27,7 @@ python -m workshop demo
 python scripts/smoke_workshop.py
 ```
 
-`lite` is one agent at a time (8 GB installed floor). `full` allows several agents in flight (32 GB floor for local weights). The council (`./bin/council`, `python -m bot`) only deliberates. It must not be described as a system that executes tasks.
+The primary path is a cheap OpenAI-compatible API plus tool calls (`python -m workshop demo`). An ordinary laptop is enough. `python -m workshop demo --offline` rehearses the same tools with no key. `python -m workshop demo --local` is optional Ollama; RAM is checked only then. `lite` and `full` are concurrency, not memory floors. The council (`./bin/council`, `python -m bot`) only deliberates. It must not be described as a system that executes tasks.
 
 ## What this system is
 

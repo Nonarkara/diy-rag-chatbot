@@ -8,6 +8,7 @@ fails the mission. The loop is capped by ``max_turns``.
 from __future__ import annotations
 
 import json
+import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,8 +16,8 @@ from pathlib import Path
 from workshop.agents import Agent, get_agent
 from workshop.config import WorkshopConfig, assert_resources
 from workshop.protocol import ProtocolError, Turn, parse_turn
-from workshop.rag import format_passages, search
 from workshop.room import Room
+from workshop.tools import ToolBox, drive
 
 
 CRITERIA = {
@@ -47,6 +48,7 @@ class Task:
     invalid_turns: int = 0
     max_turns: int = 2
     last_error: str = ""
+    tools_used: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -59,6 +61,7 @@ class Task:
             "invalid_turns": self.invalid_turns,
             "acceptance": list(self.acceptance),
             "depends_on": list(self.depends_on),
+            "tools_used": list(self.tools_used),
         }
 
 
@@ -89,6 +92,8 @@ class RunReport:
     room: Room = field(default_factory=Room)
     resource_summary: str = ""
     brief: str = ""
+    tool_calls: list[str] = field(default_factory=list)
+    workspace: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -103,6 +108,8 @@ class RunReport:
             "invalid_turns": self.invalid_turns,
             "resource_summary": self.resource_summary,
             "brief": self.brief,
+            "tool_calls": self.tool_calls,
+            "workspace": self.workspace,
             "tasks": [task.to_dict() for task in self.tasks],
             "room": [message.to_dict() for message in self.room.messages],
         }
@@ -123,6 +130,7 @@ def run_mission(
     room: Room | None = None,
     *,
     check_resources: bool = True,
+    workspace: Path | None = None,
 ) -> RunReport:
     if check_resources:
         plan = assert_resources(cfg)
@@ -130,6 +138,9 @@ def run_mission(
     else:
         resource_summary = "resource check skipped"
     room = room or Room()
+    if workspace is None:
+        workspace = Path(tempfile.mkdtemp(prefix="workshop-"))
+    workspace.mkdir(parents=True, exist_ok=True)
     room.post("orchestrator", "status", f"Mission started in {cfg.mode} mode. {resource_summary}")
 
     waves: list[list[str]] = []
@@ -163,10 +174,9 @@ def run_mission(
 
         wave = ready[: cfg.max_concurrent]
         waves.append([task.id for task in wave])
-        results = _run_wave(wave, mission, cfg, llm, room)
+        results = _run_wave(wave, mission, cfg, llm, room, workspace)
         for task, outcome in results:
-            if task.kind != "retrieve":
-                llm_turns += 1
+            llm_turns += 1
             if outcome[0] == "invalid":
                 invalid_turns += 1
             _apply(task, outcome, mission, cfg, room)
@@ -186,6 +196,8 @@ def run_mission(
         room=room,
         resource_summary=resource_summary,
         brief=brief,
+        tool_calls=[name for task in mission.tasks for name in task.tools_used],
+        workspace=str(workspace),
     )
 
 
@@ -198,10 +210,10 @@ def _ready(mission: Mission) -> list[Task]:
     ]
 
 
-def _run_wave(wave, mission, cfg, llm, room):
+def _run_wave(wave, mission, cfg, llm, room, workspace: Path):
     def one(task: Task):
         try:
-            turn = _execute(task, mission, cfg, llm, room)
+            turn = _execute(task, mission, cfg, llm, room, workspace)
             return task, ("ok", turn)
         except ProtocolError as exc:
             return task, ("invalid", str(exc))
@@ -218,34 +230,65 @@ def _run_wave(wave, mission, cfg, llm, room):
     return results
 
 
-def _execute(task: Task, mission: Mission, cfg: WorkshopConfig, llm, room: Room) -> Turn:
-    if task.kind == "retrieve":
-        passages = search(cfg.knowledge_dir, mission.goal, k=4)
-        artifact = format_passages(passages)
-        if artifact == "NO_PASSAGES":
-            raise ProtocolError(f"librarian found nothing in {cfg.knowledge_dir}")
-        return Turn(action="done", artifact=artifact, note=f"{len(passages)} passages")
+def _execute(task: Task, mission: Mission, cfg: WorkshopConfig, llm, room: Room, workspace: Path) -> Turn:
     agent = get_agent(cfg.mode, task.owner)
     system, user = _prompt(agent, task, mission, room)
+    if hasattr(llm, "chat"):
+        box = ToolBox(cfg.knowledge_dir, workspace)
+        raw, used = drive(llm, system, user, box)
+        task.tools_used.extend(used)
+        for name in used:
+            room.post("orchestrator", "status", f"{agent.name} called {name}", task.id)
+        try:
+            turn = parse_turn(raw)
+        except ProtocolError:
+            if box.last_write and len(box.last_write.split()) >= 12:
+                turn = Turn(action="done", artifact=box.last_write, note=f"saved via write_artifact")
+            else:
+                raise
+        if box.last_write and len(turn.artifact.split()) < 12:
+            turn = Turn(
+                action=turn.action,
+                note=turn.note or "saved via write_artifact",
+                artifact=box.last_write,
+                question=turn.question,
+                handoff_to=turn.handoff_to,
+                decision=turn.decision,
+            )
+        return turn
     raw = llm.complete(system, user)
     return parse_turn(raw)
+
+
+def artifact_name(task: Task) -> str:
+    if task.kind == "retrieve":
+        return "passages.md"
+    if task.kind == "draft":
+        return "brief.md"
+    if task.kind == "review":
+        return "review.md"
+    return f"{task.id}.md"
 
 
 def _prompt(agent: Agent, task: Task, mission: Mission, room: Room) -> tuple[str, str]:
     system = (
         f"You are {agent.name}, the {agent.role}. {agent.brief}\n"
-        "You do a job. You do not greet, banter, or address other agents socially.\n"
-        "Reply with ONE JSON object and nothing else. Keys:\n"
+        "You do the job by calling tools. Do not greet, banter, or invent file contents.\n"
+        "Tools:\n"
+        "- search_knowledge: search the local knowledge folder\n"
+        "- read_knowledge_file: read one file inside that folder\n"
+        "- read_artifact: read a file a previous agent saved\n"
+        "- write_artifact: save your work product (do this before you finish notes or a brief)\n"
+        "- fetch_url: optional public https page; local hosts are refused\n"
+        "After the tools have done the work, reply with ONE JSON object and nothing else. Keys:\n"
         'action: "advance" | "ask" | "yield" | "done"\n'
         "note: one sentence on what changed\n"
-        "artifact: the work product (required for advance and done)\n"
+        "artifact: the work product you saved (required for advance and done)\n"
         "question: one bounded question, or null\n"
         "handoff_to: agent name, or null\n"
         'decision: "approve" or "revise" when you are the reviewer, else null\n'
-        "Use done when this task's acceptance criteria are met.\n"
-        "Use ask only if you cannot proceed without one fact.\n"
-        "Use yield only when you have nothing useful to add — then leave artifact empty.\n"
-        "Cite paths as knowledge/<file>. Do not invent files."
+        "Cite paths as knowledge/<file> copied from tool results. Do not invent files.\n"
+        "Use ask only if you cannot proceed without one fact. Use yield only to stay silent."
     )
     mentions = room.mentions_for(agent.name)
     context = _context(mission)
@@ -259,10 +302,13 @@ def _prompt(agent: Agent, task: Task, mission: Mission, room: Room) -> tuple[str
             f"\nPREVIOUS_TURN_REJECTED: {task.last_error}\n"
             "Reply with one JSON work object that fixes that. Do not chat.\n"
         )
+    read_files = _read_files(task, mission)
     user = (
         f"TASK_ID: {task.id}\n"
         f"TASK_KIND: {task.kind}\n"
         f"OWNER: {agent.name}\n"
+        f"ARTIFACT_FILE: {artifact_name(task)}\n"
+        f"READ_FILES: {', '.join(read_files) if read_files else '(none)'}\n"
         f"GOAL: {mission.goal}\n"
         f"BRIEF: {task.brief}\n"
         f"ACCEPTANCE:\n{criteria}\n"
@@ -271,6 +317,20 @@ def _prompt(agent: Agent, task: Task, mission: Mission, room: Room) -> tuple[str
         f"CONTEXT:\n{context or '(none yet)'}\n"
     )
     return system, user
+
+
+def _read_files(task: Task, mission: Mission) -> list[str]:
+    names: list[str] = []
+    for dep_id in task.depends_on:
+        dep = _by_id(mission, dep_id)
+        if dep is None or dep.kind == "review":
+            continue
+        name = artifact_name(dep)
+        if name not in names:
+            names.append(name)
+    if task.kind == "review" and "brief.md" not in names:
+        names.append("brief.md")
+    return names
 
 
 def _context(mission: Mission) -> str:
@@ -287,13 +347,6 @@ def _apply(task: Task, outcome: tuple, mission: Mission, cfg: WorkshopConfig, ro
         _reject(task, mission, room, str(payload))
         return
     turn: Turn = payload
-    if task.kind == "retrieve":
-        task.artifact = turn.artifact
-        task.status = "done"
-        task.turns += 1
-        room.post("librarian", "artifact", _clip(turn.artifact, 1200), task.id)
-        room.post("orchestrator", "status", f"Assigned next work after {task.id}.", task.id)
-        return
     if turn.action == "yield":
         task.invalid_turns += 1
         task.last_error = "yield is silence; the assigned artifact is still missing"

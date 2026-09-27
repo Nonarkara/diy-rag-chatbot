@@ -1,4 +1,4 @@
-"""The happy-path mission: retrieve → research → brief → review.
+"""The happy-path mission: search with tools → research → brief → review.
 
 Lite runs one agent at a time.
 Full adds a second researcher and may run both research tasks together.

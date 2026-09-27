@@ -1,8 +1,8 @@
 # Workshop v2
 
-A local multi-agent orchestrator. Agents have names and skills. The orchestrator assigns tasks. A task ends when its artifact meets the acceptance checks, when the agent asks one question, or when the turn budget is spent. Idle conversation is rejected.
+A DIY multi-agent orchestrator. Agents have names and skills. They do the work by calling tools (search the knowledge folder, read and write artifact files, optionally fetch a public https page). The orchestrator assigns tasks. A task ends when its artifact meets the acceptance checks, when the agent asks one question, or when the turn budget is spent. Idle conversation is rejected.
 
-This is a DIY program you run on your own computer. It is not Grok Bot, OpenClaw, or a hosted clone of either.
+The primary model is any cheap OpenAI-compatible API. Weights stay on that API, so an ordinary laptop is enough. Ollama is optional. This is not Grok Bot, OpenClaw, or a hosted clone of either.
 
 ## Why a new package
 
@@ -21,19 +21,23 @@ flowchart TD
   user[User message] --> room[Room]
   room --> gate{Job or greeting?}
   gate -->|greeting| silence[Status line only]
-  gate -->|job| plan[Resource plan]
-  plan -->|local model does not fit| stop[InsufficientResources]
-  plan -->|ok| queue[Task queue]
-  queue --> lib[librarian: lexical search]
-  lib --> wave{mode}
+  gate -->|job| queue[Task queue]
+  queue --> api[OpenAI-compatible chat completions]
+  api --> tools[Tool calls]
+  tools --> search[search_knowledge]
+  tools --> rw[read_artifact / write_artifact]
+  search --> wave{mode}
   wave -->|lite, 1 in flight| one[researcher]
   wave -->|full, same wave| two[researcher and scout]
   one --> writer[writer]
   two --> writer
-  writer --> reviewer[reviewer]
+  writer --> reviewer[reviewer reads brief.md]
   reviewer -->|acceptance failed, budget left| writer
   reviewer -->|acceptance passed| done[brief.md]
   reviewer -->|budget spent| fail[failed, with the reason]
+  ollama[Optional Ollama] -.-> api
+  ollama --> ram{free RAM holds the weights?}
+  ram -->|no| stop[Refusal for local models only]
 ```
 
 Waves are the unit of concurrency. Lite's cap is 1, so every wave is a single task. Full's cap is 4; the demo puts `research_facts` and `research_limits` in one wave and leaves the writer and reviewer in later waves, because they depend on the notes.
@@ -54,15 +58,16 @@ The reviewer may approve. The orchestrator still runs the acceptance checks (cit
 
 ## Memory
 
-`assert_resources` runs before any live call.
+RAM is checked only when `WORKSHOP_PROVIDER=ollama`.
 
-- Local provider (`ollama`): required free RAM ≈ 2 GB headroom + model weight + 0.6 GB × concurrency. Installed-RAM floor is 8 GB for `lite` and 32 GB for `full`.
+- API provider (`openai`, including OpenRouter and Groq via `LLM_BASE_URL`): no weight RAM, no floor, no refusal. `lite` and `full` only change how many agents run at once.
+- Local provider: required free RAM ≈ model weight + 1.5 GB headroom + 0.5 GB for each extra in-flight request. There is no installed-RAM floor.
 - Weights for known names live in `KNOWN_MODELS_GB`. They are Q4 planning budgets, not a benchmark.
 - An unknown local name raises `WorkshopConfigError` until `WORKSHOP_MODEL_GB` is set.
-- `openai` (any OpenAI-compatible URL) adds no local weights, so the floor does not apply. `LLM_API_KEY` is read from the environment. The repo ships a placeholder in `.env.example` only.
-- `scripted` is the offline demo. It skips the RAM floor so the smoke test can run on any machine. It does not pretend to be a local model.
+- `LLM_API_KEY` is read from the environment. The repo ships a placeholder in `.env.example` only.
+- `scripted` (`--offline`) runs the same tools with no network. The smoke test uses it, plus a fake HTTP round-trip of the OpenAI tool payload.
 
-`WORKSHOP_I_ACCEPT_RISK=1` skips the refusal. The estimate is still printed.
+`WORKSHOP_I_ACCEPT_RISK=1` skips the local refusal. The estimate is still printed.
 
 ## Room
 
@@ -70,20 +75,21 @@ The reviewer may approve. The orchestrator still runs the acceptance checks (cit
 
 ## Retrieval
 
-`workshop/rag.py` scores markdown and text under `knowledge/` by token overlap and returns paths plus excerpts. The librarian task is that function, not a model pretending to have read the folder. The demo mission asks for filing rules and refusal rules, which the sample pages already state. The workshop does not invent corpus pages.
+`search_knowledge` calls `workshop/rag.py`, which scores markdown and text under `knowledge/` by token overlap and returns paths plus excerpts. The librarian and the researcher must call that tool. They do not receive the folder in the prompt and then pretend they searched. The demo mission asks for filing rules and refusal rules, which the sample pages already state. The workshop does not invent corpus pages. `fetch_url` accepts public https only and refuses private addresses. There is no shell tool.
 
 ## How to run
 
-From the repo root:
+From the repo root, after `LLM_API_KEY` is in `.env`:
 
 ```bash
 pip install -r requirements.txt
 python -m workshop demo
+python -m workshop demo --offline
 python scripts/smoke_workshop.py
-python -m workshop demo --live --mode lite
+python -m workshop demo --local
 ```
 
-`--live` uses `WORKSHOP_PROVIDER` (default `ollama` when the flag is set) and `WORKSHOP_MODEL`. Ollama should be reachable at `http://127.0.0.1:11434`.
+`--local` uses Ollama at `http://127.0.0.1:11434`. The default model for that flag is `qwen2.5:3b` unless `WORKSHOP_MODEL` names a known local model.
 
 ## Files
 
@@ -94,7 +100,8 @@ python -m workshop demo --live --mode lite
 | `workshop/room.py` | transcript and silence |
 | `workshop/rag.py` | local lexical search |
 | `workshop/config.py` | modes and the RAM refusal |
-| `workshop/llm.py` | scripted workers and the live client |
+| `workshop/tools.py` | search, read, write, bounded fetch |
+| `workshop/llm.py` | OpenAI-compatible tools, optional Ollama, scripted rehearsal |
 | `workshop.yaml` | defaults |
 | `tests/test_workshop.py` | smoke coverage |
 | `scripts/smoke_workshop.py` | one command that must exit 0 |

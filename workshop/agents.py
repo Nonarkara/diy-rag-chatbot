@@ -17,35 +17,35 @@ LIBRARIAN = Agent(
     name="librarian",
     role="retrieval",
     skills=("search local knowledge files", "cite paths", "stay silent when nothing matches"),
-    brief="Run the folder search and hand passages to the next agent. Do not paraphrase from memory.",
+    brief="Call search_knowledge, then write_artifact with the paths and excerpts. Do not answer from memory.",
 )
 
 RESEARCHER = Agent(
     name="researcher",
     role="research",
     skills=("read retrieved passages", "note what the files actually say", "cite paths"),
-    brief="Write research notes grounded only in the passages you were given.",
+    brief="Call search_knowledge, then write_artifact with notes that cite the paths the tool returned.",
 )
 
 SCOUT = Agent(
     name="scout",
     role="research",
     skills=("read retrieved passages", "extract limits and refusals", "cite paths"),
-    brief="Write notes on what the files refuse, and the handoff when they have no answer.",
+    brief="Call search_knowledge, then write_artifact with what the files refuse and the handoff when they have no answer.",
 )
 
 WRITER = Agent(
     name="writer",
     role="draft",
     skills=("turn notes into a short brief", "honor @mentions", "cite paths"),
-    brief="Write the operator brief from the research notes. Do not add facts that are not in those notes.",
+    brief="Call read_artifact on the research notes, then write_artifact the brief. Do not add facts that are not in those notes.",
 )
 
 REVIEWER = Agent(
     name="reviewer",
     role="review",
     skills=("check citations", "check the refusal boundary", "approve or request one revision"),
-    brief="Review the brief against the acceptance criteria. Approve only when they hold.",
+    brief="Call read_artifact on the brief. Approve only when the acceptance checks hold.",
 )
 
 
