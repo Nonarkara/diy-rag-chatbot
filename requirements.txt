@@ -1,5 +1,6 @@
-# LINE RAG Box — keep this list short on purpose.
+# DIY RAG + workshop — keep this list short on purpose.
 # No LangChain, no LlamaIndex, no Chroma, no extra database server.
+# Workshop v2 (python -m workshop demo) needs PyYAML. Live models also need httpx.
 fastapi>=0.115
 uvicorn>=0.32
 python-dotenv>=1.0

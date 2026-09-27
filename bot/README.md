@@ -1,5 +1,13 @@
 # bot/ — in-process council + Telegram adapter
 
+This package **deliberates**. It does not run a task queue. For agents that retrieve, write, and review until a brief exists, use the workshop:
+
+```bash
+python -m workshop demo
+```
+
+See the repository README, section "Workshop v2".
+
 This package is the **deployable council**: one Telegram bot, one
 Python process, the deliberation happens **inside** the process. End
 users who message the bot get the same multi-perspective verdict that

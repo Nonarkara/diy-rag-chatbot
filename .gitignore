@@ -23,6 +23,9 @@ logs/
 # Council session captures (verdicts go here; not committed by default)
 council-sessions/
 
+# Workshop run artifacts (brief, room transcript, trace)
+workshop-runs/
+
 # Council host-side caches (opencode state, etc.)
 .opencode/
 .claude/
