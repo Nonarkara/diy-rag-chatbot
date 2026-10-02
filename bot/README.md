@@ -28,7 +28,7 @@ brain; the personas are subagent calls within the brain.
 │  python-telegram-bot                                │
 │     │                                               │
 │     ▼                                               │
-│  bot.telegram  ──►  bot.core.run_council()          │
+│  bot.telegram  ──►  shared bot.core stage helpers   │
 │                       │                             │
 │                       ├──► bot.personas  (19 loaded)│
 │                       ├──► bot.llm      (Ollama…)   │
@@ -39,8 +39,16 @@ brain; the personas are subagent calls within the brain.
 └─────────────────────────────────────────────────────┘
 ```
 
-All 5 stages run inside the bot's process. Total wall time on a
+The Telegram adapter orchestrates the stages using helpers from `bot.core`; the separate core entry point also exposes `run_council()`. All 5 stages run inside the bot's process. Total wall time on a
 warm Ollama `qwen3:4b`: ~2–4 minutes for a 5-persona panel.
+
+## Before connecting a channel
+
+- Run from the repository root with Python and the dependencies in `requirements.txt`. Prepare the selected model first. `--core-smoke` makes actual model requests; it is not an offline fixture test.
+- This is a deliberation bot, not the LINE RAG runtime. It loads persona prompts and the submitted question, not `knowledge/` documents. It has no file-read tools, retrieval index or guaranteed source-grounded refusal behavior.
+- The default panel is three (`ship-now` within `execution-lean`), or four when the curator is added. N selected personas produce **3N + 1 model calls**: three parallel stages plus synthesis. Local inference has resource cost; hosted calls consume provider quota/billing.
+- `TELEGRAM_ALLOWED_USERS` is optional and blank means anyone can invoke the bot. Non-empty malformed settings are rejected, including mixed valid/invalid lists and empty list entries. An unset, empty or whitespace-only value still intentionally allows everyone; review valid numeric IDs before connecting.
+- Python bot defaults are in `core.py` / `personas.py`; the host skill’s `.council.yaml` is not loaded by `python -m bot`.
 
 ## Install & run
 
@@ -79,9 +87,9 @@ or just send a question in a DM.
 ## LLM provider notes
 
 - **Ollama (default)** — local, free. Must be running at
-  `http://localhost:11434`. Pull a model first: `ollama pull qwen3:4b`.
+  `http://localhost:11434` by default. Pull the same model named in `LLM_MODEL`; the example above selects `qwen3:4b`.
   Cold-load latency: 5–30 seconds on first call.
-- **OpenAI** — `https://api.openai.com/v1`. Requires an API key.
+- **OpenAI** — base `https://api.openai.com`. The client appends `/v1/chat/completions`; do not include `/v1` twice. Requires an API key.
 - **Groq** — OpenAI-compatible. Set `LLM_BASE_URL=https://api.groq.com/openai`
   and `LLM_MODEL=llama-3.1-8b-instant`. Free tier available.
 - **OpenRouter / Together / LM Studio** — same shape as OpenAI;
@@ -96,7 +104,7 @@ The bot's reply has three parts:
 
 1. A status message that edits in place as the council progresses
    (`🔵 Stage 01/04 …`, `🔵 Stage 02/04 …`, etc.)
-2. The verdict markdown, split into ≤ 3800-char messages (Telegram's
+2. The verdict markdown, split at a 3800-character threshold before part annotations (Telegram's
    4096-char limit with a margin). The first message replaces the
    status; follow-up messages continue the verdict.
 3. A short `✅ Council done in N.Ns · N personas · M message(s)`
@@ -114,8 +122,8 @@ The verdict itself has all the upstream 0xNyk sections:
 
 For a typical question, the orchestrator picks:
 
-- **profile:** `execution-lean` (5 personas)
-- **triad:** `ship-now` (3 of the 5: torvalds, feynman, aurelius)
+- **profile pool:** `execution-lean` (5 personas)
+- **selected triad:** `ship-now` (3 of that pool: torvalds, feynman, aurelius)
 - **+ rag-curator** auto-added when the question's keywords match
   `retrieval | knowledge | rag | embedding | faithfulness`
 

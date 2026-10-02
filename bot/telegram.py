@@ -66,7 +66,13 @@ def _parse_allowed_users() -> set[int]:
     raw = os.environ.get("TELEGRAM_ALLOWED_USERS", "").strip()
     if not raw:
         return set()  # empty = allow everyone
-    return {int(x) for x in raw.split(",") if x.strip().isdigit()}
+    parts = [part.strip() for part in raw.split(",")]
+    if any(not part.isdigit() for part in parts):
+        raise ValueError("TELEGRAM_ALLOWED_USERS must contain only comma-separated numeric user IDs")
+    try:
+        return {int(part) for part in parts}
+    except ValueError:
+        raise ValueError("TELEGRAM_ALLOWED_USERS contains an invalid numeric user ID") from None
 
 
 def _user_allowed(update: Update, allowed: set[int]) -> bool:

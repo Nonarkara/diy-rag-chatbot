@@ -2,7 +2,7 @@
 
 ![hero](hero.svg)
 
-This repo ships **two council engines**. They share the same goal —
+This repo ships a host-CLI council skill, an adapter for a separately installed multi-model app, and a Python Telegram council. It does not ship the LINE RAG runtime. The two documented council patterns below share the same goal —
 multi-perspective deliberation on hard questions — but they use
 different machinery. Pick the right one per question.
 
@@ -34,9 +34,7 @@ End user wants a verdict from a Telegram bot?
   └── yes → python -m bot  (single-orchestrator pattern, see below)
 ```
 
-The three wrappers are siblings: they share the same `council-sessions/`
-capture folder, the same `.gitignore`, and the same follow-up
-checklist.
+The shell wrappers use `council-sessions/`; the Python Telegram adapter does not write that session archive. `bin/council` creates a template where the operator must paste the verdict, not an automatic transcript capture.
 
 ---
 
@@ -77,9 +75,7 @@ Gemini CLI). One LLM, many personas (system prompts).
 
 The RAG-specific persona `council-rag-curator` (this repo's local
 addition) is auto-included on any question whose keywords match
-`retrieval | knowledge | rag | embedding | faithfulness`. It opens
-the cited file before commenting on what it says, and labels every
-load-bearing claim as `EVIDENCED` / `INFERRED` / `ASSUMED` / `MISSING`.
+`retrieval | knowledge | rag | embedding | faithfulness`. The host skill instructs it to inspect cited files and label evidence. The Python bot has no file-reading tools or retrieval step, so that instruction is not proof of grounding.
 
 ## The karpathy 3-stage protocol
 
@@ -111,27 +107,25 @@ running app or falls back to the 0xNyk skill.
 ![why-this-wins](why-this-wins.svg)
 
 The orchestrator pattern wins on four axes at once — and only on the
-orchestrator pattern. The illustration above is the proof:
+orchestrator pattern. The illustration is a conceptual comparison, not a benchmark. For the shipped Python bot:
 
 | Approach | Breadth | Grounding | Synthesis | Cost | Deploys |
 |---|---|---|---|---|---|
 | Single LLM | 1 perspective | no evidence check | just the prose | $ per call | API only |
 | Multi-bot Telegram | N bots in parallel | none — bots don't see each other | zero — no shared verdict | N × per-call | yes, no synthesis |
 | RAG alone | 1 perspective on a corpus | folder-grounded | still one answer | 1× per call + retrieval | yes |
-| **DIY orchestrator (this repo)** | **N personas · parallel** | **folder + cross-examined** | **chairman synthesis** | **same as 1 LLM · Ollama free** | **yes · all channels** |
+| **DIY Python council** | **N personas · staged calls** | **prompt + peer review; no folder retrieval** | **chairman synthesis** | **3N + 1 model calls** | **Telegram adapter only** |
 
-The axes where the orchestrator wins — breadth, grounding, synthesis —
-are precisely the axes where the other three fall short. And the cost
-is the same as a single LLM call. The reason: the deliberation is
-**in-process**, so there is no second or third call to pay for. There
-are *N calls* per question (one per persona), but they all happen on
-the same machine, and the LLM is Ollama (free).
+For N personas, stages 01–03 each call the model N times, followed by one
+chairman call: **3N + 1**. The default three-person panel therefore makes ten
+calls; adding the curator makes thirteen. Running those calls in one Python
+process does not combine their tokens into one request or make a hosted provider
+free. Ollama avoids a hosted per-token bill but still uses memory and compute.
 
-The reason this is on par with the top AI-council repos (karpathy,
-0xNyk) and strictly better than the multi-bot mesh is the **single-
-orchestrator discipline**: the channel is a thin client, the brain
-is one process, and the personas are subagent calls inside the
-brain. There is no other architecture where all four axes line up.
+Cross-examination is not document retrieval. The current helper labels peers
+“Member A” etc. while also including their figure names, so it is not a blinded
+review. These are useful deliberation mechanics, not guarantees of evidence,
+independence or correctness.
 
 ---
 
@@ -168,12 +162,12 @@ For a Telegram bot user:
 a Telegram user
   └─ /council <question>  (or a plain DM)
        └─ python-telegram-bot  (single process, one orchestrator)
-            └─ bot.core.run_council()
+            └─ bot.telegram using shared bot.core stage helpers
                  ├─ Stage 01: N parallel LLM calls
-                 ├─ Stage 02: N parallel LLM calls (anonymised)
+                 ├─ Stage 02: N parallel LLM calls (peer-labelled, figures visible)
                  ├─ Stage 03: N parallel LLM calls
                  └─ Stage 04: 1 chairman synthesis call
-                      └─ verdict markdown → chunked at 3800 chars
+                      └─ verdict markdown → 3800-char splits + part labels
                            └─ one or more Telegram replies
 ```
 
@@ -223,9 +217,9 @@ There are three projects the rest of the world calls "AI council":
 
 What we add that the other two do not:
 
-- **A RAG-specific 19th persona** (`council-rag-curator`) that opens the cited file before commenting on what it says. The 0xNyk personas are general-purpose; this one is for *this* domain.
+- **A RAG-specific 19th persona** (`council-rag-curator`) that asks a capable host agent to inspect evidence. The Python bot has no retrieval/file tools. The 0xNyk personas are general-purpose; this one is for *this* domain.
 - **A `bin/llm-council` shim** that auto-detects whether the karpathy app is up and falls back to 0xNyk otherwise. Neither of the upstream projects have a fallback path.
-- **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo gives you a `python -m bot` and you're done.
+- **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo provides the `python -m bot` entry point; dependencies, model/channel configuration and access-control review remain required.
 - **The single-orchestrator pattern as a documented anti-pattern fix** for the multi-bot Telegram failure mode. Anyone who has tried the multi-bot approach has hit the same wall.
 
 What we share:
