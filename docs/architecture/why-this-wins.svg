@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="-apple-system, BlinkMacSystemFont, 'SF Mono', 'JetBrains Mono', Menlo, monospace">
-  <title>Why this wins — comparison across the four common approaches</title>
-  <desc>Four manga panels comparing approaches: single-LLM, multi-bot, RAG-only, and the DIY orchestrator. The orchestrator wins on breadth × grounding × synthesis.</desc>
+  <title>Four orchestration approaches — conceptual trade-offs</title>
+  <desc>Four manga panels comparing approaches: single-LLM, multi-bot, RAG-only, and the DIY orchestrator. Conceptual comparison, not a benchmark; the Python council has no corpus retrieval.</desc>
 
   <defs>
     <radialGradient id="halo-amber" cx="50%" cy="50%" r="60%">
@@ -37,8 +37,8 @@
 
   <!-- TOP STRIP -->
   <rect x="40" y="40" width="1120" height="48" class="frame-hair"/>
-  <text x="56" y="62" class="text-tiny">fig 03 · why this wins</text>
-  <text x="56" y="80" class="text-title">Four approaches · one orchestrator wins</text>
+  <text x="56" y="62" class="text-tiny">fig 03 · architecture choices</text>
+  <text x="56" y="80" class="text-title">Four approaches · different trade-offs</text>
   <text x="1140" y="80" text-anchor="end" class="text-faint">breadth × grounding × synthesis × cost</text>
 
   <!-- COLUMN HEADERS (axes) -->
@@ -88,7 +88,7 @@
       <text x="0" y="32" class="text-faint">just the prose</text>
     </g>
     <g transform="translate(680, 50)">
-      <rect x="0" y="0" width="140" height="14" class="ink"/>
+      <rect x="0" y="0" width="100" height="14" class="ink"/>
       <text x="0" y="32" class="text-faint">$ per call (provider API)</text>
     </g>
     <g transform="translate(800, 50)">
@@ -152,7 +152,7 @@
       <text x="0" y="32" class="text-faint">zero — no shared verdict</text>
     </g>
     <g transform="translate(680, 50)">
-      <rect x="0" y="0" width="140" height="14" class="ink"/>
+      <rect x="0" y="0" width="100" height="14" class="ink"/>
       <text x="0" y="32" class="text-faint">N × per-call cost</text>
     </g>
     <g transform="translate(800, 50)">
@@ -224,7 +224,7 @@
     <!-- Trophy stamp -->
     <g transform="translate(14, 12)">
       <rect x="0" y="0" width="34" height="22" fill="#ff9500"/>
-      <text x="17" y="17" text-anchor="middle" class="text-tiny" fill="#fafaf7">★ wins</text>
+      <text x="17" y="17" text-anchor="middle" class="text-tiny" fill="#fafaf7">here</text>
     </g>
     <text x="56" y="26" class="text-label-amber" fill="#ff9500" font-weight="700">D · DIY orchestrator (this repo)</text>
     <text x="56" y="42" class="text-faint">"one bot, N personas as in-process LLM calls, 5 stages"</text>
@@ -249,7 +249,7 @@
       <text x="0" y="3" text-anchor="middle" class="text-tiny-amber">ORC</text>
     </g>
 
-    <!-- Full bars (winner takes all) -->
+    <!-- Illustrative category bars; not benchmark measurements -->
     <g transform="translate(220, 50)">
       <rect x="0" y="0" width="140" height="14" class="frame-amber" fill="none"/>
       <rect x="0" y="0" width="140" height="14" fill="#ff9500" opacity="0.4"/>
@@ -258,7 +258,7 @@
     <g transform="translate(370, 50)">
       <rect x="0" y="0" width="140" height="14" fill="#ff9500" opacity="0.4"/>
       <rect x="0" y="0" width="140" height="14" class="frame-amber" fill="none"/>
-      <text x="0" y="32" class="text-faint">folder + cross-examined</text>
+      <text x="0" y="32" class="text-faint">prompt + peer review</text>
     </g>
     <g transform="translate(520, 50)">
       <rect x="0" y="0" width="140" height="14" fill="#ff9500" opacity="0.4"/>
@@ -266,13 +266,13 @@
       <text x="0" y="32" class="text-faint">chairman synthesis</text>
     </g>
     <g transform="translate(680, 50)">
-      <rect x="0" y="0" width="140" height="14" fill="#ff9500" opacity="0.4"/>
-      <rect x="0" y="0" width="140" height="14" class="frame-amber" fill="none"/>
-      <text x="0" y="32" class="text-faint">$ same as 1 LLM · Ollama free</text>
+      <rect x="0" y="0" width="100" height="14" fill="#ff9500" opacity="0.4"/>
+      <rect x="0" y="0" width="100" height="14" class="frame-amber" fill="none"/>
+      <text x="0" y="32" class="text-faint">3N+1 model calls</text>
     </g>
     <g transform="translate(800, 50)">
-      <text class="text-mono" fill="#ff9500" font-weight="700">yes · all channels</text>
-      <text y="14" class="text-faint">Telegram (shipped) · Discord · web</text>
+      <text class="text-mono" fill="#ff9500" font-weight="700">Telegram adapter</text>
+      <text y="14" class="text-faint">Other adapters needed</text>
     </g>
     <g transform="translate(920, 50)">
       <text class="text-mono" fill="#ff9500" font-weight="700">structured verdict</text>
@@ -282,8 +282,8 @@
 
   <!-- ============ BOTTOM: THE WINNING AXIS EXPLAINED ============ -->
   <rect x="40" y="680" width="1120" height="80" class="frame-hair"/>
-  <text x="56" y="704" class="text-tiny-amber">▶ why D wins</text>
-  <text x="170" y="704" class="text-mono">breadth (N personas) × grounding (open the file) × synthesis (chairman) — same cost as a single call.</text>
-  <text x="56" y="724" class="text-mono">A is cheap to build, narrow. B is wide, no synthesis. C is grounded, no dissent. D is all four — because the deliberation lives inside one process.</text>
+  <text x="56" y="704" class="text-tiny-amber">▶ D today</text>
+  <text x="170" y="704" class="text-mono">N personas, staged review, one synthesis. Corpus retrieval is not wired into bot/.</text>
+  <text x="56" y="724" class="text-mono">Illustrative bars, not measured scores. Local compute or provider billing applies to every model call.</text>
   <text x="56" y="744" class="text-faint">Replicated: bin/council (host CLI) · bin/llm-council (karpathy) · python -m bot (Telegram) — all call the same orchestrator pattern.</text>
 </svg>

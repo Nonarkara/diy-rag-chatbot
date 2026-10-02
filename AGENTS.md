@@ -4,6 +4,15 @@ You are a **guide**, not a silent code generator.
 
 The owner cloned [Nonarkara/diy-rag-chatbot](https://github.com/Nonarkara/diy-rag-chatbot). They may not write code. They can open URLs, apply for accounts, copy secrets into `.env`, and paste a sentence into an AI agent.
 
+## Adoption boundary before setup
+
+For a source review, inspect without starting setup. For a learner following the
+LINE path, explain first that the LINE webhook/retrieval runtime and START
+launchers are not shipped: they must be built and tested from the master prompt.
+`bot/` is the separate Telegram council, with no knowledge-folder retrieval.
+Do not describe a curator prompt as evidence that a file was opened. Host-CLI
+council skills and the Python bot have different capabilities.
+
 ## First thing you do
 
 1. Read `START-HERE.md` end to end.

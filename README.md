@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  Turn any knowledge folder into a LINE / Telegram bot that answers <em>only</em> from the folder — plus a deployable in-process AI council for hard decisions. One Python process. 19 personas. MIT.
+  A Thai-first teaching and build kit for a folder-grounded LINE bot, plus separate Python source for an in-process Telegram council. The LINE retrieval runtime is not shipped in this clone. 19 persona files. MIT.
 </p>
 
 <p align="center">
@@ -54,9 +54,13 @@
 
 ---
 
-**TL;DR (Thai):** โยนไฟล์ลงโฟลเดอร์ `knowledge/` → บอท LINE ตอบจากไฟล์นั้นเท่านั้น (ถ้าไม่มีก็บอกว่าไม่มี ไม่เดา) → เมื่อต้องตัดสินใจเรื่องใหญ่ ๆ เรียกสภา 19 คนผ่าน `bin/council "คำถาม"` หรือส่งข้อความไปที่ Telegram bot (`python -m bot`) — ทั้งหมดนี้คือ **single-orchestrator pattern** ที่แก้ปัญหา "หลายบอทคุยกันไม่ได้" ของ Telegram
+**TL;DR (Thai):** clone นี้มีคู่มือ สไลด์ และ prompt สำหรับให้เอเจนต์สร้าง LINE RAG แต่ยังไม่มี runtime ของ LINE หรือ `START.command` / `START.bat` ส่วน `bot/` เป็นสภา Telegram แยกต่างหาก ไม่ได้ค้นไฟล์ `knowledge/` และไม่ใช่หลักฐานว่าคำตอบอ้างอิงไฟล์แล้ว
 
-**TL;DR (English):** Drop files into `knowledge/` → the LINE bot answers only from those files (refuses when not there, never guesses) → for hard decisions, convene the 19-persona council via `bin/council "question"` or message the Telegram bot (`python -m bot`). This is the **single-orchestrator pattern** — the answer to the multi-bot Telegram failure where bots can't address each other.
+**TL;DR (English):** The LINE path is a build specification and guided setup, not a runnable RAG app in this checkout. `START.command`, `START.bat`, the LINE webhook server and its retrieval/indexing implementation still need to be built from the master prompt. `python -m bot` runs a separate Telegram council after dependencies, model access and channel configuration; it does not retrieve from `knowledge/`.
+
+The shipped bot selects three personas by default, adds the RAG curator for matching keywords, and makes **3N + 1 model calls** for N selected personas. File-grounding rules in a prompt do not supply file-reading tools. Review [bot prerequisites and limits](bot/README.md#before-connecting-a-channel) before using private material or enabling a public bot.
+
+Known validation gaps: the vendored roster validator currently reports five curator/roster inconsistencies. Non-Claude auto-install paths in `bin/council` also need repair because a command and its flags are stored as one quoted executable string. Neither issue is fixed by the documentation updates; do not assume every host path is verified.
 
 **สไลด์ภาษาไทย 31 สไลด์** พร้อม [English README](#english) ด้านล่าง
 
@@ -74,9 +78,9 @@
 
 What we add that the other two do not:
 
-1. **A RAG-specific 19th persona** (`council-rag-curator`) that opens the cited file before commenting on what it says. The 0xNyk personas are general-purpose; this one is for *this* domain.
+1. **A RAG-specific 19th persona** (`council-rag-curator`) that instructs a capable host agent to inspect cited files. The Python Telegram bot has no file-reading or retrieval tools. The 0xNyk personas are general-purpose; this one is for *this* domain.
 2. **A `bin/llm-council` shim** that auto-detects whether the karpathy app is up and falls back to 0xNyk otherwise. Neither of the upstream projects have a fallback path.
-3. **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. This repo gives you `python -m bot` and you're done.
+3. **A Telegram deployable bot** (`bot/`) that runs the same 0xNyk protocol in-process. 0xNyk requires a host CLI; karpathy requires a separate web app. The entry point is `python -m bot`; dependencies, a working model, channel credentials and access-control review are still required.
 4. **The single-orchestrator pattern as a documented anti-pattern fix** for the multi-bot Telegram failure mode. Anyone who has tried the multi-bot approach has hit the same wall. The fix lives here.
 
 What we share:

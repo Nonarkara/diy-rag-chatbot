@@ -18,6 +18,12 @@
 
 ---
 
+## ขอบเขตของ clone นี้ / What this clone contains
+
+คู่มือนี้อธิบายผลลัพธ์ที่จะได้ **หลังสร้าง LINE RAG ตาม master prompt แล้ว** แต่ clone นี้ยังไม่มี LINE webhook server, retrieval/indexing runtime หรือ `START.command` / `START.bat` อย่าเปิด tunnel หรือคาดหวัง `/admin` ก่อนที่เอเจนต์จะสร้างและทดสอบส่วนเหล่านั้น
+
+The teaching deck, sample knowledge and build contract ship here. The LINE runtime does not. `bot/` is a separate Telegram council with no knowledge-folder retrieval; its setup is in [bot/README.md](bot/README.md).
+
 ## สิ่งที่จะได้เมื่อจบ
 
 คนทัก LINE Official Account ของคุณ → ระบบค้นไฟล์ในโฟลเดอร์ `knowledge/` → ตอบจากไฟล์นั้นเท่านั้น → ถ้าไม่มีในไฟล์ จะพูดว่าไม่มี ไม่เดา
@@ -271,7 +277,7 @@ OLLAMA_EMBED_MODEL=bge-m3
 
 ## สถานี 10 · กด START
 
-เมื่อมี `START.command` / `START.bat` ในโฟลเดอร์นี้:
+ไฟล์ `START.command` / `START.bat` **ยังไม่อยู่ใน clone นี้** ให้สร้างและทดสอบ LINE runtime ตาม master prompt ก่อน แล้วจึงทำขั้นตอนนี้ เมื่อมี launcher ที่ทดสอบแล้ว:
 
 - แม็ค: ดับเบิลคลิก `START.command` (ครั้งแรกอาจต้องคลิกขวา → เปิด)
 - วินโดวส์: ดับเบิลคลิก `START.bat`
