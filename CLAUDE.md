@@ -1,11 +1,29 @@
 # Claude Code
 
-อ่าน `AGENTS.md` ก่อน แล้วพาเจ้าของบอทเดินตาม `START-HERE.md` ทีละสถานี รวมสถานี 14 (ที่รัน) 15 (Telegram) 16 (Discord)
+Read `AGENTS.md` first — that is the canonical entry contract for
+any agent. This file is the Claude Code–specific pointer.
 
-สัญญาจัดเก็บอยู่ที่ `knowledge/HOW-WE-FILE.md` — คัดลอกมาจาก Smart City Thailand
+## What to do in this folder
 
-อย่าสร้างเครื่องใหม่ถ้ายังไม่ได้ถามว่าต้องการให้ build ตาม `LINE_RAG_Claude_Code_Master_Prompt.md` หรือไม่
+1. Open this folder in Claude Code (or any compatible agent).
+2. Read `AGENTS.md`.
+3. Tell the owner what the kit can do, then run `./bin/scaffold
+   --help` to see the scaffolder's options.
+4. When the owner says "build me X", follow AGENTS.md Shape 1.
 
-ห้ามขอให้วาง Channel Secret, Access Token, BotFather token หรือ Discord token ลงในแชต — ให้พิมพ์ลง `.env` เอง แล้วตอบว่า 「ใส่แล้ว」
+## If the owner points you at a project folder (not this kit)
 
-อย่าแนะนำ Vercel เป็นที่รันบอทนี้
+Read the project's own `AGENTS.md`. It overrides this file.
+
+## Don't
+
+- Don't edit `AGENTS.md`, `CLAUDE.md`, or the `bin/scaffold`
+  script silently. Tell the owner first.
+- Don't add new packages to `requirements.txt` without flagging it.
+- Don't push to a remote.
+
+## TL;DR
+
+`./bin/scaffold --type chatbot --name my-assistant && cd my-assistant && ./bin/start`
+
+That's the magic.

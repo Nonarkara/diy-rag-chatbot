@@ -1,0 +1,98 @@
+/* Webpage styles — hairline, MoMA-adjacent, zero build step. */
+:root {
+  --bg: #fafaf7;
+  --ink: #111;
+  --muted: #555;
+  --accent: #ff9500;
+  --hair: 0.5px solid #111;
+  --mono: "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.frame { border: var(--hair); padding: 16px 20px; margin-bottom: 16px; background: #fff; }
+
+header.frame {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.brand {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.brand-mark { color: var(--accent); font-size: 18px; }
+
+.brand-text {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+nav {
+  display: flex;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+nav a {
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+nav a:hover { color: var(--accent); }
+
+main { display: block; }
+
+.hero h1 {
+  margin: 8px 0;
+  font-size: 36px;
+  letter-spacing: -0.02em;
+}
+
+.muted { color: var(--muted); }
+
+h2 {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px 0;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  padding: 1px 4px;
+  border: 0.5px solid #ddd;
+  border-radius: 2px;
+}
+
+footer.frame {
+  margin-top: 24px;
+  font-size: 11px;
+}
+
+a {
+  color: var(--accent);
+}

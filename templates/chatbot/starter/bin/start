@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# bin/start — run the chatbot locally.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# Load .env if present
+if [[ -f ".env" ]]; then
+  set -a; source .env; set +a
+elif [[ -f ".env.example" ]]; then
+  echo "[start] no .env yet — using .env.example defaults (offline Ollama)"
+  set -a; source .env.example; set +a
+fi
+
+# Pick a Python that has the deps installed
+if command -v python3 >/dev/null 2>&1; then
+  PY=python3
+else
+  echo "Error: python3 not found. Install Python 3.10+ first." >&2
+  exit 1
+fi
+
+# Quick sanity: are deps installed?
+if ! "$PY" -c "import fastapi, uvicorn, httpx" 2>/dev/null; then
+  echo "[start] missing deps — installing requirements.txt"
+  "$PY" -m pip install -q -r requirements.txt
+fi
+
+echo "[start] knowledge dir: ${KNOWLEDGE_DIR:-./knowledge}"
+echo "[start] LLM: ${LLM_PROVIDER:-ollama}:${LLM_MODEL:-qwen3:4b}"
+echo "[start] listening on http://127.0.0.1:8000"
+echo "[start] test: curl -X POST http://127.0.0.1:8000/ask -H 'Content-Type: application/json' -d '{\"q\":\"hi\"}'"
+echo
+exec "$PY" -m uvicorn app:app --host 127.0.0.1 --port 8000 --reload

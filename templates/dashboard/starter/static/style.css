@@ -1,0 +1,95 @@
+/* Dashboard styles — minimal, hairline, MoMA-adjacent. */
+:root {
+  --bg: #fafaf7;
+  --ink: #111;
+  --muted: #666;
+  --accent: #ff9500;
+  --hair: 0.5px solid #111;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+header {
+  border-bottom: var(--hair);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+header h1 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+
+.muted { color: var(--muted); margin: 0; font-size: 12px; }
+
+main { display: grid; gap: 24px; }
+
+#summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.card {
+  border: var(--hair);
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.card-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.card-value {
+  font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+  font-size: 22px;
+  margin-top: 4px;
+}
+
+#chart-section, #table-section {
+  border: var(--hair);
+  background: #fff;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "SF Mono", "JetBrains Mono", Menlo, monospace;
+  font-size: 12px;
+}
+
+th, td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 0.5px solid #ddd;
+}
+
+th {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

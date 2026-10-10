@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# bin/start — run the dashboard locally.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+cd "$PROJECT_ROOT"
+
+if [[ -f ".env" ]]; then
+  set -a; source .env; set +a
+elif [[ -f ".env.example" ]]; then
+  echo "[start] no .env yet — using .env.example defaults"
+  set -a; source .env.example; set +a
+fi
+
+if command -v python3 >/dev/null 2>&1; then
+  PY=python3
+else
+  echo "Error: python3 not found. Install Python 3.10+ first." >&2
+  exit 1
+fi
+
+if ! "$PY" -c "import fastapi, uvicorn, jinja2" 2>/dev/null; then
+  echo "[start] missing deps — installing requirements.txt"
+  "$PY" -m pip install -q -r requirements.txt
+fi
+
+HOST="${HOST:-127.0.0.1}"
+PORT="${PORT:-8000}"
+echo "[start] data dir: ${DATA_DIR:-./data}"
+echo "[start] refresh: ${REFRESH_SECONDS:-30}s"
+echo "[start] listening on http://${HOST}:${PORT}"
+echo "[start] open in a browser, or:"
+echo "        curl http://${HOST}:${PORT}/api/data"
+echo
+exec "$PY" -m uvicorn app:app --host "$HOST" --port "$PORT" --reload
