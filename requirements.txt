@@ -1,16 +1,21 @@
-# LINE RAG Box — keep this list short on purpose.
+# Vibecoding Kit (OOTBPAP) — keep this list short on purpose.
+# Per-template deps live in templates/<T>/starter/requirements.txt
+# and are installed by each starter's bin/start. The kit itself
+# has only the deps bin/council, bin/llm-council, and bin/scaffold
+# need (which is just bash + git + python3).
+#
 # No LangChain, no LlamaIndex, no Chroma, no extra database server.
-fastapi>=0.115
-uvicorn>=0.32
-python-dotenv>=1.0
-httpx>=0.27
-pypdf>=5.0
-python-docx>=1.1
-openpyxl>=3.1
-python-pptx>=1.0
-watchdog>=4.0
-numpy>=2.0
+
+# AI council wrappers (bin/council, bin/llm-council) shell out to
+# host CLIs (claude, opencode, codex, gemini) — no Python deps needed.
+# But the vendored 0xNyk council skill installation reads PyYAML.
 PyYAML>=6.0
 
-# Telegram council bot (bot/) — optional, only if you run python -m bot
+# The Telegram bot (bot/) — optional, only if you run `python -m bot`
 python-telegram-bot>=20.0
+
+# httpx + python-dotenv are the *only* Python deps that
+# bin/scaffold itself pulls in (via the templates' requirements.txt).
+# They're listed here so a fresh clone can run the smoke test.
+httpx>=0.27
+python-dotenv>=1.0
