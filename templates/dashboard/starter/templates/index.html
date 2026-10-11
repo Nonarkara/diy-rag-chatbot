@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · vibecoding-kit</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Dashboard</h1>
+    <p class="muted">
+      Source: <code id="source-name">(none)</code>
+      · refresh every <span id="refresh-seconds">30</span>s
+    </p>
+  </header>
+
+  <main>
+    <section id="summary">
+      <div class="card">
+        <div class="card-label">Rows</div>
+        <div class="card-value" id="card-rows">0</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Columns</div>
+        <div class="card-value" id="card-columns">0</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Last update</div>
+        <div class="card-value" id="card-updated">—</div>
+      </div>
+    </section>
+
+    <section id="chart-section">
+      <canvas id="chart" width="900" height="320"></canvas>
+    </section>
+
+    <section id="table-section">
+      <table id="data-table">
+        <thead><tr><th>(waiting for data)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/static/charts.js"></script>
+</body>
+</html>

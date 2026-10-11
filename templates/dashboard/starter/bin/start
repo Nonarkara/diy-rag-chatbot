@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# bin/start — run the dashboard locally, with auto-venv.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+VENV="${VENV:-$PROJECT_ROOT/.venv}"
+
+if [[ -f ".env" ]]; then
+  set -a; source .env; set +a
+elif [[ -f ".env.example" ]]; then
+  echo "[start] no .env yet — using .env.example defaults"
+  set -a; source .env.example; set +a
+fi
+
+PY=""
+for candidate in python3 python3.12 python3.11 python3.10; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    PY="$(command -v "$candidate")"
+    break
+  fi
+done
+if [[ -z "$PY" ]]; then
+  echo "Error: python3 not found. Install Python 3.10+ first." >&2
+  exit 1
+fi
+
+if [[ ! -d "$VENV" ]]; then
+  echo "[start] creating venv at $VENV"
+  "$PY" -m venv "$VENV"
+fi
+VPY="$VENV/bin/python"
+VPIP="$VENV/bin/pip"
+if [[ ! -x "$VPY" ]]; then
+  echo "Error: venv was created but $VPY is missing. Delete $VENV and retry." >&2
+  exit 1
+fi
+
+need_install=0
+while IFS= read -r pkg; do
+  mod="${pkg%%[<>=!~ ]*}"
+  mod="${mod//-/_}"
+  if ! "$VPY" -c "import $mod" 2>/dev/null; then
+    need_install=1
+    break
+  fi
+done < <(grep -vE '^\s*#|^\s*$' requirements.txt)
+
+if [[ "$need_install" == "1" ]]; then
+  echo "[start] installing requirements.txt into venv"
+  "$VPIP" install -q -r requirements.txt
+fi
+
+HOST="${HOST:-127.0.0.1}"
+PORT="${PORT:-8000}"
+echo "[start] data dir: ${DATA_DIR:-./data}"
+echo "[start] refresh: ${REFRESH_SECONDS:-30}s"
+echo "[start] listening on http://${HOST}:${PORT}"
+echo "[start] open in a browser, or:"
+echo "        curl http://${HOST}:${PORT}/api/data"
+echo
+exec "$VPY" -m uvicorn app:app --host "$HOST" --port "$PORT" --reload
